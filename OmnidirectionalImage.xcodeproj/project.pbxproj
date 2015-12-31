@@ -8,10 +8,24 @@
 
 /* Begin PBXBuildFile section */
 		028D79FB1C30130B00790A10 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 028D79FA1C30130B00790A10 /* main.cpp */; };
+		028D7A081C301B9700790A10 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 028D7A071C301B9700790A10 /* main.cpp */; };
+		028D7A0D1C301BEA00790A10 /* libopencv_core.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 028D7A0C1C301BEA00790A10 /* libopencv_core.dylib */; };
+		028D7A0F1C301BF300790A10 /* libopencv_highgui.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 028D7A0E1C301BF300790A10 /* libopencv_highgui.dylib */; };
+		028D7A111C301C0A00790A10 /* libopencv_imgproc.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 028D7A101C301C0A00790A10 /* libopencv_imgproc.dylib */; };
+		028D7A141C302CE200790A10 /* Rotate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 028D7A121C302CE200790A10 /* Rotate.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
 		028D79F51C30130B00790A10 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+		028D7A031C301B9700790A10 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = /usr/share/man/man1/;
@@ -25,6 +39,13 @@
 /* Begin PBXFileReference section */
 		028D79F71C30130B00790A10 /* OmnidirectionalImage */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = OmnidirectionalImage; sourceTree = BUILT_PRODUCTS_DIR; };
 		028D79FA1C30130B00790A10 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
+		028D7A051C301B9700790A10 /* Rotate */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Rotate; sourceTree = BUILT_PRODUCTS_DIR; };
+		028D7A071C301B9700790A10 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
+		028D7A0C1C301BEA00790A10 /* libopencv_core.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libopencv_core.dylib; path = ../../../../../../../usr/local/Cellar/opencv/2.4.12/lib/libopencv_core.dylib; sourceTree = "<group>"; };
+		028D7A0E1C301BF300790A10 /* libopencv_highgui.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libopencv_highgui.dylib; path = ../../../../../../../usr/local/Cellar/opencv/2.4.12/lib/libopencv_highgui.dylib; sourceTree = "<group>"; };
+		028D7A101C301C0A00790A10 /* libopencv_imgproc.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libopencv_imgproc.dylib; path = ../../../../../../../usr/local/Cellar/opencv/2.4.12/lib/libopencv_imgproc.dylib; sourceTree = "<group>"; };
+		028D7A121C302CE200790A10 /* Rotate.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Rotate.cpp; sourceTree = "<group>"; };
+		028D7A131C302CE200790A10 /* Rotate.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Rotate.hpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -35,13 +56,27 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		028D7A021C301B9700790A10 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				028D7A0D1C301BEA00790A10 /* libopencv_core.dylib in Frameworks */,
+				028D7A0F1C301BF300790A10 /* libopencv_highgui.dylib in Frameworks */,
+				028D7A111C301C0A00790A10 /* libopencv_imgproc.dylib in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
 		028D79EE1C30130B00790A10 = {
 			isa = PBXGroup;
 			children = (
+				028D7A101C301C0A00790A10 /* libopencv_imgproc.dylib */,
+				028D7A0E1C301BF300790A10 /* libopencv_highgui.dylib */,
+				028D7A0C1C301BEA00790A10 /* libopencv_core.dylib */,
 				028D79F91C30130B00790A10 /* OmnidirectionalImage */,
+				028D7A061C301B9700790A10 /* Rotate */,
 				028D79F81C30130B00790A10 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -50,6 +85,7 @@
 			isa = PBXGroup;
 			children = (
 				028D79F71C30130B00790A10 /* OmnidirectionalImage */,
+				028D7A051C301B9700790A10 /* Rotate */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -60,6 +96,16 @@
 				028D79FA1C30130B00790A10 /* main.cpp */,
 			);
 			path = OmnidirectionalImage;
+			sourceTree = "<group>";
+		};
+		028D7A061C301B9700790A10 /* Rotate */ = {
+			isa = PBXGroup;
+			children = (
+				028D7A071C301B9700790A10 /* main.cpp */,
+				028D7A121C302CE200790A10 /* Rotate.cpp */,
+				028D7A131C302CE200790A10 /* Rotate.hpp */,
+			);
+			path = Rotate;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -82,6 +128,23 @@
 			productReference = 028D79F71C30130B00790A10 /* OmnidirectionalImage */;
 			productType = "com.apple.product-type.tool";
 		};
+		028D7A041C301B9700790A10 /* Rotate */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 028D7A091C301B9700790A10 /* Build configuration list for PBXNativeTarget "Rotate" */;
+			buildPhases = (
+				028D7A011C301B9700790A10 /* Sources */,
+				028D7A021C301B9700790A10 /* Frameworks */,
+				028D7A031C301B9700790A10 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Rotate;
+			productName = Rotate;
+			productReference = 028D7A051C301B9700790A10 /* Rotate */;
+			productType = "com.apple.product-type.tool";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -92,6 +155,9 @@
 				ORGANIZATIONNAME = masakazu;
 				TargetAttributes = {
 					028D79F61C30130B00790A10 = {
+						CreatedOnToolsVersion = 7.2;
+					};
+					028D7A041C301B9700790A10 = {
 						CreatedOnToolsVersion = 7.2;
 					};
 				};
@@ -109,6 +175,7 @@
 			projectRoot = "";
 			targets = (
 				028D79F61C30130B00790A10 /* OmnidirectionalImage */,
+				028D7A041C301B9700790A10 /* Rotate */,
 			);
 		};
 /* End PBXProject section */
@@ -119,6 +186,15 @@
 			buildActionMask = 2147483647;
 			files = (
 				028D79FB1C30130B00790A10 /* main.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		028D7A011C301B9700790A10 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				028D7A141C302CE200790A10 /* Rotate.cpp in Sources */,
+				028D7A081C301B9700790A10 /* main.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -161,6 +237,8 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = /usr/local/Cellar/opencv/2.4.12/include;
+				LIBRARY_SEARCH_PATHS = /usr/local/Cellar/opencv/2.4.12/lib;
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -198,6 +276,8 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = /usr/local/Cellar/opencv/2.4.12/include;
+				LIBRARY_SEARCH_PATHS = /usr/local/Cellar/opencv/2.4.12/lib;
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = macosx;
@@ -214,6 +294,24 @@
 		028D7A001C30130B00790A10 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		028D7A0A1C301B9700790A10 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				HEADER_SEARCH_PATHS = /usr/local/Cellar/opencv/2.4.12/include;
+				LIBRARY_SEARCH_PATHS = /usr/local/Cellar/opencv/2.4.12/lib;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		028D7A0B1C301B9700790A10 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				HEADER_SEARCH_PATHS = /usr/local/Cellar/opencv/2.4.12/include;
+				LIBRARY_SEARCH_PATHS = /usr/local/Cellar/opencv/2.4.12/lib;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
@@ -235,6 +333,14 @@
 			buildConfigurations = (
 				028D79FF1C30130B00790A10 /* Debug */,
 				028D7A001C30130B00790A10 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+		028D7A091C301B9700790A10 /* Build configuration list for PBXNativeTarget "Rotate" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				028D7A0A1C301B9700790A10 /* Debug */,
+				028D7A0B1C301B9700790A10 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 		};
