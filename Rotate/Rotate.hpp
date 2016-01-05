@@ -22,12 +22,17 @@ public:
     
     void orth2ang(int u, int v, double& theta, double& phi);
     void ang2orth(double theta, double phi, int& u, int& v);
+    void ang2orthd(double theta, double phi, double& u, double& v);
     
-    void rotateXOrthDot(double chi, int u, int v, int& ur, int& vr);
+    void rotateXOrthBilinearDot(double chi, int u, int v, cv::Vec3b& pixel);
+    void rotateXOrthNearDot(double chi, int u, int v, cv::Vec3b& pixel);
     void rotateXOrth(double chi, cv::Mat& rotImg);
     
     void rotateYOrthDot(double chi, int u, int v, int& ur, int& vr);
     void rotateYOrth(double chi, cv::Mat& rotImg);
+    
+    void rotateXAng(double chi, double theta, double phi,
+                    double& thetar, double& phir);
     
     void setThetaScale();
     double normalizeTheta(double rawTheta);

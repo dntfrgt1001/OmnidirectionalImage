@@ -33,7 +33,7 @@ int main(int argc, const char * argv[])
     cv::Mat rotThetaImg = cv::Mat::zeros(frameSize, CV_8UC3);
     cv::Mat rotPhiImg = cv::Mat::zeros(frameSize, CV_8UC3);
     
-    double thetaChi = M_PI * 1.0/3.0;
+    double thetaChi = M_PI * 1.0/3.0 * 0;
     double phiChi = M_PI * 1.0/2.0;
 
     rot.rotateYOrth(thetaChi, rotThetaImg);
@@ -43,11 +43,11 @@ int main(int argc, const char * argv[])
     rot.rotateXOrth(phiChi, rotPhiImg);
     
     cv::namedWindow("input", CV_WINDOW_AUTOSIZE|CV_WINDOW_FREERATIO);
-    cv::namedWindow("rotTheta", CV_WINDOW_AUTOSIZE|CV_WINDOW_FREERATIO);
+//    cv::namedWindow("rotTheta", CV_WINDOW_AUTOSIZE|CV_WINDOW_FREERATIO);
     cv::namedWindow("rotPhi", CV_WINDOW_AUTOSIZE|CV_WINDOW_FREERATIO);
     
     cv::imshow("input", img);
-    cv::imshow("rotTheta", rotThetaImg);
+//    cv::imshow("rotTheta", rotThetaImg);
     cv::imshow("rotPhi", rotPhiImg);
     
 //    std::string outputName = "lattice30.png";

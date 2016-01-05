@@ -22,40 +22,70 @@ Rotate::~Rotate(){
 void Rotate::orth2ang(int u, int v, double &theta, double &phi)
 {
     theta = (u - frameSize->width/2.0) * 2.0*M_PI/frameSize->width;
-    phi = (-1) * (v - frameSize->height/2.0) * M_PI/frameSize->height;
+    phi = (-1.0) * (v - frameSize->height/2.0) * M_PI/frameSize->height;
 }
 
 void Rotate::ang2orth(double theta, double phi, int &u, int &v)
 {
-    u = (int) (theta*frameSize->width/(2.0*M_PI) + frameSize->width/2.0);
-    v = (int) ((-1)*phi*frameSize->height/M_PI + frameSize->height/2.0);
+    u = (int) round(theta*frameSize->width/(2.0*M_PI) + frameSize->width/2.0);
+    v = (int) round((-1.0)*phi*frameSize->height/M_PI + frameSize->height/2.0);
 }
 
-void Rotate::rotateXOrthDot(double chi, int u, int v, int &ur, int &vr)
+void Rotate::ang2orthd(double theta, double phi, double &u, double &v)
+{
+    u = theta*frameSize->width/(2.0*M_PI) + frameSize->width/2.0;
+    v = (-1.0)*phi*frameSize->height/M_PI + frameSize->height/2.0;
+}
+
+void Rotate::rotateXOrthBilinearDot(double chi, int u, int v, cv::Vec3b& pixel)
 {
     double theta, phi;
     double thetar, phir;
     
     orth2ang(u, v, theta, phi);
     
-    thetar = atan(sin(theta)*cos(phi) /
-                (sin(chi)*sin(phi) + cos(chi)*cos(theta)*cos(phi)));
-    phir = asin(cos(chi)*sin(phi)-sin(chi)*cos(theta)*cos(phi));
+    rotateXAng(chi, theta, phi, thetar, phir);
     
-    if (0 <= theta && thetar < 0) thetar += M_PI;
-    if (theta < 0 && 0 <= thetar) thetar -= M_PI;
+    double ur, vr;
+    
+    ang2orthd(thetar, phir, ur, vr);
+    
+    pixel =
+            (ceil(ur) - ur) * (ceil(vr) - vr) *
+            img->at<cv::Vec3b>((int)ceil(vr), (int)ceil(ur)) +
+            (ceil(ur) - ur) * (vr - floor(vr)) *
+            img->at<cv::Vec3b>((int)floor(vr), (int)ceil(ur)) +
+            (ur - floor(ur)) * (ceil(vr) - vr) *
+            img->at<cv::Vec3b>((int)ceil(vr), (int)floor(ur)) +
+            (ur - floor(ur)) * (vr - floor(vr)) *
+            img->at<cv::Vec3b>((int)floor(vr), (int)floor(ur));
+}
+
+void Rotate::rotateXOrthNearDot(double chi, int u, int v, cv::Vec3b& pixel)
+{
+    double theta, phi;
+    double thetar, phir;
+    
+    orth2ang(u, v, theta, phi);
+    
+    rotateXAng(chi, theta, phi, thetar, phir);
+    
+    int ur, vr;
     
     ang2orth(thetar, phir, ur, vr);
+    
+    pixel = img->at<cv::Vec3b>(vr, ur);
 }
 
 void Rotate::rotateXOrth(double chi, cv::Mat& rotImg)
 {
     for (int u=0; u<frameSize->width; u++) {
         for (int v=0; v<frameSize->height; v++) {
-            int ur, vr;
+            cv::Vec3b tmpPixel;
             
-            rotateXOrthDot((-1) * chi, u, v, ur, vr);
-            rotImg.at<cv::Vec3b>(v, u) = img->at<cv::Vec3b>(vr, ur);
+            rotateXOrthNearDot((-1.0) * chi, u, v, tmpPixel);
+//            rotateXOrthBilinearDot((-1.0)*chi, u, v, tmpPixel);
+            rotImg.at<cv::Vec3b>(v, u) = tmpPixel;
         }
     }
 }
@@ -67,7 +97,7 @@ void Rotate::rotateYOrthDot(double chi, int u, int v, int &ur, int &vr)
 
 void Rotate::rotateYOrth(double chi, cv::Mat &rotImg)
 {
-    int delta = (int) (normalizeTheta(chi) * thetaScale);
+    int delta = (int) round(normalizeTheta(chi) * thetaScale);
     
     int rest = frameSize->width - delta;
     
@@ -79,6 +109,17 @@ void Rotate::rotateYOrth(double chi, cv::Mat &rotImg)
     
     imgLeft.copyTo(rotRight);
     imgRight.copyTo(rotLeft);
+}
+
+void Rotate::rotateXAng(double chi, double theta, double phi,
+                        double& thetar, double& phir)
+{
+    thetar = atan(sin(theta)*cos(phi) /
+                  (sin(chi)*sin(phi) + cos(chi)*cos(theta)*cos(phi)));
+    phir = asin(cos(chi)*sin(phi)-sin(chi)*cos(theta)*cos(phi));
+    
+    if (0 <= theta && thetar < 0) thetar += M_PI;
+    if (theta < 0 && 0 <= thetar) thetar -= M_PI;
 }
 
 double Rotate::normalizeTheta(double rawTheta)
