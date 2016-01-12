@@ -4,25 +4,60 @@
 <dict>
 	<key>SchemeUserState</key>
 	<dict>
+		<key>MatchTest.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>4</integer>
+		</dict>
 		<key>OmnidirectionalImage.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
 			<integer>0</integer>
 		</dict>
-		<key>Rotate.xcscheme</key>
+		<key>RotationTest.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>1</integer>
+			<integer>2</integer>
 		</dict>
 		<key>Test.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>2</integer>
+			<integer>1</integer>
+		</dict>
+		<key>VideoMatchTest.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>5</integer>
+		</dict>
+		<key>WriteVideo.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>3</integer>
 		</dict>
 	</dict>
 	<key>SuppressBuildableAutocreation</key>
 	<dict>
 		<key>02206DE01C356B0400733203</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>0245CD5E1C3F848B00FF5E33</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>0245CD6D1C3F866D00FF5E33</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>0245CD7C1C41382500FF5E33</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>0245CD9A1C43DF3700FF5E33</key>
 		<dict>
 			<key>primary</key>
 			<true/>

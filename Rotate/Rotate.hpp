@@ -15,34 +15,36 @@
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 
+#include "Transform.hpp"
+
 class Rotate {
 public:
-    Rotate(const cv::Size* frameSize, cv::Mat* img);
+    Rotate(const cv::Size* frameSize, const Transform* transform);
     ~Rotate();
     
-    void orth2ang(int u, int v, double& theta, double& phi);
-    void ang2orth(double theta, double phi, int& u, int& v);
-    void ang2orthd(double theta, double phi, double& u, double& v);
+    //void orth2ang(int u, int v, double& theta, double& phi);
+    //void ang2orth(double theta, double phi, int& u, int& v);
+    //void ang2orthd(double theta, double phi, double& u, double& v);
     
-    void rotateXOrthBilinearDot(double chi, int u, int v, cv::Vec3b& pixel);
-    void rotateXOrthNearDot(double chi, int u, int v, cv::Vec3b& pixel);
-    void rotateXOrth(double chi, cv::Mat& rotImg);
+    //void rotateXOrthBilinearDot(double chi, int u, int v, cv::Vec3b& pixel);
+    void rotateXOrthNearDot(double chi, int u, int v, int& ur, int&vr);
+    void rotateXOrth(double chi, const cv::Mat& img, cv::Mat& rotImg);
     
-    void rotateYOrthDot(double chi, int u, int v, int& ur, int& vr);
-    void rotateYOrth(double chi, cv::Mat& rotImg);
+    
+    //it is ineffecient to rotate dot one by one
+    void rotateYOrthNearDot(double chi, int u, int v, int& ur, int& vr);
+    void rotateYAng(double chi, const cv::Mat&img, cv::Mat& rotImg);
+    void rotateYOrth(int chi, const cv::Mat& img, cv::Mat& rotImg);
     
     void rotateXAng(double chi, double theta, double phi,
                     double& thetar, double& phir);
     
-    void setThetaScale();
-    double normalizeTheta(double rawTheta);
-    
-    void setImage(cv::Mat* newImg);
+    void writeRotateYMovie(double deltaChi, const cv::Mat& img, double angWidth,
+                           const std::string& outputName, int frame);
     
 private:
     const cv::Size* frameSize;
-    cv::Mat* img;
-    double thetaScale; // [pixel/rad]
+    const Transform* transform;
 };
 
 #endif /* Rotate_hpp */
