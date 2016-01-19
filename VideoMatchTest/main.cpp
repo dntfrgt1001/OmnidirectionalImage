@@ -27,7 +27,7 @@ int main(int argc, const char * argv[])
     const Transform transform(&frameSize);
     Rotate rot(&frameSize, &transform);
     
-    const std::string videoName = "rotation.mp4";
+    const std::string videoName = "rotation2.mp4";
     cv::VideoCapture capture(workDir + videoName);
     if (!capture.isOpened()) return -1;
     
@@ -36,10 +36,10 @@ int main(int argc, const char * argv[])
     if (input.empty()) return -1;
     cv::resize(input, stdImg, frameSize);
     
-    int orthRange = transform.dphi2v(M_PI * 1.0/3.0);
+    int orthRange = transform.dphi2v(M_PI * 1.0/4.0);
     Match match(&frameSize, &stdImg, &rot, orthRange);
     
-    const std::string outputName = "output.mp4";
+    const std::string outputName = "output2.mp4";
     cv::VideoWriter writer(workDir+outputName, CV_FOURCC('m', 'p', '4', 'v'),
                            30, frameSize, true);
     if (!writer.isOpened()) return -1;

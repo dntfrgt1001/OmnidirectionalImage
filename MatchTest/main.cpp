@@ -23,7 +23,7 @@ int main(int argc, const char * argv[])
     std::string workDir = "/Users/masakazu/Documents/Koike lab/product/OmnidirectionalImage/working/";
     std::string inputName = "R0010050.JPG";
     
-    const cv::Size frameSize(1000, 500);
+    const cv::Size frameSize(1920, 960);
     
     cv::Mat input, img;
     input = cv::imread(workDir + inputName);
@@ -34,17 +34,19 @@ int main(int argc, const char * argv[])
     Rotate rot(&frameSize, &transform);
     
     cv::Mat img2(frameSize, CV_8UC3);
-    rot.rotateYAng(M_PI*1.0/5.0, img, img2);
+    rot.rotateYAng(M_PI * 1.0/60.0, img, img2);
     
-    double angRange = M_PI * 1.0/6.0;
-    int orthRange = transform.dphi2v(angRange);
+    double matchAngRange = M_PI * 1.0/6.0;
     
-    Match match(&frameSize, &img, &rot, orthRange);
+    Match match(&frameSize, &img, &rot, matchAngRange);
     
+    cv::Mat rotImg(frameSize, CV_8UC3);
+    match.rotateXMatch(img, rotImg);
+    
+    /*
     cv::Mat modImg(frameSize, CV_8UC3);
     match.rotateYMatch(img2, modImg);
 
-    
     
     cv::namedWindow("standard image", CV_WINDOW_AUTOSIZE|CV_WINDOW_FREERATIO);
     cv::namedWindow("query image", CV_WINDOW_AUTOSIZE|CV_WINDOW_FREERATIO);
@@ -53,7 +55,7 @@ int main(int argc, const char * argv[])
     cv::imshow("standard image", img);
     cv::imshow("query image", img2);
     cv::imshow("modified image", modImg);
-    
+    */
     /*
     
     cv::Rect roi(0, frameSize.height/2 - orthRange/2,
@@ -127,7 +129,6 @@ int main(int argc, const char * argv[])
     cv::namedWindow("result");
     cv::imshow("result", result);
     */
-    cv::waitKey(-1);
     
     return 0;
 }

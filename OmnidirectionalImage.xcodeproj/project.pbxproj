@@ -42,6 +42,9 @@
 		0245CDA71C43E24200FF5E33 /* Transform.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0245CD8D1C4233E000FF5E33 /* Transform.cpp */; };
 		0245CDA81C43E24500FF5E33 /* Match.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0245CD931C43B4BC00FF5E33 /* Match.cpp */; };
 		0245CDA91C43E24900FF5E33 /* Rotate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 028D7A121C302CE200790A10 /* Rotate.cpp */; };
+		0245CDAA1C44DFD700FF5E33 /* Transform.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0245CD8D1C4233E000FF5E33 /* Transform.cpp */; };
+		0245CDAB1C4780D200FF5E33 /* Rotate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 028D7A121C302CE200790A10 /* Rotate.cpp */; };
+		0245CDAC1C4780D700FF5E33 /* Transform.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0245CD8D1C4233E000FF5E33 /* Transform.cpp */; };
 		028D79FB1C30130B00790A10 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 028D79FA1C30130B00790A10 /* main.cpp */; };
 /* End PBXBuildFile section */
 
@@ -502,6 +505,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0245CDAC1C4780D700FF5E33 /* Transform.cpp in Sources */,
+				0245CDAB1C4780D200FF5E33 /* Rotate.cpp in Sources */,
 				02206DE41C356B0400733203 /* main.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -520,6 +525,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0245CDAA1C44DFD700FF5E33 /* Transform.cpp in Sources */,
 				0245CD751C3F92E400FF5E33 /* Rotate.cpp in Sources */,
 				0245CD711C3F866D00FF5E33 /* main.cpp in Sources */,
 			);

@@ -11,21 +11,61 @@
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 
+#include "Transform.hpp"
+#include "Rotate.hpp"
+
 int main(int argc, const char * argv[])
 {
     std::string workDir = "/Users/masakazu/Documents/Koike lab/product/OmnidirectionalImage/working/";
     std::string inputName = "R0010050.JPG";
     
-    /*
-    const cv::Size frameSize(1001, 500);
+
+    const cv::Size frameSize(1000, 500);
     
     cv::Mat input, img;
     
     input = cv::imread(workDir + inputName);
     cv::resize(input, img, frameSize);
+
+    Transform transform(&frameSize);
+    
+    Rotate rotate(&frameSize, &transform);
+    
+    double deltaChi = M_PI * 1.0/60.0;
+    
+    
+    cv::Mat rotImg(frameSize, CV_8UC3);
+    //rotate.rotateXAng(curChi, img, rotImg);
+    
+    double curChi = deltaChi * 4;
+    double theta = -3.1415926535897927;
+    double phi = 1.3613568165555772;
+    
+    double denomi, numere;
+    denomi = sin(curChi)*sin(phi) + cos(curChi)*cos(theta)*cos(phi);
+    numere  = sin(theta)*cos(phi);
+    
+    double thetar = atan(sin(theta)*cos(phi) /
+                  (sin(curChi)*sin(phi) + cos(curChi)*cos(theta)*cos(phi)));
+    
+    double inputToAsin = cos(curChi)*sin(phi)-sin(curChi)*cos(theta)*cos(phi);
+    double phir = asin(cos(curChi)*sin(phi)-sin(curChi)*cos(theta)*cos(phi));
+   
+    std::cout << "inputToAsin = " << inputToAsin << std::endl;
+    std::cout << "asin(inputToAsin) = " << phir << std::endl;
+    
+    /*
+    std::cout << "sin(chi)*sin(phi)" << sin(chi)*sin(phi) << std::endl;
+    std::cout << "cos(chi)*cos(theta)*cos(phi)" << cos(chi)*cos(theta)*cos(phi)<<std::endl;
+    
+    
+    std::cout << "denomi = " << denomi << std::endl;
+    std::cout << "numere = " << numere << std::endl;
+    std::cout << "thetar = " << thetar << std::endl;
     */
+    cv::waitKey(-1);
     
-    
+    /*
     cv::VideoCapture capture(0);
     if (!capture.isOpened()) return -1;
     
@@ -56,6 +96,6 @@ int main(int argc, const char * argv[])
         
         if (cv::waitKey(10) > 0) break;
     }
-    
+    */
     return 0;
 }

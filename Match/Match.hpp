@@ -20,22 +20,35 @@
 
 class Match{
 public:
-    Match(const cv::Size* frameSize, cv::Mat* stdImg, Rotate* rot,
-          int matchRange);
+    Match(const cv::Size* frameSize, const cv::Mat* stdImg, Rotate* rot,
+          double matchAngRange);
     void rotateYMatch(const cv::Mat& img, cv::Mat& rotImg);
-    void crossMatch(cv::vector<cv::DMatch>& dmatch1,
-                    cv::vector<cv::DMatch>& dmatch2,
-                    cv::vector<cv::DMatch>& crossMatch);
+    void crossMatch(std::vector<cv::DMatch>& dMatches1,
+                    std::vector<cv::DMatch>& dMatches2,
+                    std::vector<cv::DMatch>& dMatches);
+    void getMoveMean(std::vector<cv::KeyPoint>& keyPoints,
+                     std::vector<cv::DMatch>& dMathces,
+                       cv::Point2f& movePoint);
+    void getMoveTrimMean(std::vector<cv::KeyPoint>& keyPoints,
+                         std::vector<cv::DMatch>& dMatches,
+                         cv::Point2f& movePoint, double trimRatio);
     
+    void rotateXMatch(const cv::Mat& img, cv::Mat& rotImg);
+    
+    void getKeyMatch(const cv::Mat& img, std::vector<cv::KeyPoint>& keyPoints,
+                     std::vector<cv::DMatch>& dMatches);
+    
+    
+    void outputMatchInfo(const std::vector<cv::KeyPoint>& keyPoints,
+                         const std::vector<cv::DMatch>& dMatches,
+                         const std::string& fileName);
 private:
     const cv::Size* frameSize;
-    cv::Mat* stdImg;
+    const cv::Mat* stdImg;
     Rotate* rot;
     
-    int matchRange;
-    
     cv::Rect roi;
-    cv::vector<cv::KeyPoint> stdKeyPoints;
+    std::vector<cv::KeyPoint> stdKeyPoints;
     cv::Mat stdDescriptor;
 };
 

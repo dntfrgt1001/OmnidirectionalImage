@@ -28,19 +28,22 @@ public:
     
     //void rotateXOrthBilinearDot(double chi, int u, int v, cv::Vec3b& pixel);
     void rotateXOrthNearDot(double chi, int u, int v, int& ur, int&vr);
-    void rotateXOrth(double chi, const cv::Mat& img, cv::Mat& rotImg);
-    
+    void rotateXAngDot(double chi, double theta, double phi,
+                       double& thetar, double& phir);
+    void rotateXAng(double chi, const cv::Mat& img, cv::Mat& rotImg);
     
     //it is ineffecient to rotate dot one by one
-    void rotateYOrthNearDot(double chi, int u, int v, int& ur, int& vr);
+    //void rotateYOrthNearDot(double chi, int u, int v, int& ur, int& vr);
     void rotateYAng(double chi, const cv::Mat&img, cv::Mat& rotImg);
-    void rotateYOrth(int chi, const cv::Mat& img, cv::Mat& rotImg);
+    void rotateYOrth(int orthChi, const cv::Mat& img, cv::Mat& rotImg);
     
-    void rotateXAng(double chi, double theta, double phi,
-                    double& thetar, double& phir);
+    void writeConstXMovie(const cv::Mat& img, const std::string& outputName,
+                          double deltaChi, int frameNum);
     
-    void writeRotateYMovie(double deltaChi, const cv::Mat& img, double angWidth,
-                           const std::string& outputName, int frame);
+    void writeRepeatYMovie(const cv::Mat& img, const std::string& outputName,
+                           double repWidth, double deltaChi, int frameNum);
+    void writeConstYMovie(const cv::Mat& img, const std::string& outputName,
+                          double deltaChi, int frameNum);
     
 private:
     const cv::Size* frameSize;
