@@ -20,7 +20,7 @@
 
 class Match{
 public:
-    Match(const cv::Size* frameSize, const cv::Mat* stdImg, Rotate* rot,
+    Match(const cv::Size& frameSize, const cv::Mat& stdImg, Rotate& rot,
           double matchAngRange);
     void rotateYMatch(const cv::Mat& img, cv::Mat& rotImg);
     void crossMatch(std::vector<cv::DMatch>& dMatches1,
@@ -38,14 +38,14 @@ public:
     void getKeyMatch(const cv::Mat& img, std::vector<cv::KeyPoint>& keyPoints,
                      std::vector<cv::DMatch>& dMatches);
     
+    double getMatchScoreNum(std::vector<cv::DMatch>& dMatches);
+    double getMatchScoreDistance(std::vector<cv::DMatch>& dMatches);
     
-    void outputMatchInfo(const std::vector<cv::KeyPoint>& keyPoints,
-                         const std::vector<cv::DMatch>& dMatches,
-                         const std::string& fileName);
+    
 private:
-    const cv::Size* frameSize;
-    const cv::Mat* stdImg;
-    Rotate* rot;
+    const cv::Size& frameSize;
+    const cv::Mat& stdImg;
+    Rotate& rot;
     
     cv::Rect roi;
     std::vector<cv::KeyPoint> stdKeyPoints;

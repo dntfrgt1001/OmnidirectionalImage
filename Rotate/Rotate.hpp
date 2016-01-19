@@ -19,7 +19,7 @@
 
 class Rotate {
 public:
-    Rotate(const cv::Size* frameSize, const Transform* transform);
+    Rotate(const cv::Size& frameSize, const Transform& transform);
     ~Rotate();
     
     //void orth2ang(int u, int v, double& theta, double& phi);
@@ -46,8 +46,8 @@ public:
                           double deltaChi, int frameNum);
     
 private:
-    const cv::Size* frameSize;
-    const Transform* transform;
+    const cv::Size& frameSize;
+    const Transform& transform;
 };
 
 #endif /* Rotate_hpp */

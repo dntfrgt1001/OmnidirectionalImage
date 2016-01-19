@@ -29,16 +29,16 @@ int main(int argc, const char * argv[])
     input = cv::imread(workDir + inputName);
     cv::resize(input, img, frameSize);
     
-    const Transform transform(&frameSize);
+    const Transform transform(frameSize);
     
-    Rotate rot(&frameSize, &transform);
+    Rotate rot(frameSize, transform);
     
     cv::Mat img2(frameSize, CV_8UC3);
     rot.rotateYAng(M_PI * 1.0/60.0, img, img2);
     
     double matchAngRange = M_PI * 1.0/6.0;
     
-    Match match(&frameSize, &img, &rot, matchAngRange);
+    Match match(frameSize, img, rot, matchAngRange);
     
     cv::Mat rotImg(frameSize, CV_8UC3);
     match.rotateXMatch(img, rotImg);

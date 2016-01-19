@@ -15,7 +15,7 @@
 
 class Transform{
 public:
-    Transform(const cv::Size* frameSize);
+    Transform(const cv::Size& frameSize);
     
     int theta2u(double theta) const;
     int phi2v(double phi) const;
@@ -33,6 +33,6 @@ public:
     int normalizeU(int rawU) const;
     
 private:
-    const cv::Size* frameSize;
+    const cv::Size& frameSize;
 };
 #endif /* Transform_hpp */

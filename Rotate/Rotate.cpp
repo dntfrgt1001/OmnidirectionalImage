@@ -10,7 +10,7 @@
 #include <iostream>
 #include <math.h>
 
-Rotate::Rotate(const cv::Size* frameSize, const Transform* transform):
+Rotate::Rotate(const cv::Size& frameSize, const Transform& transform):
 frameSize(frameSize), transform(transform)
 {
 }
@@ -71,19 +71,19 @@ void Rotate::rotateXOrthNearDot(double chi, int u, int v, int& ur, int& vr)
     double theta, phi;
     double thetar, phir;
     
-    transform->orth2ang(u, v, theta, phi);
+    transform.orth2ang(u, v, theta, phi);
     
     rotateXAngDot(chi, theta, phi, thetar, phir);
     
-    transform->ang2orth(thetar, phir, ur, vr);
+    transform.ang2orth(thetar, phir, ur, vr);
  
     if (ur == -1) ur++;
-    if (ur == frameSize->width) ur--;
+    if (ur == frameSize.width) ur--;
     if (vr == -1) vr++;
-    if (vr == frameSize->height) vr--;
+    if (vr == frameSize.height) vr--;
 
-    assert(0<=ur && ur<frameSize->width);
-    assert(0<=vr && vr<frameSize->height);
+    assert(0<=ur && ur<frameSize.width);
+    assert(0<=vr && vr<frameSize.height);
 
 //    pixel = img->at<cv::Vec3b>(vr, ur);
 }
@@ -116,8 +116,8 @@ void Rotate::rotateXAngDot(double chi, double theta, double phi,
 
 void Rotate::rotateXAng(double chi, const cv::Mat& img, cv::Mat& rotImg)
 {
-    for (int u=0; u<frameSize->width; u++) {
-        for (int v=0; v<frameSize->height; v++) {
+    for (int u=0; u<frameSize.width; u++) {
+        for (int v=0; v<frameSize.height; v++) {
             int ur, vr;
 
             rotateXOrthNearDot(chi, u, v, ur, vr);
@@ -125,14 +125,14 @@ void Rotate::rotateXAng(double chi, const cv::Mat& img, cv::Mat& rotImg)
         }
     }
     
-    int halfWidth = frameSize->width / 2;
-    if (frameSize->width % 2 == 0) {
-        for (int v=0; v<frameSize->height; v++) {
+    int halfWidth = frameSize.width / 2;
+    if (frameSize.width % 2 == 0) {
+        for (int v=0; v<frameSize.height; v++) {
             rotImg.at<cv::Vec3b>(v, halfWidth-1) = 2.0/3.0*rotImg.at<cv::Vec3b>(v, halfWidth-2) + 1.0/3.0*rotImg.at<cv::Vec3b>(v, halfWidth+1);
             rotImg.at<cv::Vec3b>(v, halfWidth) = 1.0/3.0*rotImg.at<cv::Vec3b>(v, halfWidth-2) + 2.0/3.0*rotImg.at<cv::Vec3b>(v, halfWidth+1);
         }
     }else{
-        for (int v=0; v<frameSize->height; v++) {
+        for (int v=0; v<frameSize.height; v++) {
             rotImg.at<cv::Vec3b>(v, halfWidth) = 1.0/2.0*rotImg.at<cv::Vec3b>(v, halfWidth-1) + 1.0/2.0*rotImg.at<cv::Vec3b>(v, halfWidth+1);
         }
     }
@@ -149,22 +149,22 @@ void Rotate::rotateYAng(double chi, const cv::Mat& img, cv::Mat &rotImg)
 {
 //    int delta = (int) round(transform->normalizeTheta(chi) *
 //                            (frameSize->width / 2.0) / M_PI);
-    int delta = transform->dtheta2u(transform->normalizeTheta(chi));
+    int delta = transform.dtheta2u(transform.normalizeTheta(chi));
     
     rotateYOrth(delta, img, rotImg);
 }
 
 void Rotate::rotateYOrth(int orthChi, const cv::Mat& img, cv::Mat& rotImg)
 {
-    orthChi = transform->normalizeU(orthChi);
+    orthChi = transform.normalizeU(orthChi);
     
-    int rest = frameSize->width - orthChi;
+    int rest = frameSize.width - orthChi;
     
-    cv::Mat imgLeft(img, cv::Rect(0, 0, rest, frameSize->height));
-    cv::Mat imgRight(img, cv::Rect(rest, 0, orthChi, frameSize->height));
+    cv::Mat imgLeft(img, cv::Rect(0, 0, rest, frameSize.height));
+    cv::Mat imgRight(img, cv::Rect(rest, 0, orthChi, frameSize.height));
     
-    cv::Mat rotLeft(rotImg, cv::Rect(0, 0, orthChi, frameSize->height));
-    cv::Mat rotRight(rotImg, cv::Rect(orthChi, 0, rest, frameSize->height));
+    cv::Mat rotLeft(rotImg, cv::Rect(0, 0, orthChi, frameSize.height));
+    cv::Mat rotRight(rotImg, cv::Rect(orthChi, 0, rest, frameSize.height));
     
     imgLeft.copyTo(rotRight);
     imgRight.copyTo(rotLeft);
@@ -185,10 +185,10 @@ double Rotate::normalizeTheta(double rawTheta)
 void Rotate::writeRepeatYMovie(const cv::Mat &img, const std::string &outputName,
                                double repWidth, double deltaChi, int frameNum)
 {
-    cv::Mat rotImg(*frameSize, CV_8UC3);
+    cv::Mat rotImg(frameSize, CV_8UC3);
     
     cv::VideoWriter writer(outputName, CV_FOURCC('m', 'p', '4', 'v'),
-                           30, *frameSize, true);
+                           30, frameSize, true);
     if (!writer.isOpened()) exit(-1);
     
     cv::namedWindow("RotateYMovie", CV_WINDOW_AUTOSIZE|CV_WINDOW_FREERATIO);
@@ -227,10 +227,10 @@ void Rotate::writeRepeatYMovie(const cv::Mat &img, const std::string &outputName
 
 void Rotate::writeConstYMovie(const cv::Mat &img, const std::string &outputName, double deltaChi, int frameNum)
 {
-    cv::Mat rotImg(*frameSize, CV_8UC3);
+    cv::Mat rotImg(frameSize, CV_8UC3);
     
     cv::VideoWriter writer(outputName, CV_FOURCC('m', 'p', '4', 'v'),
-                           30, *frameSize, true);
+                           30, frameSize, true);
     if (!writer.isOpened()) exit(-1);
     
     cv::namedWindow("ConstYMovie", CV_WINDOW_AUTOSIZE|CV_WINDOW_FREERATIO);
@@ -250,10 +250,10 @@ void Rotate::writeConstYMovie(const cv::Mat &img, const std::string &outputName,
 
 void Rotate::writeConstXMovie(const cv::Mat &img, const std::string &outputName, double deltaChi, int frameNum)
 {
-    cv::Mat rotImg(*frameSize, CV_8UC3);
+    cv::Mat rotImg(frameSize, CV_8UC3);
     
     cv::VideoWriter writer(outputName, CV_FOURCC('m', 'p', '4', 'v'),
-                          30, *frameSize, true);
+                          30, frameSize, true);
     if (!writer.isOpened()) exit(-1);
     
     cv::namedWindow("ConstXMovie", CV_WINDOW_AUTOSIZE|CV_WINDOW_FREERATIO);

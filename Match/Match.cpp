@@ -10,15 +10,15 @@
 #include <iostream>
 #include <numeric>
 
-Match::Match(const cv::Size* frameSize, const cv::Mat* stdImg, Rotate* rot,
+Match::Match(const cv::Size& frameSize, const cv::Mat& stdImg, Rotate& rot,
              double matchAngHeight):
 frameSize(frameSize), stdImg(stdImg), rot(rot)
 {
-    int matchOrthHeight = (int) round(matchAngHeight * frameSize->height / M_PI);
-    roi = cv::Rect(0, frameSize->height/2 - matchOrthHeight/2,
-                   frameSize->width, matchOrthHeight);
+    int matchOrthHeight = (int) round(matchAngHeight * frameSize.height / M_PI);
+    roi = cv::Rect(0, frameSize.height/2 - matchOrthHeight/2,
+                   frameSize.width, matchOrthHeight);
     
-    cv::Mat stdRoiImg = (*stdImg)(roi);
+    cv::Mat stdRoiImg = (stdImg)(roi);
     
     cv::Ptr<cv::FeatureDetector> detector = cv::FeatureDetector::create("SIFT");
     detector->detect(stdRoiImg, stdKeyPoints);
@@ -74,7 +74,7 @@ void Match::rotateYMatch(const cv::Mat &img, cv::Mat &rotImg)
     cv::Point2f movePoint;
     getMoveTrimMean(keyPoints, dMatches, movePoint, 1.0/3.0);
     
-    rot->rotateYOrth((-1) * round(movePoint.x), img, rotImg);
+    rot.rotateYOrth((-1) * round(movePoint.x), img, rotImg);
 }
 
 void Match::getMoveMean(std::vector<cv::KeyPoint> &keyPoints,
@@ -87,7 +87,7 @@ void Match::getMoveMean(std::vector<cv::KeyPoint> &keyPoints,
         cv::Point2f pt2 = keyPoints[dMatches[i].trainIdx].pt;
         
         if (pt1.x <= pt2.x) avePoint += pt2 - pt1;
-        else avePoint += cv::Point2f(frameSize->width, 0.0) + pt2 - pt1;
+        else avePoint += cv::Point2f(frameSize.width, 0.0) + pt2 - pt1;
     }
     avePoint *= 1.0/dMatches.size();
 
@@ -100,7 +100,7 @@ void Match::getMoveMean(std::vector<cv::KeyPoint> &keyPoints,
         
         cv::Point2f tmpPoint;
         if (pt1.x <= pt2.x) tmpPoint = pt2 - pt1;
-        else tmpPoint = cv::Point2f((float)frameSize->width, 0.0) + pt2 - pt1;
+        else tmpPoint = cv::Point2f((float)frameSize.width, 0.0) + pt2 - pt1;
         
         /*
         double err = cv::norm(avePoint - tmpPoint);
@@ -132,7 +132,7 @@ void Match::getMoveTrimMean(std::vector<cv::KeyPoint> &keyPoints,
         
         cv::Point2f tmpVec;
         if (pt1.x <= pt2.x) tmpVec = pt2 - pt1;
-        else tmpVec = cv::Point2f(frameSize->width, 0.0) + pt2 - pt1;
+        else tmpVec = cv::Point2f(frameSize.width, 0.0) + pt2 - pt1;
         
         moveVec.push_back(cv::norm(tmpVec));
     }
@@ -148,7 +148,6 @@ void Match::getMoveTrimMean(std::vector<cv::KeyPoint> &keyPoints,
     movePoint = cv::Point2f(average, 0);
     
     std::cout << "delta = " << movePoint << ", number = " << moveVec.size() << std::endl;
-
 }
 
 void Match::crossMatch(std::vector<cv::DMatch> &dMatches1, std::vector<cv::DMatch> &dMatches2, std::vector<cv::DMatch> &dMatches)
@@ -177,45 +176,42 @@ void Match::rotateXMatch(const cv::Mat &img, cv::Mat &rotImg)
     cv::namedWindow("StandardImg", CV_WINDOW_AUTOSIZE|CV_WINDOW_FREERATIO);
     cv::namedWindow("DeltaRotImg", CV_WINDOW_AUTOSIZE|CV_WINDOW_FREERATIO);
     
-    const std::string workDir = "/Users/masakazu/Documents/Koike lab/product/OmnidirectionalImage/working/pictures/";
+//    const std::string workDir = "/Users/masakazu/Documents/Koike lab/product/OmnidirectionalImage/working/pictures/";
     
     
     for (int i=0; i<=divNum; i++) {
         double curChi = -1 * M_PI /2 + deltaChi * i;
         
-        cv::Mat deltaRotImg(*frameSize, CV_8UC3);
-        rot->rotateXAng(curChi, img, deltaRotImg);
+        cv::Mat deltaRotImg(frameSize, CV_8UC3);
+        rot.rotateXAng(curChi, img, deltaRotImg);
         
         const std::string curName = "rot" + std::to_string(i) + ".jpg";
-        cv::imwrite(workDir+curName, deltaRotImg);
+//        cv::imwrite(workDir+curName, deltaRotImg);
         
         std::vector<cv::KeyPoint> keyPoints;
         std::vector<cv::DMatch> dMatches;
         getKeyMatch(deltaRotImg, keyPoints, dMatches);
         
-        outputMatchInfo(keyPoints, dMatches, "test");
-        
-        cv::imshow("StandardImg", *stdImg);
+        cv::imshow("StandardImg", stdImg);
         cv::imshow("DeltaRotImg", deltaRotImg);
         
-        cv::waitKey(-1);
+//        cv::waitKey(-1);
     }
 }
 
-void Match::outputMatchInfo(const std::vector<cv::KeyPoint> &keyPoints, const std::vector<cv::DMatch> &dMatches, const std::string &fileName)
+double Match::getMatchScoreNum(std::vector<cv::DMatch> &dMatches)
 {
-    float accum = 0.0;
+    return (double) dMatches.size();
+}
+
+double Match::getMatchScoreDistance(std::vector<cv::DMatch> &dMatches)
+{
+    double accum = 0.0;
+    
     for (int i=0; i<dMatches.size(); i++) {
         accum += dMatches[i].distance;
     }
     accum /= dMatches.size();
     
-    float accum2 = 0.0;
-    int size = (int)dMatches.size();
-    for (int i=size/3; i<size*2.0/3.0; i++) {
-        accum2 += dMatches[i].distance;
-    }
-    accum2 /= size;
-    
-    std::cout << "(KeyNum, MatchNum, AveDis, AveDis2) = (" << keyPoints.size() << ", " << dMatches.size() << ", " << accum << ", " << accum2 << ")" << std::endl;
+    return (double) accum;
 }
