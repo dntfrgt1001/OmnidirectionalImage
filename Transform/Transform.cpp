@@ -57,16 +57,20 @@ int Transform::dphi2v(double phi) const
 
 double Transform::normalizeTheta(double rawTheta) const
 {
-    while (rawTheta < 0)        rawTheta += 2.0*M_PI;
-    while (2*M_PI < rawTheta)   rawTheta -= 2.0*M_PI;
+    while (rawTheta < -1.0 * M_PI) rawTheta += 2.0*M_PI;
+    while (M_PI <= rawTheta)       rawTheta -= 2.0*M_PI;
     
+    /*
+    while (rawTheta < 0)        rawTheta += 2.0*M_PI;
+    while (2*M_PI <= rawTheta)  rawTheta -= 2.0*M_PI;
+    */
     return rawTheta;
 }
 
 int Transform::normalizeU(int rawU) const
 {
     while (rawU < 0)                rawU += frameSize.width;
-    while (frameSize.width < rawU) rawU -= frameSize.width;
+    while (frameSize.width <= rawU) rawU -= frameSize.width;
     
     return rawU;
 }

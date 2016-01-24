@@ -27,18 +27,18 @@ int main(int argc, const char * argv[])
     input = cv::imread(workDir + inputName);
     cv::resize(input, img, frameSize);
     
-    Transform transform(&frameSize);
+    Transform transform(frameSize);
     
-    const std::string outputName = "rotation4.mp4";
-    Rotate rot(&frameSize, &transform);
+    const std::string outputName = "rotation5.mp4";
+    Rotate rot(frameSize, transform);
     
-    double deltaChi = M_PI * 1.0/60.0;
+    double deltaChi = M_PI * 1.0/60.0 * -1;
     //double repWidth = M_PI;
     int frameNum = 360;
     
     //rot.writeRepeatYMovie(img, workDir+outputName, repWidth, deltaChi, frameNum);
-    //rot.writeConstYMovie(img, workDir+outputName, deltaChi, frameNum);
-    rot.writeConstXMovie(img, workDir+outputName, deltaChi, frameNum);
+    rot.writeConstYMovie(img, workDir+outputName, deltaChi, frameNum);
+    //rot.writeConstXMovie(img, workDir+outputName, deltaChi, frameNum);
     
     return 0;
 }

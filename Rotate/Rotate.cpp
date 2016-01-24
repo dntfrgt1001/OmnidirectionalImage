@@ -149,9 +149,11 @@ void Rotate::rotateYAng(double chi, const cv::Mat& img, cv::Mat &rotImg)
 {
 //    int delta = (int) round(transform->normalizeTheta(chi) *
 //                            (frameSize->width / 2.0) / M_PI);
-    int delta = transform.dtheta2u(transform.normalizeTheta(chi));
+//    int delta = transform.dtheta2u(transform.normalizeTheta(chi));
     
-    rotateYOrth(delta, img, rotImg);
+    int orthChi = transform.dtheta2u((transform.normalizeTheta(chi)));
+    
+    rotateYOrth(orthChi, img, rotImg);
 }
 
 void Rotate::rotateYOrth(int orthChi, const cv::Mat& img, cv::Mat& rotImg)
@@ -242,6 +244,7 @@ void Rotate::writeConstYMovie(const cv::Mat &img, const std::string &outputName,
         
         writer << rotImg;
         
+        std::cout << "progress: " << i << "/" << frameNum << std::endl;
         cv::imshow("ConstYMovie", rotImg);
     }
     

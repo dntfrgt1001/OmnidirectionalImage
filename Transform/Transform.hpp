@@ -28,7 +28,8 @@ public:
     int dtheta2u(double theta) const;
     int dphi2v(double phi) const;
     
-    //return the theta value where 0<=theta<2PI
+    //return the theta value where -pi <= theta < pi
+    //return the u value where 0 <= u < width
     double normalizeTheta(double rawTheta) const;
     int normalizeU(int rawU) const;
     

@@ -28,16 +28,30 @@ int main(int argc, const char * argv[])
     input = cv::imread(workDir + inputName);
     cv::resize(input, img, frameSize);
     
-    const Transform transform(&frameSize);
-    Rotate rot(&frameSize, &transform, &img);
+    const Transform transform(frameSize);
+    Rotate rot(frameSize, transform);
     
+    cv::Mat rotImg(frameSize, CV_8UC3);
+    double deltaChi = M_PI * 1.0/60.0 * 1.0;
+
+    cv::namedWindow("rotImg", CV_WINDOW_AUTOSIZE|CV_WINDOW_FREERATIO);
     
-    cv::Mat rotThetaImg = cv::Mat::zeros(frameSize, CV_8UC3);
-    cv::Mat rotPhiImg = cv::Mat::zeros(frameSize, CV_8UC3);
+    img.copyTo(rotImg);
+    cv::imshow("rotImg", rotImg);
+    cv::waitKey(-1);
     
-    double thetaChi = M_PI * 1.0/3.0 * 0;
-    double phiChi = M_PI * 1.0/2.0;
+    int limit = 300;
+    for (int i=0; i<limit; i++) {
+        double curChi = deltaChi * i;
+        
+        rot.rotateXAng(curChi, img, rotImg);
+        
+        cv::imshow("rotImg", rotImg);
+        
+        if (cv::waitKey(10) > 0) break;
+     }
     
+    /*
     rot.rotateYOrth(thetaChi, rotThetaImg);
     
     rot.setImage(&rotThetaImg);
@@ -57,6 +71,7 @@ int main(int argc, const char * argv[])
     std::string outputName = "out.mp4";
     
     rot.writeRotateYMovie(deltaChi, angWidth, workDir+outputName, 150);
+    */
     //    rot.showotateYMovie(deltaChi, angWidth);
     
     
@@ -90,7 +105,7 @@ int main(int argc, const char * argv[])
      
      cv::imshow("test", zero);
      */
-    cv::waitKey(-1);
+
     
     return 0;
 }

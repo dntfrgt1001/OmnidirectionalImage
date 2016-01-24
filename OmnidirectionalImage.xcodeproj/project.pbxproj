@@ -12,6 +12,16 @@
 		020234651C4E1B2C00A4E282 /* libopencv_imgproc.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 020234641C4E1B2C00A4E282 /* libopencv_imgproc.dylib */; };
 		020234691C4E1B7100A4E282 /* libopencv_features2d.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 020234681C4E1B7100A4E282 /* libopencv_features2d.dylib */; };
 		0202346B1C4E1BAB00A4E282 /* libopencv_nonfree.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 0202346A1C4E1BAB00A4E282 /* libopencv_nonfree.dylib */; };
+		0202346C1C4E336200A4E282 /* libopencv_nonfree.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 0202346A1C4E1BAB00A4E282 /* libopencv_nonfree.dylib */; };
+		0202346D1C4E336500A4E282 /* libopencv_features2d.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 020234681C4E1B7100A4E282 /* libopencv_features2d.dylib */; };
+		0202346E1C4E336700A4E282 /* libopencv_imgproc.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 020234641C4E1B2C00A4E282 /* libopencv_imgproc.dylib */; };
+		0202346F1C4E336A00A4E282 /* libopencv_highgui.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 020234621C4E1B2500A4E282 /* libopencv_highgui.dylib */; };
+		020234701C4E336D00A4E282 /* libopencv_core.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 020234601C4E1B1C00A4E282 /* libopencv_core.dylib */; };
+		020EE39C1C5071E3008D6045 /* libopencv_nonfree.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 0202346A1C4E1BAB00A4E282 /* libopencv_nonfree.dylib */; };
+		020EE39D1C5071E6008D6045 /* libopencv_features2d.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 020234681C4E1B7100A4E282 /* libopencv_features2d.dylib */; };
+		020EE39E1C5071E9008D6045 /* libopencv_imgproc.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 020234641C4E1B2C00A4E282 /* libopencv_imgproc.dylib */; };
+		020EE39F1C5071ED008D6045 /* libopencv_highgui.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 020234621C4E1B2500A4E282 /* libopencv_highgui.dylib */; };
+		020EE3A01C5071F1008D6045 /* libopencv_core.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 020234601C4E1B1C00A4E282 /* libopencv_core.dylib */; };
 		02206DE41C356B0400733203 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 02206DE31C356B0400733203 /* main.cpp */; };
 		0245CD621C3F848B00FF5E33 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0245CD611C3F848B00FF5E33 /* main.cpp */; };
 		0245CD661C3F84BE00FF5E33 /* Rotate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 028D7A121C302CE200790A10 /* Rotate.cpp */; };
@@ -139,6 +149,11 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				020EE39E1C5071E9008D6045 /* libopencv_imgproc.dylib in Frameworks */,
+				020EE3A01C5071F1008D6045 /* libopencv_core.dylib in Frameworks */,
+				020EE39D1C5071E6008D6045 /* libopencv_features2d.dylib in Frameworks */,
+				020EE39C1C5071E3008D6045 /* libopencv_nonfree.dylib in Frameworks */,
+				020EE39F1C5071ED008D6045 /* libopencv_highgui.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -146,6 +161,11 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0202346E1C4E336700A4E282 /* libopencv_imgproc.dylib in Frameworks */,
+				020234701C4E336D00A4E282 /* libopencv_core.dylib in Frameworks */,
+				0202346D1C4E336500A4E282 /* libopencv_features2d.dylib in Frameworks */,
+				0202346C1C4E336200A4E282 /* libopencv_nonfree.dylib in Frameworks */,
+				0202346F1C4E336A00A4E282 /* libopencv_highgui.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -573,6 +593,7 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					/usr/local/Cellar/opencv/2.4.12/lib,
+					/usr/local/Cellar/opencv/2.4.12_2/lib,
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -584,6 +605,7 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					/usr/local/Cellar/opencv/2.4.12/lib,
+					/usr/local/Cellar/opencv/2.4.12_2/lib,
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -594,7 +616,7 @@
 			buildSettings = {
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					/usr/local/Cellar/opencv/2.4.12/lib,
+					/usr/local/Cellar/opencv/2.4.12_2/lib,
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -605,7 +627,7 @@
 			buildSettings = {
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					/usr/local/Cellar/opencv/2.4.12/lib,
+					/usr/local/Cellar/opencv/2.4.12_2/lib,
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
