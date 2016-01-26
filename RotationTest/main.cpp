@@ -32,20 +32,23 @@ int main(int argc, const char * argv[])
     Rotate rot(frameSize, transform);
     
     cv::Mat rotImg(frameSize, CV_8UC3);
-    double deltaChi = M_PI * 1.0/60.0 * 1.0;
+
 
     cv::namedWindow("rotImg", CV_WINDOW_AUTOSIZE|CV_WINDOW_FREERATIO);
     
     img.copyTo(rotImg);
     cv::imshow("rotImg", rotImg);
     cv::waitKey(-1);
+
+    double deltaXChi = M_PI * 1.0/60.0;
+    double deltaYChi = M_PI * 1.0/60.0;
     
     int limit = 300;
     for (int i=0; i<limit; i++) {
-        double curChi = deltaChi * i;
+        double curXChi = deltaXChi * i;
+        double curYChi = deltaYChi * i;
         
-        rot.rotateXAng(curChi, img, rotImg);
-        
+        rot.rotateXYAng(curXChi, curYChi, img, rotImg);
         cv::imshow("rotImg", rotImg);
         
         if (cv::waitKey(10) > 0) break;

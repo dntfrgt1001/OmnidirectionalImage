@@ -17,12 +17,14 @@
 #include <opencv2/features2d/features2d.hpp>
 #include <opencv2/nonfree/nonfree.hpp>
 #include "Rotate.hpp"
+#include "Transform.hpp"
 
 class Match{
 public:
-    Match(const cv::Size& frameSize, const cv::Mat& stdImg, Rotate& rot,
-          double matchAngRange);
-    void rotateYMatch(const cv::Mat& img, cv::Mat& rotImg);
+    Match(const cv::Size& frameSize, const cv::Mat& stdImg, Transform& transform,
+          Rotate& rot, int divNum);
+    
+    void rotateYMatch(const cv::Mat& img, cv::Mat& modImg);
     void crossMatch(std::vector<cv::DMatch>& dMatches1,
                     std::vector<cv::DMatch>& dMatches2,
                     std::vector<cv::DMatch>& dMatches);
@@ -33,7 +35,7 @@ public:
                          std::vector<cv::DMatch>& dMatches,
                          cv::Point2f& movePoint, double trimRatio);
     
-    void rotateXMatch(const cv::Mat& img, cv::Mat& rotImg);
+    void rotateXMatch(const cv::Mat& img, cv::Mat& modImg);
     
     void getKeyMatch(const cv::Mat& img, std::vector<cv::KeyPoint>& keyPoints,
                      std::vector<cv::DMatch>& dMatches);
@@ -41,12 +43,18 @@ public:
     double getMatchScoreNum(std::vector<cv::DMatch>& dMatches);
     double getMatchScoreDistance(std::vector<cv::DMatch>& dMatches);
     
+    void lowLatitudeMask(const cv::Mat& img, cv::Mat maskImg);
+    
+    double searchRotateX(const cv::Mat& img,
+                         double staChi, double chiWidth, int divNum);
     
 private:
     const cv::Size& frameSize;
     const cv::Mat& stdImg;
+    Transform& transform;
     Rotate& rot;
     
+    int divNum;
     cv::Rect roi;
     std::vector<cv::KeyPoint> stdKeyPoints;
     cv::Mat stdDescriptor;

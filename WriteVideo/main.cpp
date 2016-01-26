@@ -29,16 +29,17 @@ int main(int argc, const char * argv[])
     
     Transform transform(frameSize);
     
-    const std::string outputName = "rotation5.mp4";
+    const std::string outputName = "rotation7.mp4";
     Rotate rot(frameSize, transform);
     
-    double deltaChi = M_PI * 1.0/60.0 * -1;
-    //double repWidth = M_PI;
+    double deltaXChi = M_PI * 1.0/60.0;
+    double deltaYChi = M_PI * 1.0/30.0;
     int frameNum = 360;
     
-    //rot.writeRepeatYMovie(img, workDir+outputName, repWidth, deltaChi, frameNum);
-    rot.writeConstYMovie(img, workDir+outputName, deltaChi, frameNum);
-    //rot.writeConstXMovie(img, workDir+outputName, deltaChi, frameNum);
+    //rot.writeConstXMovie(img, workDir+outputName, deltaXChi, frameNum);
+    //rot.writeConstYMovie(img, workDir+outputName, deltaYChi, frameNum);
+    rot.writeConstXYMovie(img, workDir+outputName,
+                          deltaXChi, deltaYChi, frameNum);
     
     return 0;
 }

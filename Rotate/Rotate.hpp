@@ -34,8 +34,11 @@ public:
     
     //it is ineffecient to rotate dot one by one
     //void rotateYOrthNearDot(double chi, int u, int v, int& ur, int& vr);
-    void rotateYAng(double chi, const cv::Mat&img, cv::Mat& rotImg);
+    void rotateYAng(double chi, const cv::Mat& img, cv::Mat& rotImg);
     void rotateYOrth(int orthChi, const cv::Mat& img, cv::Mat& rotImg);
+    
+    void rotateXYAng(double xchi, double ychi, const cv::Mat& img,
+                     cv::Mat& rotImg);
     
     void writeConstXMovie(const cv::Mat& img, const std::string& outputName,
                           double deltaChi, int frameNum);
@@ -44,6 +47,8 @@ public:
                            double repWidth, double deltaChi, int frameNum);
     void writeConstYMovie(const cv::Mat& img, const std::string& outputName,
                           double deltaChi, int frameNum);
+    void writeConstXYMovie(const cv::Mat& img, const std::string& outputName,
+                           double deltaXChi, double deltaYChi, int frameNum);
     
 private:
     const cv::Size& frameSize;

@@ -172,17 +172,14 @@ void Rotate::rotateYOrth(int orthChi, const cv::Mat& img, cv::Mat& rotImg)
     imgRight.copyTo(rotLeft);
 }
 
-
-/*
-double Rotate::normalizeTheta(double rawTheta)
+void Rotate::rotateXYAng(double xchi, double ychi, const cv::Mat &img, cv::Mat &rotImg)
 {
-    while (rawTheta < 0) rawTheta += 2.0*M_PI;
+    cv::Mat tmpImg(frameSize, CV_8UC3);
     
-    while (2*M_PI < rawTheta) rawTheta -= 2.0*M_PI;
+    rotateXAng(xchi, img, tmpImg);
     
-    return rawTheta;
+    rotateYAng(ychi, tmpImg, rotImg);
 }
-*/
 
 void Rotate::writeRepeatYMovie(const cv::Mat &img, const std::string &outputName,
                                double repWidth, double deltaChi, int frameNum)
@@ -253,6 +250,7 @@ void Rotate::writeConstYMovie(const cv::Mat &img, const std::string &outputName,
 
 void Rotate::writeConstXMovie(const cv::Mat &img, const std::string &outputName, double deltaChi, int frameNum)
 {
+    /*
     cv::Mat rotImg(frameSize, CV_8UC3);
     
     cv::VideoWriter writer(outputName, CV_FOURCC('m', 'p', '4', 'v'),
@@ -269,6 +267,33 @@ void Rotate::writeConstXMovie(const cv::Mat &img, const std::string &outputName,
         writer << rotImg;
         
         cv::imshow("ConstXMovie", rotImg);
+    }
+    
+    std::cout << "video write finished." << std::endl;
+    */
+    
+    writeConstXYMovie(img, outputName, deltaChi, 0, frameNum);
+}
+
+void Rotate::writeConstXYMovie(const cv::Mat &img, const std::string &outputName, double deltaXChi, double deltaYChi, int frameNum)
+{
+    cv::Mat rotImg(frameSize, CV_8UC3);
+    
+    cv::VideoWriter writer(outputName, CV_FOURCC('m', 'p', '4', 'v'),
+                           30, frameSize, true);
+    if (!writer.isOpened()) exit(-1);
+    
+    cv::namedWindow("ConstMovie", CV_WINDOW_FREERATIO|CV_WINDOW_AUTOSIZE);
+    
+    for (int i=0; i<frameNum; i++) {
+        double curXChi = deltaXChi * i;
+        double curYChi = deltaYChi * i;
+        
+        rotateXYAng(curXChi, curYChi, img, rotImg);
+        
+        writer << rotImg;
+        
+        cv::imshow("ConstMovie", rotImg);
     }
     
     std::cout << "video write finished." << std::endl;

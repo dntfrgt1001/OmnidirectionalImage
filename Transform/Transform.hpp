@@ -32,6 +32,8 @@ public:
     //return the u value where 0 <= u < width
     double normalizeTheta(double rawTheta) const;
     int normalizeU(int rawU) const;
+    double normalizePhi(double rawPhi) const;
+    int normalizeV(int rawV) const;
     
 private:
     const cv::Size& frameSize;

@@ -10,11 +10,11 @@
 #include <iostream>
 #include <numeric>
 
-Match::Match(const cv::Size& frameSize, const cv::Mat& stdImg, Rotate& rot,
-             double matchAngHeight):
-frameSize(frameSize), stdImg(stdImg), rot(rot)
+Match::Match(const cv::Size& frameSize, const cv::Mat& stdImg, Transform& transform, Rotate& rot, int divNum):
+frameSize(frameSize), transform(transform), stdImg(stdImg), rot(rot),
+divNum(divNum)
 {
-    int matchOrthHeight = (int) round(matchAngHeight * frameSize.height / M_PI);
+    int matchOrthHeight = transform.dphi2v(M_PI / divNum);
     roi = cv::Rect(0, frameSize.height/2 - matchOrthHeight/2,
                    frameSize.width, matchOrthHeight);
     
@@ -46,7 +46,7 @@ void Match::getKeyMatch(const cv::Mat &img, std::vector<cv::KeyPoint>& keyPoints
     crossMatch(dMatches1, dMatches2, dMatches);
 }
 
-void Match::rotateYMatch(const cv::Mat &img, cv::Mat &rotImg)
+void Match::rotateYMatch(const cv::Mat &img, cv::Mat &modImg)
 {
     /*
     const cv::Mat roiImg = img(roi);
@@ -74,7 +74,7 @@ void Match::rotateYMatch(const cv::Mat &img, cv::Mat &rotImg)
     cv::Point2f movePoint;
     getMoveTrimMean(keyPoints, dMatches, movePoint, 1.0/3.0);
     
-    rot.rotateYOrth((-1) * round(movePoint.x), img, rotImg);
+    rot.rotateYOrth((-1) * round(movePoint.x), img, modImg);
 }
 
 void Match::getMoveMean(std::vector<cv::KeyPoint> &keyPoints,
@@ -165,38 +165,28 @@ void Match::crossMatch(std::vector<cv::DMatch> &dMatches1, std::vector<cv::DMatc
     }
 }
 
-
-#include <iostream>
-#include <fstream>
 void Match::rotateXMatch(const cv::Mat &img, cv::Mat &rotImg)
 {
-    const int divNum = 12;
-    const double deltaChi = M_PI / (double)divNum;
+    double staChi = -1.0 * M_PI / 2.0;
+    double chiWidth = M_PI;
+    double maxChiOneScan = searchRotateX(img, staChi, chiWidth, divNum);
+    rot.rotateXAng(maxChiOneScan, img, rotImg);
     
-    cv::namedWindow("StandardImg", CV_WINDOW_AUTOSIZE|CV_WINDOW_FREERATIO);
-    cv::namedWindow("DeltaRotImg", CV_WINDOW_AUTOSIZE|CV_WINDOW_FREERATIO);
+    std::cout << "modAngle1 = " << maxChiOneScan << std::endl;
     
-//    const std::string workDir = "/Users/masakazu/Documents/Koike lab/product/OmnidirectionalImage/working/pictures/";
+    double staChi2 = maxChiOneScan - M_PI / (divNum*2);
+    double chiWidth2 = M_PI / divNum;
+    double maxChiTwoScan = searchRotateX(img, staChi2, chiWidth2, divNum);
+    rot.rotateXAng(maxChiTwoScan, img, rotImg);
     
+    std::cout << "modAngle2 = " << maxChiTwoScan << std::endl;
     
-    for (int i=0; i<=divNum; i++) {
-        double curChi = -1 * M_PI /2 + deltaChi * i;
-        
-        cv::Mat deltaRotImg(frameSize, CV_8UC3);
-        rot.rotateXAng(curChi, img, deltaRotImg);
-        
-        const std::string curName = "rot" + std::to_string(i) + ".jpg";
-//        cv::imwrite(workDir+curName, deltaRotImg);
-        
-        std::vector<cv::KeyPoint> keyPoints;
-        std::vector<cv::DMatch> dMatches;
-        getKeyMatch(deltaRotImg, keyPoints, dMatches);
-        
-        cv::imshow("StandardImg", stdImg);
-        cv::imshow("DeltaRotImg", deltaRotImg);
-        
-//        cv::waitKey(-1);
-    }
+    cv::namedWindow("Modified Image", CV_WINDOW_AUTOSIZE|CV_WINDOW_FREERATIO);
+    cv::namedWindow("Standard Image", CV_WINDOW_AUTOSIZE|CV_WINDOW_FREERATIO);
+    cv::imshow("Modified Image", rotImg);
+    cv::imshow("Standard Image", stdImg);
+    
+    cv::waitKey(-1);
 }
 
 double Match::getMatchScoreNum(std::vector<cv::DMatch> &dMatches)
@@ -214,4 +204,64 @@ double Match::getMatchScoreDistance(std::vector<cv::DMatch> &dMatches)
     accum /= dMatches.size();
     
     return (double) accum;
+}
+
+void Match::lowLatitudeMask(const cv::Mat &img, cv::Mat maskImg)
+{
+    double larPhi = M_PI / 6;
+    
+    for (int u=0; u<frameSize.width; u++) {
+        for (int v=0; v<frameSize.height; v++) {
+            double theta = transform.u2theta(u);
+            double phi = transform.v2phi(v);
+            double lat = atan(tan(phi)/cos(theta));
+            
+            if (-1.0 * larPhi/2.0 <= lat && lat < larPhi/2.0) {
+                maskImg.at<cv::Vec3b>(v, u) = cv::Vec3b(0, 0, 0);
+            }else{
+                maskImg.at<cv::Vec3b>(v, u) = img.at<cv::Vec3b>(v, u);
+            }
+        }
+    }
+}
+
+double Match::searchRotateX(const cv::Mat& img,
+                            double staChi, double chiWidth, int divNum)
+{
+    double deltaChi = chiWidth / divNum;
+    
+    cv::namedWindow("Standard Image", CV_WINDOW_AUTOSIZE|CV_WINDOW_FREERATIO);
+    cv::namedWindow("Input Image", CV_WINDOW_AUTOSIZE|CV_WINDOW_FREERATIO);
+    cv::namedWindow("CurRot Image", CV_WINDOW_AUTOSIZE|CV_WINDOW_FREERATIO);
+    
+    double maxScore = 0.0;
+    double maxChi = 0.0;
+    for (int i=0; i<divNum; i++) {
+        double curChi = staChi + deltaChi * i;
+        
+        cv::Mat curRotImg(frameSize, CV_8UC3);
+        rot.rotateXAng(curChi, img, curRotImg);
+        
+        std::vector<cv::KeyPoint> keyPoints;
+        std::vector<cv::DMatch> dMatches;
+        getKeyMatch(curRotImg, keyPoints, dMatches);
+        
+        double curScore = getMatchScoreNum(dMatches);
+        
+        if (maxScore < curScore) {
+            maxScore = curScore;
+            maxChi = curChi;
+        }
+        
+        cv::imshow("Standard Image", stdImg);
+        cv::imshow("Input Image", img);
+        cv::imshow("CurRot Image", curRotImg);
+        
+        //std::cout << "(maxChi, maxScore, curChi, #curScore) = " << maxChi << ", " << maxScore << ", " << curChi << ", " << curScore << ")" << std::endl;
+        std::cout << curChi << ", " << curScore << std::endl;
+        
+        //cv::waitKey(-1);
+    }
+    
+    return maxChi;
 }

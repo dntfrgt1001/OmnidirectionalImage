@@ -74,3 +74,20 @@ int Transform::normalizeU(int rawU) const
     
     return rawU;
 }
+
+double Transform::normalizePhi(double rawPhi) const
+{
+    while (rawPhi < -1.0 * M_PI / 2.0) rawPhi += M_PI / 2.0;
+    while (M_PI / 2.0 <= rawPhi)       rawPhi -= M_PI / 2.0;
+    
+    return rawPhi;
+}
+
+int Transform::normalizeV(int rawV) const
+{
+    while (rawV < 0)                 rawV += frameSize.height;
+    while (frameSize.height <= rawV) rawV -= frameSize.height;
+
+    return rawV;
+}
+
