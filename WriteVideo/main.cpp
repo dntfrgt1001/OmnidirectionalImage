@@ -29,11 +29,11 @@ int main(int argc, const char * argv[])
     
     Transform transform(frameSize);
     
-    const std::string outputName = "rotation7.mp4";
+    const std::string outputName = "rotation8.mp4";
     Rotate rot(frameSize, transform);
     
-    double deltaXChi = M_PI * 1.0/60.0;
-    double deltaYChi = M_PI * 1.0/30.0;
+    double deltaXChi = M_PI * 1.0/30.0;
+    double deltaYChi = M_PI * 1.0/90.0;
     int frameNum = 360;
     
     //rot.writeConstXMovie(img, workDir+outputName, deltaXChi, frameNum);

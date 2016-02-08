@@ -21,8 +21,8 @@
 
 class Match{
 public:
-    Match(const cv::Size& frameSize, const cv::Mat& stdImg, Transform& transform,
-          Rotate& rot, int divNum);
+    Match(const cv::Size& frameSize, const cv::Mat& stdImg,
+          Transform& transform, Rotate& rot, int divNum);
     
     void rotateYMatch(const cv::Mat& img, cv::Mat& modImg);
     void crossMatch(std::vector<cv::DMatch>& dMatches1,

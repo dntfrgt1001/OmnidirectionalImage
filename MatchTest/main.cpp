@@ -23,7 +23,7 @@ int main(int argc, const char * argv[])
     std::string workDir = "/Users/masakazu/Documents/Koike lab/product/OmnidirectionalImage/working/";
     std::string inputName = "R0010050.JPG";
     
-    const cv::Size frameSize(1280, 640);
+    const cv::Size frameSize(1960, 980);
     
     cv::Mat input, img;
     input = cv::imread(workDir + inputName);
@@ -36,7 +36,7 @@ int main(int argc, const char * argv[])
     cv::Mat img2(frameSize, CV_8UC3);
     rot.rotateXAng(M_PI * 1.0/8.0, img, img2);
     
-    Match match(frameSize, img, transform, rot, 6);
+    Match match(frameSize, img, transform, rot, 7);
     
     cv::Mat rotImg(frameSize, CV_8UC3);
     match.rotateXMatch(img2, rotImg);

@@ -172,7 +172,7 @@ void Match::rotateXMatch(const cv::Mat &img, cv::Mat &rotImg)
     double maxChiOneScan = searchRotateX(img, staChi, chiWidth, divNum);
     rot.rotateXAng(maxChiOneScan, img, rotImg);
     
-    std::cout << "modAngle1 = " << maxChiOneScan << std::endl;
+    //std::cout << "modAngle1 = " << maxChiOneScan << std::endl;
     
     double staChi2 = maxChiOneScan - M_PI / (divNum*2);
     double chiWidth2 = M_PI / divNum;
@@ -181,12 +181,12 @@ void Match::rotateXMatch(const cv::Mat &img, cv::Mat &rotImg)
     
     std::cout << "modAngle2 = " << maxChiTwoScan << std::endl;
     
-    cv::namedWindow("Modified Image", CV_WINDOW_AUTOSIZE|CV_WINDOW_FREERATIO);
-    cv::namedWindow("Standard Image", CV_WINDOW_AUTOSIZE|CV_WINDOW_FREERATIO);
-    cv::imshow("Modified Image", rotImg);
-    cv::imshow("Standard Image", stdImg);
+//    cv::namedWindow("Modified Image", CV_WINDOW_AUTOSIZE|CV_WINDOW_FREERATIO);
+//    cv::namedWindow("Standard Image", CV_WINDOW_AUTOSIZE|CV_WINDOW_FREERATIO);
+//    cv::imshow("Modified Image", rotImg);
+//    cv::imshow("Standard Image", stdImg);
     
-    cv::waitKey(-1);
+//    cv::waitKey(-1);
 }
 
 double Match::getMatchScoreNum(std::vector<cv::DMatch> &dMatches)
@@ -229,11 +229,11 @@ double Match::searchRotateX(const cv::Mat& img,
                             double staChi, double chiWidth, int divNum)
 {
     double deltaChi = chiWidth / divNum;
-    
+    /*
     cv::namedWindow("Standard Image", CV_WINDOW_AUTOSIZE|CV_WINDOW_FREERATIO);
     cv::namedWindow("Input Image", CV_WINDOW_AUTOSIZE|CV_WINDOW_FREERATIO);
     cv::namedWindow("CurRot Image", CV_WINDOW_AUTOSIZE|CV_WINDOW_FREERATIO);
-    
+    */
     double maxScore = 0.0;
     double maxChi = 0.0;
     for (int i=0; i<divNum; i++) {
@@ -252,13 +252,13 @@ double Match::searchRotateX(const cv::Mat& img,
             maxScore = curScore;
             maxChi = curChi;
         }
-        
+        /*
         cv::imshow("Standard Image", stdImg);
         cv::imshow("Input Image", img);
         cv::imshow("CurRot Image", curRotImg);
-        
+        */
         //std::cout << "(maxChi, maxScore, curChi, #curScore) = " << maxChi << ", " << maxScore << ", " << curChi << ", " << curScore << ")" << std::endl;
-        std::cout << curChi << ", " << curScore << std::endl;
+        //std::cout << curChi << ", " << curScore << std::endl;
         
         //cv::waitKey(-1);
     }

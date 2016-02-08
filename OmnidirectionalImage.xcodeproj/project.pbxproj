@@ -29,6 +29,11 @@
 		020EE39F1C5071ED008D6045 /* libopencv_highgui.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 020234621C4E1B2500A4E282 /* libopencv_highgui.dylib */; };
 		020EE3A01C5071F1008D6045 /* libopencv_core.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 020234601C4E1B1C00A4E282 /* libopencv_core.dylib */; };
 		02206DE41C356B0400733203 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 02206DE31C356B0400733203 /* main.cpp */; };
+		022D86021C5F155E008C0206 /* libopencv_core.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 020234601C4E1B1C00A4E282 /* libopencv_core.dylib */; };
+		022D86031C5F1561008C0206 /* libopencv_highgui.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 020234621C4E1B2500A4E282 /* libopencv_highgui.dylib */; };
+		022D86041C5F1565008C0206 /* libopencv_imgproc.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 020234641C4E1B2C00A4E282 /* libopencv_imgproc.dylib */; };
+		022D86051C5F1568008C0206 /* libopencv_features2d.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 020234681C4E1B7100A4E282 /* libopencv_features2d.dylib */; };
+		022D86061C5F156B008C0206 /* libopencv_nonfree.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 0202346A1C4E1BAB00A4E282 /* libopencv_nonfree.dylib */; };
 		0245CD621C3F848B00FF5E33 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0245CD611C3F848B00FF5E33 /* main.cpp */; };
 		0245CD661C3F84BE00FF5E33 /* Rotate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 028D7A121C302CE200790A10 /* Rotate.cpp */; };
 		0245CD711C3F866D00FF5E33 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0245CD701C3F866D00FF5E33 /* main.cpp */; };
@@ -196,6 +201,11 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				022D86041C5F1565008C0206 /* libopencv_imgproc.dylib in Frameworks */,
+				022D86021C5F155E008C0206 /* libopencv_core.dylib in Frameworks */,
+				022D86051C5F1568008C0206 /* libopencv_features2d.dylib in Frameworks */,
+				022D86061C5F156B008C0206 /* libopencv_nonfree.dylib in Frameworks */,
+				022D86031C5F1561008C0206 /* libopencv_highgui.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -580,11 +590,8 @@
 		02206DE51C356B0400733203 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					/usr/local/Cellar/opencv/2.4.12/lib,
-					/usr/local/Cellar/opencv/2.4.12_2/lib,
-				);
+				HEADER_SEARCH_PATHS = "$(inherited)";
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -592,11 +599,8 @@
 		02206DE61C356B0400733203 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					/usr/local/Cellar/opencv/2.4.12/lib,
-					/usr/local/Cellar/opencv/2.4.12_2/lib,
-				);
+				HEADER_SEARCH_PATHS = "$(inherited)";
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
@@ -604,11 +608,8 @@
 		0245CD641C3F848B00FF5E33 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					/usr/local/Cellar/opencv/2.4.12/lib,
-					/usr/local/Cellar/opencv/2.4.12_2/lib,
-				);
+				HEADER_SEARCH_PATHS = "$(inherited)";
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -616,11 +617,8 @@
 		0245CD651C3F848B00FF5E33 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					/usr/local/Cellar/opencv/2.4.12/lib,
-					/usr/local/Cellar/opencv/2.4.12_2/lib,
-				);
+				HEADER_SEARCH_PATHS = "$(inherited)";
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
@@ -628,10 +626,8 @@
 		0245CD731C3F866D00FF5E33 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					/usr/local/Cellar/opencv/2.4.12_2/lib,
-				);
+				HEADER_SEARCH_PATHS = "$(inherited)";
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -639,10 +635,8 @@
 		0245CD741C3F866D00FF5E33 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					/usr/local/Cellar/opencv/2.4.12_2/lib,
-				);
+				HEADER_SEARCH_PATHS = "$(inherited)";
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
@@ -650,6 +644,7 @@
 		0245CD821C41382500FF5E33 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				HEADER_SEARCH_PATHS = "$(inherited)";
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -658,6 +653,7 @@
 		0245CD831C41382500FF5E33 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				HEADER_SEARCH_PATHS = "$(inherited)";
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -666,10 +662,8 @@
 		0245CDA01C43DF3700FF5E33 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					/usr/local/Cellar/opencv/2.4.12/lib,
-				);
+				HEADER_SEARCH_PATHS = "$(inherited)";
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -677,10 +671,8 @@
 		0245CDA11C43DF3700FF5E33 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					/usr/local/Cellar/opencv/2.4.12/lib,
-				);
+				HEADER_SEARCH_PATHS = "$(inherited)";
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
@@ -771,6 +763,8 @@
 		028D79FF1C30130B00790A10 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				HEADER_SEARCH_PATHS = "$(inherited)";
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -778,6 +772,8 @@
 		028D7A001C30130B00790A10 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				HEADER_SEARCH_PATHS = "$(inherited)";
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
@@ -785,8 +781,8 @@
 		028D7A0A1C301B9700790A10 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				HEADER_SEARCH_PATHS = /usr/local/Cellar/opencv/2.4.12/include;
-				LIBRARY_SEARCH_PATHS = /usr/local/Cellar/opencv/2.4.12/lib;
+				HEADER_SEARCH_PATHS = "$(inherited)";
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -794,8 +790,8 @@
 		028D7A0B1C301B9700790A10 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				HEADER_SEARCH_PATHS = /usr/local/Cellar/opencv/2.4.12/include;
-				LIBRARY_SEARCH_PATHS = /usr/local/Cellar/opencv/2.4.12/lib;
+				HEADER_SEARCH_PATHS = "$(inherited)";
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
