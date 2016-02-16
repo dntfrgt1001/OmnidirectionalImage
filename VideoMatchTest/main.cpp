@@ -27,7 +27,7 @@ int main(int argc, const char * argv[])
     Transform transform(frameSize);
     Rotate rot(frameSize, transform);
     
-    const std::string videoName = "rotateX.mp4";
+    const std::string videoName = "Phi.MP4";
     cv::VideoCapture capture(workDir + videoName);
     if (!capture.isOpened()) return -1;
     
@@ -39,10 +39,10 @@ int main(int argc, const char * argv[])
     int divNum = 8;
     Match match(frameSize, stdImg, transform, rot, divNum);
     
-    const std::string outputName = "output5.mp4";
-//    cv::VideoWriter writer(workDir+outputName, CV_FOURCC('m', 'p', '4', 'v'),
-//                           30, frameSize, true);
-//    if (!writer.isOpened()) return -1;
+    const std::string outputName = "output9.mp4";
+    cv::VideoWriter writer(workDir+outputName, CV_FOURCC('m', 'p', '4', 'v'),
+                           30, frameSize, true);
+    if (!writer.isOpened()) return -1;
     
     cv::namedWindow("standard image", CV_WINDOW_AUTOSIZE|CV_WINDOW_FREERATIO);
     cv::namedWindow("current image", CV_WINDOW_AUTOSIZE|CV_WINDOW_FREERATIO);
@@ -65,7 +65,7 @@ int main(int argc, const char * argv[])
         
         std::cout << "frame number = " << i << std::endl;
         
-//        writer << curModImg;
+        writer << curModImg;
         
         i++;
         if(i >= 120) break;

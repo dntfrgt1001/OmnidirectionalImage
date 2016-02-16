@@ -307,10 +307,10 @@
 				0245CD6F1C3F866D00FF5E33 /* WriteVideo */,
 				0245CD7E1C41382500FF5E33 /* MatchTest */,
 				0245CD9C1C43DF3700FF5E33 /* VideoMatchTest */,
-				028D79F81C30130B00790A10 /* Products */,
 				0245CD8C1C4233B100FF5E33 /* Transform */,
 				0245CD921C43B46100FF5E33 /* Match */,
 				0245CD5A1C3F83DE00FF5E33 /* Rotate */,
+				028D79F81C30130B00790A10 /* Products */,
 			);
 			sourceTree = "<group>";
 		};
