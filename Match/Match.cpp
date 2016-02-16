@@ -147,7 +147,7 @@ void Match::getMoveTrimMean(std::vector<cv::KeyPoint> &keyPoints,
     
     movePoint = cv::Point2f(average, 0);
     
-    std::cout << "delta = " << movePoint << ", number = " << moveVec.size() << std::endl;
+//    std::cout << "delta = " << movePoint << ", number = " << moveVec.size() << std::endl;
 }
 
 void Match::crossMatch(std::vector<cv::DMatch> &dMatches1, std::vector<cv::DMatch> &dMatches2, std::vector<cv::DMatch> &dMatches)
@@ -170,14 +170,16 @@ void Match::rotateXMatch(const cv::Mat &img, cv::Mat &rotImg)
     double staChi = -1.0 * M_PI / 2.0;
     double chiWidth = M_PI;
     double maxChiOneScan = searchRotateX(img, staChi, chiWidth, divNum);
-    rot.rotateXAng(maxChiOneScan, img, rotImg);
+    //rot.rotateXAng(maxChiOneScan, img, rotImg);
     
     //std::cout << "modAngle1 = " << maxChiOneScan << std::endl;
     
     double staChi2 = maxChiOneScan - M_PI / (divNum*2);
     double chiWidth2 = M_PI / divNum;
     double maxChiTwoScan = searchRotateX(img, staChi2, chiWidth2, divNum);
-    rot.rotateXAng(maxChiTwoScan, img, rotImg);
+    //rot.rotateXAng(maxChiTwoScan, img, rotImg);
+    
+    modUpDown(img, rotImg, maxChiTwoScan);
     
     std::cout << "modAngle2 = " << maxChiTwoScan << std::endl;
     
@@ -187,6 +189,70 @@ void Match::rotateXMatch(const cv::Mat &img, cv::Mat &rotImg)
 //    cv::imshow("Standard Image", stdImg);
     
 //    cv::waitKey(-1);
+}
+
+void Match::modUpDown(const cv::Mat &img, cv::Mat &modImg, double chi)
+{
+    cv::Mat smpModImg(frameSize, CV_8UC3);
+    cv::Mat invModImg(frameSize, CV_8UC3);
+    
+    rot.rotateXAng(chi, img, smpModImg);
+    rot.rotateXAng(chi + M_PI, img, invModImg);
+    
+    std::vector<cv::KeyPoint> keyPoints1, keyPoints2;
+    std::vector<cv::DMatch> dMatches1, dMatches2;
+    getKeyMatch(smpModImg, keyPoints1, dMatches1);
+    getKeyMatch(invModImg, keyPoints2, dMatches2);
+    
+    cv::Point2f movePoint1, movePoint2;
+    
+    double trimRatio = 1.0 / 3.0;
+/*    getMoveTrimMean(keyPoints1, dMatches1, movePoint1, trimRatio);
+    getMoveTrimMean(keyPoints2, dMatches2, movePoint2, trimRatio);
+    
+    if (movePoint1.x < movePoint2.x)
+        smpModImg.copyTo(modImg);
+    else
+        invModImg.copyTo(modImg);
+*/
+    double score1 = getMatchDistance(keyPoints1, dMatches1, trimRatio);
+    double score2 = getMatchDistance(keyPoints2, dMatches2, trimRatio);
+
+    if (score1 < score2)
+        smpModImg.copyTo(modImg);
+    else
+        invModImg.copyTo(modImg);
+    
+    cv::namedWindow("smpImg", CV_WINDOW_AUTOSIZE|CV_WINDOW_FREERATIO);
+    cv::namedWindow("invImg", CV_WINDOW_AUTOSIZE|CV_WINDOW_FREERATIO);
+    cv::imshow("smpImg", smpModImg);
+    cv::imshow("invImg", invModImg);
+    
+    std::cout << "(score1, score2) = (" << score1 << ", " << score2 << ")" << std::endl;
+    
+ //   cv::waitKey(-1);
+}
+
+double Match::getMatchDistance(std::vector<cv::KeyPoint> &keyPoints, std::vector<cv::DMatch> &dMatches, double trimRatio)
+{
+    std::vector<float> accVec;
+    
+    for (int i=0; i<dMatches.size(); i++) {
+        cv::Point2f pt1 = stdKeyPoints[dMatches[i].queryIdx].pt;
+        cv::Point2f pt2 = keyPoints[dMatches[i].trainIdx].pt;
+        
+        //accVec.push_back(fabs(pt1.x - pt2.x));
+        accVec.push_back(cv::norm(pt1 - pt2));
+    }
+    
+    std::sort(accVec.begin(), accVec.end());
+    int range = (dMatches.size() * trimRatio);
+    accVec.erase(accVec.begin(), accVec.begin()+range);
+    accVec.erase(accVec.begin()+range, accVec.end());
+    
+    float average = std::accumulate(accVec.begin(), accVec.end(), 0.0) / accVec.size();
+    
+    return average;
 }
 
 double Match::getMatchScoreNum(std::vector<cv::DMatch> &dMatches)
@@ -203,7 +269,7 @@ double Match::getMatchScoreDistance(std::vector<cv::DMatch> &dMatches)
     }
     accum /= dMatches.size();
     
-    return (double) accum;
+    return accum;
 }
 
 void Match::lowLatitudeMask(const cv::Mat &img, cv::Mat maskImg)
