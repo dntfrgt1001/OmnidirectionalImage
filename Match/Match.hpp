@@ -37,7 +37,8 @@ public:
     
     void rotateXMatch(const cv::Mat& img, cv::Mat& modImg);
     
-    void getKeyMatch(const cv::Mat& img, std::vector<cv::KeyPoint>& keyPoints,
+    void getKeyMatch(const cv::Mat& img,
+                     std::vector<cv::KeyPoint>& keyPoints,
                      std::vector<cv::DMatch>& dMatches);
     
     double getMatchScoreNum(std::vector<cv::DMatch>& dMatches);
@@ -47,6 +48,11 @@ public:
     
     double searchRotateX(const cv::Mat& img,
                          double staChi, double chiWidth, int divNum);
+    void modUpDown(const cv::Mat& img, cv::Mat& modImg, double chi);
+    
+    double getMatchDistance(std::vector<cv::KeyPoint>& keyPoints,
+                            std::vector<cv::DMatch>& dMatches,
+                            double trimRatio);
     
 private:
     const cv::Size& frameSize;
