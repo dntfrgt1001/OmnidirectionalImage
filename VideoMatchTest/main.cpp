@@ -39,7 +39,7 @@ int main(int argc, const char * argv[])
     int divNum = 8;
     Match match(frameSize, stdImg, transform, rot, divNum);
     
-    const std::string outputName = "output9.mp4";
+    const std::string outputName = "output11.mp4";
     cv::VideoWriter writer(workDir+outputName, CV_FOURCC('m', 'p', '4', 'v'),
                            30, frameSize, true);
     if (!writer.isOpened()) return -1;

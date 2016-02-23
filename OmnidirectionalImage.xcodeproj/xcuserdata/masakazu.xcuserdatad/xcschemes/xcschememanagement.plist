@@ -14,6 +14,11 @@
 			<key>orderHint</key>
 			<integer>0</integer>
 		</dict>
+		<key>PlayVideo.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>6</integer>
+		</dict>
 		<key>RotationTest.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
@@ -27,7 +32,7 @@
 		<key>VideoMatchTest.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>1</integer>
+			<integer>5</integer>
 		</dict>
 		<key>WriteVideo.xcscheme</key>
 		<dict>
@@ -68,6 +73,11 @@
 			<true/>
 		</dict>
 		<key>028D7A041C301B9700790A10</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>029994111C72A9CB00792144</key>
 		<dict>
 			<key>primary</key>
 			<true/>
