@@ -28,9 +28,7 @@ public:
     void crossMatch(std::vector<cv::DMatch>& dMatches1,
                     std::vector<cv::DMatch>& dMatches2,
                     std::vector<cv::DMatch>& dMatches);
-    void getMoveMean(std::vector<cv::KeyPoint>& keyPoints,
-                     std::vector<cv::DMatch>& dMathces,
-                       cv::Point2f& movePoint);
+
     void getMoveTrimMean(std::vector<cv::KeyPoint>& keyPoints,
                          std::vector<cv::DMatch>& dMatches,
                          cv::Point2f& movePoint, double trimRatio);
@@ -50,15 +48,26 @@ public:
                          double staChi, double chiWidth, int divNum);
     void modUpDown(const cv::Mat& img, cv::Mat& modImg, double chi);
     
+    bool isUpright(std::vector<cv::KeyPoint>& keyPoints1,
+                   std::vector<cv::KeyPoint>& keyPoints2,
+                   std::vector<cv::DMatch>& dMatches1,
+                   std::vector<cv::DMatch>& dMatches2);
+    
     double getMatchDistance(std::vector<cv::KeyPoint>& keyPoints,
                             std::vector<cv::DMatch>& dMatches,
                             double trimRatio);
     
+    void updateStdImg(const cv::Mat& newStdImg);
+    
 private:
     const cv::Size& frameSize;
-    const cv::Mat& stdImg;
+    cv::Mat stdImg;
     Transform& transform;
     Rotate& rot;
+    
+    cv::Ptr<cv::FeatureDetector> detector;
+    cv::Ptr<cv::DescriptorExtractor> extractor;
+    cv::Ptr<cv::DescriptorMatcher> matcher;
     
     int divNum;
     cv::Rect roi;

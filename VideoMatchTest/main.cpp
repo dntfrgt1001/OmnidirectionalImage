@@ -27,7 +27,7 @@ int main(int argc, const char * argv[])
     Transform transform(frameSize);
     Rotate rot(frameSize, transform);
     
-    const std::string videoName = "Phi.MP4";
+    const std::string videoName = "phi.mp4";
     cv::VideoCapture capture(workDir + videoName);
     if (!capture.isOpened()) return -1;
     
@@ -58,6 +58,8 @@ int main(int argc, const char * argv[])
         cv::resize(input, curImg, frameSize);
         
         match.rotateXMatch(curImg, curModImg);
+        
+        if (i % 3 == 0) match.updateStdImg(curModImg);
         
         cv::imshow("standard image", stdImg);
         cv::imshow("current image", curImg);
