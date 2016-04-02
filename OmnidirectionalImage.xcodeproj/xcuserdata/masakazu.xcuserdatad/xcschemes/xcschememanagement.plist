@@ -4,6 +4,11 @@
 <dict>
 	<key>SchemeUserState</key>
 	<dict>
+		<key>ConvertGyro.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>8</integer>
+		</dict>
 		<key>MatchTest.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
@@ -63,6 +68,16 @@
 			<true/>
 		</dict>
 		<key>0245CD9A1C43DF3700FF5E33</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>026B3EA51CA1A460008B59CD</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>026B3EB11CA1ABF4008B59CD</key>
 		<dict>
 			<key>primary</key>
 			<true/>
