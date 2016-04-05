@@ -18,7 +18,7 @@ pattern(pattern), bufferSize(bufferSize)
         printf("port cannnot open\n");
         exit(1);
     }
-    
+     
     tcgetattr(fd, &oldTio);
     
     termios tio;
@@ -32,10 +32,13 @@ pattern(pattern), bufferSize(bufferSize)
     //std::string tmpPattern = pattern;
     //iStrToAStr(tmpPattern.c_str(), tmpPattern.size(), this->pattern);
     
-    char patbuf[4] = {69, 66, 83, 1};
-    iStrToAStr(patbuf, 4, this->pattern);
+    char patbuf[4] = {'E', 'B', 'S', 0x01};
+
+    cAry2cStr(patbuf, 4, this->pattern);
+    
     std::cout << "pattern = " << this->pattern << std::endl;
 
+    
 }
 
 InputGyro::~InputGyro()
@@ -46,11 +49,9 @@ InputGyro::~InputGyro()
 
 void InputGyro::printData(const char *head, int size)
 {
-//    printf("( ");
     for (int i=0; i<size; i++) {
         printf("%c ", head[i]);
     }
-//    printf(")\n");
 
     printf("\n");
 }
@@ -67,48 +68,47 @@ int InputGyro::inputFromGyro()
     
     fpInBuffer[inLength] = '\0';
     
-    /*
-    for (int i=0; i<inLength; i++) {
-        intBuffer[i] = atoi(fpInBuffer[i]);
-    }
-    */
     
-    iStrToAStr(fpInBuffer, inLength, inBuffer);
-    
-//    inBuffer = fpInBuffer;
-    
-    
+    cAry2cStr(fpInBuffer, inLength, inBuffer);
     
     searchBuffer = searchBuffer + inBuffer;
-    
+/*
     std::cout << "inBuffer" << std::endl;
     std::cout << inBuffer << std::endl;
     
     std::cout << "searchBuffer" << std::endl;
     std::cout << searchBuffer << std::endl;
-    
+  */
     return inLength;
 }
 
-void InputGyro::cutout()
+int InputGyro::cutout()
 {
     std::vector<std::string> foundStrings;
     
     split(searchBuffer, pattern, foundStrings);
     
-    std::cout << std::endl << "**************" << std::endl;
+//    std::cout << std::endl << "**************" << std::endl;
     for (int i=0; i<foundStrings.size(); i++) {
         if (i != foundStrings.size()-1){
-            std::cout << foundStrings[i] << std::endl << std::endl;
+//            std::cout << foundStrings[i] << std::endl;
             
-            outputToFile(foundStrings[i]);
+            std::string shortString;
+            //outputToFile(foundStrings[i]);
+            
+            cStr2sStr(foundStrings[i], shortString);
+            
+//            outputToFile(shortString);
+            std::cout << shortString << std::endl << std::endl;
         }
     }
-    std::cout << std::endl << "**************" << std::endl;
+//    std::cout << std::endl << "**************" << std::endl;
     
     searchBuffer = foundStrings[foundStrings.size()-1];
     
 //    std::cout << std::endl << std::endl << "loop end" << std::endl << std::endl;
+    
+    return (int)foundStrings.size() - 1;
 }
 
 void InputGyro::split
@@ -129,7 +129,7 @@ void InputGyro::split
     foundStrings.push_back(std::string(str, current, str.size()-current));
 }
 
-void InputGyro::iStrToAStr(const char *in, size_t size, std::string& out)
+void InputGyro::cAry2cStr(const char *in, size_t size, std::string& out)
 {
     out = "";
     
@@ -138,11 +138,47 @@ void InputGyro::iStrToAStr(const char *in, size_t size, std::string& out)
 
         out = out + std::to_string(tmpInt) + " ";
     }
+}
+
+void InputGyro::cStr2sStr(const std::string& in, std::string &out)
+{
+    out = "";
     
-//    std::cout << out << std::endl;
+    short c[18];
+    sscanf(in.c_str(),
+           "%hd %hd %hd %hd %hd %hd %hd %hd %hd \
+            %hd %hd %hd %hd %hd %hd %hd %hd %hd ",
+            &c[0],  &c[1],  &c[2],  &c[3],  &c[4],  &c[5],
+            &c[6],  &c[7],  &c[8],  &c[9], &c[10], &c[11],
+           &c[12], &c[13], &c[14], &c[15], &c[16], &c[17]   );
+    
+    for (int i=0; i<18; i+=2) {
+        short tmpShort = char2short(c[i], c[i+1]);
+        
+        out = out + std::to_string(tmpShort) + " ";
+    }
 }
 
 void InputGyro::outputToFile(const std::string &dataString)
 {
     ofs << dataString << std::endl;
+}
+short InputGyro::char2short(short upper, short lower)
+{
+    short concated;
+    
+    concated = (upper << 8) | (0x00ff & lower);
+
+    return concated;
+}
+
+short InputGyro::char2short(char upper, char lower)
+{
+    short concated;
+    short shortUpper = upper;
+    short shortLower = lower;
+    
+    concated = (shortUpper << 8) | (0x00ff & shortLower);
+    
+    return concated;
 }

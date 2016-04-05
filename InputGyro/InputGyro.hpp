@@ -27,15 +27,18 @@ public:
     ~InputGyro();
     
     int inputFromGyro();
-    void cutout();
+    int cutout();
     
     void printData(const char* head, int size);
     
     void split(const std::string& str, const std::string& pattern,
                std::vector<std::string>& foundStrings);
-    void iStrToAStr(const char* in, size_t size, std::string& out);
+    void cAry2cStr(const char* in, size_t size, std::string& out);
+    void cStr2sStr(const std::string& in, std::string& out);
     void outputToFile(const std::string& dataString);
     
+    short char2short(char upper, char lower);
+    short char2short(short upper, short lower);
     
 private:
     int fd;
