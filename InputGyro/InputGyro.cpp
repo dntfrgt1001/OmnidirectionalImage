@@ -148,15 +148,17 @@ void InputGyro::cStr2sStr(const std::string& in, std::string &out)
     sscanf(in.c_str(),
            "%hd %hd %hd %hd %hd %hd %hd %hd %hd \
             %hd %hd %hd %hd %hd %hd %hd %hd %hd ",
-            &c[0],  &c[1],  &c[2],  &c[3],  &c[4],  &c[5],
-            &c[6],  &c[7],  &c[8],  &c[9], &c[10], &c[11],
-           &c[12], &c[13], &c[14], &c[15], &c[16], &c[17]   );
+             &c[0],  &c[1],  &c[2],  &c[3],  &c[4],  &c[5],
+             &c[6],  &c[7],  &c[8],  &c[9], &c[10], &c[11],
+            &c[12], &c[13], &c[14], &c[15], &c[16], &c[17]   );
     
     for (int i=0; i<18; i+=2) {
         short tmpShort = char2short(c[i], c[i+1]);
         
         out = out + std::to_string(tmpShort) + " ";
     }
+    
+    
 }
 
 void InputGyro::outputToFile(const std::string &dataString)

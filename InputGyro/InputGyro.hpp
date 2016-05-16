@@ -40,6 +40,7 @@ public:
     short char2short(char upper, char lower);
     short char2short(short upper, short lower);
     
+    
 private:
     int fd;
     std::ofstream ofs;
@@ -49,6 +50,7 @@ private:
     std::string inBuffer;
     std::string outBuffer;
     std::string searchBuffer;
+    short curSensorValues[3];
 };
 
 #endif /* InputGyro_hpp */
