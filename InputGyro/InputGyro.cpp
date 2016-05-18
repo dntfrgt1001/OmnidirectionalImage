@@ -11,7 +11,8 @@
 InputGyro::InputGyro
 (const std::string& fileName, const std::string& portName,
  speed_t baudRate, size_t bufferSize, const std::string& pattern):
-pattern(pattern), bufferSize(bufferSize)
+pattern(pattern), bufferSize(bufferSize),
+resolution(0.01526 / 2), storeSize(3), deltaTime(0.012)
 {
     fd = open(portName.c_str(), O_RDONLY|O_NONBLOCK);
     if (fd < 0) {
@@ -38,7 +39,19 @@ pattern(pattern), bufferSize(bufferSize)
     
     std::cout << "pattern = " << this->pattern << std::endl;
 
+    for (int i=0; i<storeSize; i++) {
+        std::vector<short> tmpVector;
+        
+        for (int i=0; i<3; i++) {
+            tmpVector.push_back(0);
+        }
+        
+        sensorValues.push_back(tmpVector);
+    }
     
+    for (int i=0; i<3; i++) {
+        curAngle[i] = 0;
+    }
 }
 
 InputGyro::~InputGyro()
@@ -91,22 +104,16 @@ int InputGyro::cutout()
 //    std::cout << std::endl << "**************" << std::endl;
     for (int i=0; i<foundStrings.size(); i++) {
         if (i != foundStrings.size()-1){
-//            std::cout << foundStrings[i] << std::endl;
             
             std::string shortString;
-            //outputToFile(foundStrings[i]);
             
             cStr2sStr(foundStrings[i], shortString);
-            
-//            outputToFile(shortString);
-            std::cout << shortString << std::endl << std::endl;
+
+//            std::cout << shortString << std::endl << std::endl;
         }
     }
-//    std::cout << std::endl << "**************" << std::endl;
     
     searchBuffer = foundStrings[foundStrings.size()-1];
-    
-//    std::cout << std::endl << std::endl << "loop end" << std::endl << std::endl;
     
     return (int)foundStrings.size() - 1;
 }
@@ -152,12 +159,65 @@ void InputGyro::cStr2sStr(const std::string& in, std::string &out)
              &c[6],  &c[7],  &c[8],  &c[9], &c[10], &c[11],
             &c[12], &c[13], &c[14], &c[15], &c[16], &c[17]   );
     
+//    short sensorValues[9];
+    
+    sensorValues.erase(sensorValues.begin());
+    
+    std::vector<short> tmpVector;
     for (int i=0; i<18; i+=2) {
         short tmpShort = char2short(c[i], c[i+1]);
+        
+//        sensorValues[i / 2] = tmpShort;
+        tmpVector.push_back(tmpShort);
         
         out = out + std::to_string(tmpShort) + " ";
     }
     
+    sensorValues.push_back(tmpVector);
+
+    /*
+    for (int i=3; i<6; i++) {
+        std::cout << sensorValues[i] << " " ;
+    }
+    std::cout << std::endl;
+    */
+    
+    /*
+    std::cout << std::endl;
+    for (int i=0; i<storeSize; i++) {
+        for (int j=0; j<9; j++) {
+            std::cout << sensorValues[i][j] << " ";
+        }
+        
+        std::cout << std::endl;
+    }
+    std::cout << std::endl;
+     */
+    
+    tmpVector.clear();
+    
+    for (int j=0; j<9; j++) {
+        int tmp = 0;
+        for (int i=0; i<storeSize; i++) {
+            tmp += sensorValues[i][j];
+        }
+        tmp /= (int)storeSize;
+        
+        tmpVector.push_back(tmp);
+    }
+    std::cout << std::endl;
+    
+    for (int i=3; i<6; i++) {
+        std::cout << tmpVector[i] << " ";
+    }
+    std::cout << std::endl;
+    
+    
+    for (int i=0; i<3; i++) {
+        curAngle[i] += tmpVector[i+3] * resolution * deltaTime;
+        std::cout << curAngle[i] << " ";
+    }
+    std::cout << std::endl;
     
 }
 

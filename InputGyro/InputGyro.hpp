@@ -26,8 +26,8 @@ public:
               speed_t baudRate, size_t bufferSize, const std::string& pattern);
     ~InputGyro();
     
-    int inputFromGyro();
-    int cutout();
+    int inputFromGyro(); // センサーからの入力をバッファに格納
+    int cutout(); // バッファから組ごとにセンサー値を切り出し
     
     void printData(const char* head, int size);
     
@@ -46,11 +46,21 @@ private:
     std::ofstream ofs;
     std::string pattern;
     termios oldTio;
+    
     const size_t bufferSize;
     std::string inBuffer;
     std::string outBuffer;
     std::string searchBuffer;
-    short curSensorValues[3];
+    
+    std::vector<std::vector<short>> sensorValues;
+    size_t storeSize;
+    
+    float curAngle[3];
+    
+    short curSensorValues[9]; // 加速度[3] ジャイロ[3] コンパス[3]
+    const float resolution;
+    const float deltaTime;
+    
 };
 
 #endif /* InputGyro_hpp */
