@@ -33,13 +33,12 @@ int main(int argc, const char * argv[])
     int count = 0;
     int limit = 1000000;
     for (int i=0; i<limit; i++) {
-
         if(gyro.inputFromGyro() > 0){
-            if(gyro.cutout() > 0){
-                std::cout << '-' << i << '-' << ' ';
-                count++;
-                usleep(10000);
-            }
+            std::cout << '-' << i << '-' << ' ' << std::endl;
+            count++;
+            gyro.printCurrentAngle();
+            gyro.printCurrentSensorValue();
+            usleep(10000);
         }
     }
     time(&end);
@@ -47,7 +46,6 @@ int main(int argc, const char * argv[])
     long elapsed = (long) difftime(end, start);
     
     std::cout << "count = " << count << " times" << std::endl;
-    //std::cout << "time = " << (double) (end - start) / CLOCKS_PER_SEC << " s" << std::endl;
     std::cout << "time = " << elapsed << " s" << std::endl;
     
     return 0;

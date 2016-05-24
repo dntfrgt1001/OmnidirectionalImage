@@ -12,7 +12,8 @@ InputGyro::InputGyro
 (const std::string& fileName, const std::string& portName,
  speed_t baudRate, size_t bufferSize, const std::string& pattern):
 pattern(pattern), bufferSize(bufferSize),
-resolution(0.01526 / 2), storeSize(3), deltaTime(0.012)
+resolution(0.01526 / 2), storeSize(3), deltaTime(0.012),
+sensorValueSize(18)
 {
     fd = open(portName.c_str(), O_RDONLY|O_NONBLOCK);
     if (fd < 0) {
@@ -29,16 +30,11 @@ resolution(0.01526 / 2), storeSize(3), deltaTime(0.012)
     tcsetattr(fd, TCSANOW, &tio);
     
     ofs.open(fileName);
-
-    //std::string tmpPattern = pattern;
-    //iStrToAStr(tmpPattern.c_str(), tmpPattern.size(), this->pattern);
     
     char patbuf[4] = {'E', 'B', 'S', 0x01};
 
-    cAry2cStr(patbuf, 4, this->pattern);
+    changegSensorValueFromCharToString(patbuf, 4, this->pattern);
     
-    std::cout << "pattern = " << this->pattern << std::endl;
-
     for (int i=0; i<storeSize; i++) {
         std::vector<short> tmpVector;
         
@@ -46,11 +42,15 @@ resolution(0.01526 / 2), storeSize(3), deltaTime(0.012)
             tmpVector.push_back(0);
         }
         
-        sensorValues.push_back(tmpVector);
+        sensorValuess.push_back(tmpVector);
     }
     
     for (int i=0; i<3; i++) {
         curAngle[i] = 0;
+    }
+    
+    for (int i=0; i<sensorValueSize/2; i++) {
+        estimatedSensorValues.push_back(0);
     }
 }
 
@@ -58,85 +58,116 @@ InputGyro::~InputGyro()
 {
     tcsetattr(fd, TCSANOW, &oldTio);
     ofs.close();
+    /*
+    std::vector<std::string>().swap(foundStrings);
+    std::vector<short>().swap(estimatedSensorValues);
+    
+    for (int i=0; i<sensorValueSize/2; i++) {
+        std::vector<short>().swap(sensorValuess[i]);
+    }
+    std::vector<std::vector<short>>().swap(sensorValuess);
+     */
 }
 
-void InputGyro::printData(const char *head, int size)
+void InputGyro::printCurrentAngle()
 {
-    for (int i=0; i<size; i++) {
-        printf("%c ", head[i]);
+    for (int i=0; i<3; i++) {
+        std::cout << curAngle[i] << " ";
     }
+    
+    std::cout << std::endl;
+}
 
-    printf("\n");
+void InputGyro::printCurrentSensorValue()
+{
+    std::cout << "current sensor values = ";
+    
+    for (int i=3; i<6; i++) {
+        std::cout << sensorValuess[storeSize-1][i] << " ";
+    }
+    
+    std::cout << std::endl;
 }
 
 int InputGyro::inputFromGyro()
 {
-    char fpInBuffer[bufferSize];
-    int inLength = (int) read(fd, fpInBuffer, bufferSize);
+    char charInBuffer[bufferSize];
     
+    // センサーから送られてきた値を読み込む
+    int inLength = (int) read(fd, charInBuffer, bufferSize);
+    
+    // 読み込む値がない場合，バッファを超えるサイズの値を読み込む場合
     if (inLength <= 0 || bufferSize < inLength) {
-        fpInBuffer[0] = '\0';
+        charInBuffer[0] = '\0';
         return -1;
     }
     
-    fpInBuffer[inLength] = '\0';
+    // 文字列として扱うために終端文字を追加
+    charInBuffer[inLength] = '\0';
     
+    // 各値の間に空白を入れながらstring型に変換
+    changegSensorValueFromCharToString(charInBuffer, inLength, inBuffer);
     
-    cAry2cStr(fpInBuffer, inLength, inBuffer);
-    
+    // 元々のバッファと現在のバッファを結合
     searchBuffer = searchBuffer + inBuffer;
-/*
-    std::cout << "inBuffer" << std::endl;
-    std::cout << inBuffer << std::endl;
+
+    // 切り出したデータの組の数を返す
+    int cutCount = cutout();
     
-    std::cout << "searchBuffer" << std::endl;
-    std::cout << searchBuffer << std::endl;
-  */
-    return inLength;
+    if (cutCount > 0) {
+        for (int i=0; i<cutCount; i++) {
+            std::vector<short> tmpSensorValues;
+            
+            extractSensorValueAsShortFromString(foundStrings[i], tmpSensorValues);
+            renewCurrentSensorValues(tmpSensorValues);
+        }
+        
+        estimateSensorValues();
+        
+        renewCurrentAngle();
+    }
+    
+    return cutCount;
 }
 
 int InputGyro::cutout()
 {
-    std::vector<std::string> foundStrings;
+    // 組ごとにデータ列をstring型として切り出す
+    split(searchBuffer, pattern);
     
-    split(searchBuffer, pattern, foundStrings);
-    
-//    std::cout << std::endl << "**************" << std::endl;
     for (int i=0; i<foundStrings.size(); i++) {
         if (i != foundStrings.size()-1){
+            std::vector<short> tmpSensorValues;
             
-            std::string shortString;
-            
-            cStr2sStr(foundStrings[i], shortString);
-
-//            std::cout << shortString << std::endl << std::endl;
+            extractSensorValueAsShortFromString(foundStrings[i], tmpSensorValues);
         }
     }
     
+    // 残りのstringを保存
     searchBuffer = foundStrings[foundStrings.size()-1];
     
+    // 切り出したデータの組の数を返す
     return (int)foundStrings.size() - 1;
 }
 
 void InputGyro::split
-(const std::string &str, const std::string &pattern,
- std::vector<std::string> &foundStrings)
+(const std::string &str, const std::string &pattern)
 {
     foundStrings.clear();
     
     size_t current = 0, found, patlen = pattern.size();
     
-
+    // データ列を組ごとに切り出し
     while ((found = str.find(pattern, current)) != std::string::npos) {
         foundStrings.push_back(std::string(str, current, found - current));
         current = found + patlen;
     }
 
-    
     foundStrings.push_back(std::string(str, current, str.size()-current));
 }
 
-void InputGyro::cAry2cStr(const char *in, size_t size, std::string& out)
+void InputGyro::changegSensorValueFromCharToString
+(const char *in, size_t size, std::string& out)
 {
     out = "";
     
@@ -147,7 +178,70 @@ void InputGyro::cAry2cStr(const char *in, size_t size, std::string& out)
     }
 }
 
-void InputGyro::cStr2sStr(const std::string& in, std::string &out)
+void InputGyro::extractSensorValueAsShortFromString
+(const std::string &in, std::vector<short>& tmpSensorValues)
+{
+    short c[18];
+    
+    // String型からchar型の値を取り出す
+    sscanf(in.c_str(),
+           "%hd %hd %hd %hd %hd %hd %hd %hd %hd \
+           %hd %hd %hd %hd %hd %hd %hd %hd %hd ",
+            &c[0],  &c[1],  &c[2],  &c[3],  &c[4],  &c[5],
+            &c[6],  &c[7],  &c[8],  &c[9], &c[10], &c[11],
+           &c[12], &c[13], &c[14], &c[15], &c[16], &c[17] );
+    
+    for (int i=0; i<sensorValueSize; i+=2) {
+        short tmpShort = char2short(c[i], c[i+1]);
+        
+        tmpSensorValues.push_back(tmpShort);
+    }
+}
+
+void InputGyro::renewCurrentSensorValues(std::vector<short> &tmpSensorValues)
+{
+    sensorValuess.erase(sensorValuess.begin());
+    
+    filterDriftAndNoise(tmpSensorValues);
+    
+    sensorValuess.push_back(tmpSensorValues);
+}
+
+void InputGyro::filterDriftAndNoise(std::vector<short> &tmpSensorValues)
+{
+    for (int i=3; i<6; i++) {
+        if (-50 < tmpSensorValues[i] && tmpSensorValues[i] < 50) {
+            tmpSensorValues[i] = 0;
+        }
+    }
+}
+
+void InputGyro::estimateSensorValues()
+{
+    // 移動平均
+    for (int j=0; j<sensorValueSize; j++) {
+        int accum = 0;
+        
+        for (int i=0; i<storeSize; i++) {
+            accum += sensorValuess[i][j];
+        }
+        
+        accum /= (int) storeSize;
+        
+        estimatedSensorValues[j] = accum;
+    }
+}
+
+void InputGyro::renewCurrentAngle()
+{
+    for (int i=0; i<3; i++) {
+        curAngle[i] += estimatedSensorValues[i+3] * resolution * deltaTime;
+    }
+}
+
+/*
+void InputGyro::changeSensorValueFromCharToShort
+(const std::string& in, std::string &out)
 {
     out = "";
     
@@ -159,48 +253,28 @@ void InputGyro::cStr2sStr(const std::string& in, std::string &out)
              &c[6],  &c[7],  &c[8],  &c[9], &c[10], &c[11],
             &c[12], &c[13], &c[14], &c[15], &c[16], &c[17]   );
     
-//    short sensorValues[9];
-    
-    sensorValues.erase(sensorValues.begin());
+    // 現在保存しているデータ群のうち最も古い組を削除
+    sensorValuess.erase(sensorValuess.begin());
     
     std::vector<short> tmpVector;
+    
     for (int i=0; i<18; i+=2) {
         short tmpShort = char2short(c[i], c[i+1]);
         
-//        sensorValues[i / 2] = tmpShort;
         tmpVector.push_back(tmpShort);
         
         out = out + std::to_string(tmpShort) + " ";
     }
     
-    sensorValues.push_back(tmpVector);
-
-    /*
-    for (int i=3; i<6; i++) {
-        std::cout << sensorValues[i] << " " ;
-    }
-    std::cout << std::endl;
-    */
-    
-    /*
-    std::cout << std::endl;
-    for (int i=0; i<storeSize; i++) {
-        for (int j=0; j<9; j++) {
-            std::cout << sensorValues[i][j] << " ";
-        }
-        
-        std::cout << std::endl;
-    }
-    std::cout << std::endl;
-     */
-    
-    tmpVector.clear();
+    // 現在処理中のデータをデータ群に追加
+    sensorValuess.push_back(tmpVector);
     
     for (int j=0; j<9; j++) {
         int tmp = 0;
         for (int i=0; i<storeSize; i++) {
-            tmp += sensorValues[i][j];
+            tmp += sensorValuess[i][j];
         }
+        // int型でキャストしないと符号なしになる
         tmp /= (int)storeSize;
         
         tmpVector.push_back(tmp);
@@ -212,7 +286,6 @@ void InputGyro::cStr2sStr(const std::string& in, std::string &out)
     }
     std::cout << std::endl;
     
-    
     for (int i=0; i<3; i++) {
         curAngle[i] += tmpVector[i+3] * resolution * deltaTime;
         std::cout << curAngle[i] << " ";
@@ -220,6 +293,8 @@ void InputGyro::cStr2sStr(const std::string& in, std::string &out)
     std::cout << std::endl;
     
 }
+
+*/
 
 void InputGyro::outputToFile(const std::string &dataString)
 {

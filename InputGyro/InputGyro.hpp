@@ -29,13 +29,27 @@ public:
     int inputFromGyro(); // センサーからの入力をバッファに格納
     int cutout(); // バッファから組ごとにセンサー値を切り出し
     
-    void printData(const char* head, int size);
+    void printCurrentAngle();
+    void printCurrentSensorValue();
     
-    void split(const std::string& str, const std::string& pattern,
-               std::vector<std::string>& foundStrings);
-    void cAry2cStr(const char* in, size_t size, std::string& out);
-    void cStr2sStr(const std::string& in, std::string& out);
+    void split(const std::string& str, const std::string& pattern);
+    // センサー値を読み込みバッファに追加
+    void changegSensorValueFromCharToString
+    (const char* in, size_t size, std::string& out);
+    // char型のセンサー値をshort型のセンサー値に
+    void extractSensorValueAsShortFromString
+    (const std::string& in, std::vector<short>& tmpSensorValues);
     void outputToFile(const std::string& dataString);
+    // 現在保存しているセンサー値を更新
+    void renewCurrentSensorValues(std::vector<short>& tmpSensorValues);
+    // 閾値以下のノイズをカット，ドリフト値について補正
+    void filterDriftAndNoise(std::vector<short>& tmpSensorValues);
+    // 現在保存しているセンサー値から正しい値を推定
+    void estimateSensorValues();
+    // センサー値を使って現在の角度を更新
+    void renewCurrentAngle();
+    
+    
     
     short char2short(char upper, char lower);
     short char2short(short upper, short lower);
@@ -52,15 +66,16 @@ private:
     std::string outBuffer;
     std::string searchBuffer;
     
-    std::vector<std::vector<short>> sensorValues;
-    size_t storeSize;
+    std::vector<std::string> foundStrings;
+    
+    std::vector<std::vector<short>> sensorValuess;
+    std::vector<short> estimatedSensorValues;
+    const size_t sensorValueSize;
+    const size_t storeSize;
     
     float curAngle[3];
-    
-    short curSensorValues[9]; // 加速度[3] ジャイロ[3] コンパス[3]
     const float resolution;
     const float deltaTime;
-    
 };
 
 #endif /* InputGyro_hpp */
