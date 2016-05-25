@@ -26,17 +26,18 @@ int main(int argc, const char * argv[])
     std::string pattern = "EBS^A";
     InputGyro gyro(path + outfile, port, baudRate, buffSize, pattern);
     
-    
     time_t start, end;
     
     time(&start);
     int count = 0;
     int limit = 1000000;
+    sleep(1);
     for (int i=0; i<limit; i++) {
         if(gyro.inputFromGyro() > 0){
             std::cout << '-' << i << '-' << ' ' << std::endl;
             count++;
             gyro.printCurrentAngle();
+            //gyro.printCurrentAccel();
             gyro.printCurrentSensorValue();
             usleep(10000);
         }
