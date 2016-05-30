@@ -18,10 +18,10 @@
 
 int main(int argc, const char * argv[])
 {
-    std::string workDir = "/Users/masakazu/Documents/Koike lab/product/OmnidirectionalImage/working/";
-    std::string inputName = "R0010050.JPG";
+    std::string workDir = "/Users/masakazu/Desktop/";
+    std::string inputName = "test2.jpg";
     
-    const cv::Size frameSize(1001, 500);
+    const cv::Size frameSize(5376, 2688);
     
     cv::Mat input, img;
     
@@ -31,15 +31,21 @@ int main(int argc, const char * argv[])
     const Transform transform(frameSize);
     Rotate rot(frameSize, transform);
     
-    cv::Mat rotImg(frameSize, CV_8UC3);
+    cv::Mat rotImg;
 
-
-    cv::namedWindow("rotImg", CV_WINDOW_AUTOSIZE|CV_WINDOW_FREERATIO);
+//    cv::namedWindow("rotImg", CV_WINDOW_AUTOSIZE|CV_WINDOW_FREERATIO);
     
     img.copyTo(rotImg);
-    cv::imshow("rotImg", rotImg);
-    cv::waitKey(-1);
+//    cv::imshow("rotImg", rotImg);
+//    cv::waitKey(-1);
 
+    double deltaPhi = M_PI * 1.0 / 3.0;
+    rot.rotateYAng(deltaPhi, img, rotImg);
+    
+    std::string outputName = "test3.jpg";
+    cv::imwrite(workDir + outputName, rotImg);
+    
+    /*
     double deltaXChi = M_PI * 1.0/60.0;
     double deltaYChi = M_PI * 1.0/60.0;
     
@@ -53,6 +59,8 @@ int main(int argc, const char * argv[])
         
         if (cv::waitKey(10) > 0) break;
      }
+    */
+    
     
     /*
     rot.rotateYOrth(thetaChi, rotThetaImg);

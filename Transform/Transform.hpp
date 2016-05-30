@@ -22,8 +22,11 @@ public:
     double u2theta(int u) const;
     double v2phi(int v) const;
     
+    // 0<= u <width, 0<= v <height
+    // -pi<= theta <pi, -pi/2<= phi < pi/2
     void orth2ang(int u, int v, double& theta, double& phi) const;
     void ang2orth(double theta, double phi, int& u, int &v) const;
+ 
     
     int dtheta2u(double theta) const;
     int dphi2v(double phi) const;

@@ -12,7 +12,7 @@ InputGyro::InputGyro
 (const std::string& fileName, const std::string& portName,
  speed_t baudRate, size_t bufferSize, const std::string& pattern):
 pattern(pattern), bufferSize(bufferSize),
-resolution(0.01526f/2), storeSize(10), deltaTime(0.012f),
+resolution(0.06f), storeSize(10), deltaTime(0.008f),
 sensorValueSize(9)
 ,inBuffer(""), outBuffer(""),searchBuffer("")
 {

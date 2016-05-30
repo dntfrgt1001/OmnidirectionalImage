@@ -116,6 +116,7 @@ void Rotate::rotateXAngDot(double chi, double theta, double phi,
 
 void Rotate::rotateXAng(double chi, const cv::Mat& img, cv::Mat& rotImg)
 {
+   /*
     for (int u=0; u<frameSize.width; u++) {
         for (int v=0; v<frameSize.height; v++) {
             int ur, vr;
@@ -134,6 +135,29 @@ void Rotate::rotateXAng(double chi, const cv::Mat& img, cv::Mat& rotImg)
     }else{
         for (int v=0; v<frameSize.height; v++) {
             rotImg.at<cv::Vec3b>(v, halfWidth) = 1.0/2.0*rotImg.at<cv::Vec3b>(v, halfWidth-1) + 1.0/2.0*rotImg.at<cv::Vec3b>(v, halfWidth+1);
+        }
+    }
+    */
+    
+    //　写像の方向を逆転　img(u, v) → chi → rotImg(ur, vr)
+    for (int ur=0; ur<frameSize.width; ur++) {
+        for (int vr=0; vr<frameSize.height; vr++) {
+            int u, v;
+            
+            rotateXOrthNearDot((-1)*chi, ur, vr, u, v);
+            rotImg.at<cv::Vec3b>(vr, ur) = img.at<cv::Vec3b>(v, u);
+        }
+    }
+    
+    int halfWidth = frameSize.width / 2;
+    if (frameSize.width % 2 == 0) {
+        for (int vr=0; vr<frameSize.height; vr++) {
+            rotImg.at<cv::Vec3b>(vr, halfWidth-1) = 2.0/3.0*rotImg.at<cv::Vec3b>(vr, halfWidth-2) + 1.0/3.0*rotImg.at<cv::Vec3b>(vr, halfWidth+1);
+            rotImg.at<cv::Vec3b>(vr, halfWidth) = 1.0/3.0*rotImg.at<cv::Vec3b>(vr, halfWidth-2) + 2.0/3.0*rotImg.at<cv::Vec3b>(vr, halfWidth+1);
+        }
+    }else{
+        for (int vr=0; vr<frameSize.height; vr++) {
+            rotImg.at<cv::Vec3b>(vr, halfWidth) = 1.0/2.0*rotImg.at<cv::Vec3b>(vr, halfWidth-1) + 1.0/2.0*rotImg.at<cv::Vec3b>(vr, halfWidth+1);
         }
     }
 }

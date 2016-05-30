@@ -30,17 +30,19 @@ int main(int argc, const char * argv[])
     
     time(&start);
     int count = 0;
-    int limit = 1000000;
+    int limit = 1000;
     sleep(1);
-    for (int i=0; i<limit; i++) {
+    for (int i=0; i<limit;) {
         if(gyro.inputFromGyro() > 0){
             std::cout << '-' << i << '-' << ' ' << std::endl;
             count++;
             gyro.printCurrentAngle();
             //gyro.printCurrentAccel();
             gyro.printCurrentSensorValue();
-            usleep(10000);
+            usleep(3000);
+            i++;
         }
+        std::cout << "-----" << std::endl;
     }
     time(&end);
 

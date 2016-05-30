@@ -7,6 +7,11 @@
 		<key>ConvertGyro.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
+			<integer>7</integer>
+		</dict>
+		<key>ExtractFeatureTest.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
 			<integer>8</integer>
 		</dict>
 		<key>MatchTest.xcscheme</key>
@@ -68,6 +73,11 @@
 			<true/>
 		</dict>
 		<key>0245CD9A1C43DF3700FF5E33</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>02648EAA1CF8058A00E4E948</key>
 		<dict>
 			<key>primary</key>
 			<true/>
