@@ -37,6 +37,10 @@ public:
     // 基準画像を回転させながらすべての領域の特徴点を抽出
     void extractFeaturePoint
     (std::vector<cv::KeyPoint>& keyPoints, cv::Mat& descriptors);
+    void extractRectRoiFeaturePoint
+    (std::vector<cv::KeyPoint>& keyPoints, cv::Mat& descriptors);
+    // ROIの座標から大域の座標に変換
+    void roiCoord2GlobalCoord(std::vector<cv::KeyPoint>& keyPoints);
     // 特徴点を連結させる
     void keyPointCat
     (std::vector<cv::KeyPoint>& dest, const std::vector<cv::KeyPoint>& src);

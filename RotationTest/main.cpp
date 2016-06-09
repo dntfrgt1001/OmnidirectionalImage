@@ -19,7 +19,7 @@
 int main(int argc, const char * argv[])
 {
     std::string workDir = "/Users/masakazu/Desktop/";
-    std::string inputName = "test2.jpg";
+    std::string inputName = "img1.jpg";
     
     const cv::Size frameSize(5376, 2688);
     
@@ -40,9 +40,11 @@ int main(int argc, const char * argv[])
 //    cv::waitKey(-1);
 
     double deltaPhi = M_PI * 1.0 / 3.0;
-    rot.rotateYAng(deltaPhi, img, rotImg);
+//    rot.rotateYAng(deltaPhi, img, rotImg);
+  
+    rot.rotateXAng(deltaPhi, img, rotImg);
     
-    std::string outputName = "test3.jpg";
+    std::string outputName = "newImg.jpg";
     cv::imwrite(workDir + outputName, rotImg);
     
     /*

@@ -30,11 +30,21 @@
 		020EE3A01C5071F1008D6045 /* libopencv_core.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 020234601C4E1B1C00A4E282 /* libopencv_core.dylib */; };
 		020FE6C91CA6DA6E00A650CE /* InputGyro.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 020FE6C71CA6DA6E00A650CE /* InputGyro.cpp */; };
 		02206DE41C356B0400733203 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 02206DE31C356B0400733203 /* main.cpp */; };
+		0225C9301CFFC8CC00356EA6 /* EstimateAffine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0225C92E1CFFC8CC00356EA6 /* EstimateAffine.cpp */; };
+		0225C9311CFFC8CC00356EA6 /* EstimateAffine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0225C92E1CFFC8CC00356EA6 /* EstimateAffine.cpp */; };
+		0225C9341CFFF23500356EA6 /* libopencv_calib3d.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 0225C9331CFFF23500356EA6 /* libopencv_calib3d.dylib */; };
+		0225C9351CFFF23500356EA6 /* libopencv_calib3d.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 0225C9331CFFF23500356EA6 /* libopencv_calib3d.dylib */; };
+		0225C93D1D00071B00356EA6 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0225C93C1D00071B00356EA6 /* main.cpp */; };
+		0225C9411D00113000356EA6 /* libopencv_core.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 020234601C4E1B1C00A4E282 /* libopencv_core.dylib */; };
+		0225C9421D00113F00356EA6 /* libopencv_calib3d.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 0225C9331CFFF23500356EA6 /* libopencv_calib3d.dylib */; };
 		022D86021C5F155E008C0206 /* libopencv_core.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 020234601C4E1B1C00A4E282 /* libopencv_core.dylib */; };
 		022D86031C5F1561008C0206 /* libopencv_highgui.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 020234621C4E1B2500A4E282 /* libopencv_highgui.dylib */; };
 		022D86041C5F1565008C0206 /* libopencv_imgproc.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 020234641C4E1B2C00A4E282 /* libopencv_imgproc.dylib */; };
 		022D86051C5F1568008C0206 /* libopencv_features2d.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 020234681C4E1B7100A4E282 /* libopencv_features2d.dylib */; };
 		022D86061C5F156B008C0206 /* libopencv_nonfree.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 0202346A1C4E1BAB00A4E282 /* libopencv_nonfree.dylib */; };
+		02315B3C1D0865A600CC22A0 /* AffineStore.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 02315B3A1D0865A600CC22A0 /* AffineStore.cpp */; };
+		02315B3E1D086A2400CC22A0 /* AffineStore.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 02315B3A1D0865A600CC22A0 /* AffineStore.cpp */; };
+		02315B3F1D086A2500CC22A0 /* AffineStore.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 02315B3A1D0865A600CC22A0 /* AffineStore.cpp */; };
 		0245CD621C3F848B00FF5E33 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0245CD611C3F848B00FF5E33 /* main.cpp */; };
 		0245CD661C3F84BE00FF5E33 /* Rotate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 028D7A121C302CE200790A10 /* Rotate.cpp */; };
 		0245CD711C3F866D00FF5E33 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0245CD701C3F866D00FF5E33 /* main.cpp */; };
@@ -62,6 +72,9 @@
 		02648EB81CF8093300E4E948 /* libopencv_highgui.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 020234621C4E1B2500A4E282 /* libopencv_highgui.dylib */; };
 		02648EB91CF8093700E4E948 /* libopencv_core.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 020234601C4E1B1C00A4E282 /* libopencv_core.dylib */; };
 		026B3EB51CA1ABF4008B59CD /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 026B3EB41CA1ABF4008B59CD /* main.cpp */; };
+		0276EF441D016F920013ADF4 /* libopencv_highgui.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 020234621C4E1B2500A4E282 /* libopencv_highgui.dylib */; };
+		0276EF451D016F950013ADF4 /* libopencv_imgproc.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 020234641C4E1B2C00A4E282 /* libopencv_imgproc.dylib */; };
+		0276EF461D016FB30013ADF4 /* Transform.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0245CD8D1C4233E000FF5E33 /* Transform.cpp */; };
 		028D79FB1C30130B00790A10 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 028D79FA1C30130B00790A10 /* main.cpp */; };
 		029994151C72A9CB00792144 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 029994141C72A9CB00792144 /* main.cpp */; };
 		029994191C72B93F00792144 /* libopencv_core.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 020234601C4E1B1C00A4E282 /* libopencv_core.dylib */; };
@@ -75,6 +88,15 @@
 
 /* Begin PBXCopyFilesBuildPhase section */
 		02206DDF1C356B0400733203 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+		0225C9381D00071B00356EA6 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = /usr/share/man/man1/;
@@ -176,6 +198,13 @@
 		020FE6C81CA6DA6E00A650CE /* InputGyro.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = InputGyro.hpp; path = InputGyro/InputGyro.hpp; sourceTree = "<group>"; };
 		02206DE11C356B0400733203 /* Test */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Test; sourceTree = BUILT_PRODUCTS_DIR; };
 		02206DE31C356B0400733203 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
+		0225C92E1CFFC8CC00356EA6 /* EstimateAffine.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = EstimateAffine.cpp; path = EstimateAffine/EstimateAffine.cpp; sourceTree = "<group>"; };
+		0225C92F1CFFC8CC00356EA6 /* EstimateAffine.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = EstimateAffine.hpp; path = EstimateAffine/EstimateAffine.hpp; sourceTree = "<group>"; };
+		0225C9331CFFF23500356EA6 /* libopencv_calib3d.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libopencv_calib3d.dylib; path = ../../../../../../../usr/local/Cellar/opencv/2.4.12_2/lib/libopencv_calib3d.dylib; sourceTree = "<group>"; };
+		0225C93A1D00071B00356EA6 /* AffineTest */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = AffineTest; sourceTree = BUILT_PRODUCTS_DIR; };
+		0225C93C1D00071B00356EA6 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
+		02315B3A1D0865A600CC22A0 /* AffineStore.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = AffineStore.cpp; path = AffineStore/AffineStore.cpp; sourceTree = "<group>"; };
+		02315B3B1D0865A600CC22A0 /* AffineStore.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = AffineStore.hpp; path = AffineStore/AffineStore.hpp; sourceTree = "<group>"; };
 		0245CD5F1C3F848B00FF5E33 /* RotationTest */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = RotationTest; sourceTree = BUILT_PRODUCTS_DIR; };
 		0245CD611C3F848B00FF5E33 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		0245CD6E1C3F866D00FF5E33 /* WriteVideo */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = WriteVideo; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -215,6 +244,17 @@
 				020409621C55028E00389583 /* libopencv_features2d.dylib in Frameworks */,
 				020409611C55028800389583 /* libopencv_nonfree.dylib in Frameworks */,
 				020409641C55029400389583 /* libopencv_highgui.dylib in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		0225C9371D00071B00356EA6 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0225C9421D00113F00356EA6 /* libopencv_calib3d.dylib in Frameworks */,
+				0225C9411D00113000356EA6 /* libopencv_core.dylib in Frameworks */,
+				0276EF441D016F920013ADF4 /* libopencv_highgui.dylib in Frameworks */,
+				0276EF451D016F950013ADF4 /* libopencv_imgproc.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -274,6 +314,7 @@
 				02648EB91CF8093700E4E948 /* libopencv_core.dylib in Frameworks */,
 				02648EB61CF8092D00E4E948 /* libopencv_features2d.dylib in Frameworks */,
 				02648EB51CF8092A00E4E948 /* libopencv_nonfree.dylib in Frameworks */,
+				0225C9351CFFF23500356EA6 /* libopencv_calib3d.dylib in Frameworks */,
 				02648EB81CF8093300E4E948 /* libopencv_highgui.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -289,6 +330,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0225C9341CFFF23500356EA6 /* libopencv_calib3d.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -329,6 +371,23 @@
 			path = Test;
 			sourceTree = "<group>";
 		};
+		0225C9321CFFC8DA00356EA6 /* EstimateAffine */ = {
+			isa = PBXGroup;
+			children = (
+				0225C92E1CFFC8CC00356EA6 /* EstimateAffine.cpp */,
+				0225C92F1CFFC8CC00356EA6 /* EstimateAffine.hpp */,
+			);
+			name = EstimateAffine;
+			sourceTree = "<group>";
+		};
+		0225C93B1D00071B00356EA6 /* AffineTest */ = {
+			isa = PBXGroup;
+			children = (
+				0225C93C1D00071B00356EA6 /* main.cpp */,
+			);
+			path = AffineTest;
+			sourceTree = "<group>";
+		};
 		022D08B31CF5915F0032A92F /* ExtractFeaturePoint */ = {
 			isa = PBXGroup;
 			children = (
@@ -336,6 +395,15 @@
 				02E4371B1CF845CF007C3605 /* ExtractFeaturePoint.hpp */,
 			);
 			name = ExtractFeaturePoint;
+			sourceTree = "<group>";
+		};
+		02315B391D08655F00CC22A0 /* AffineStore */ = {
+			isa = PBXGroup;
+			children = (
+				02315B3A1D0865A600CC22A0 /* AffineStore.cpp */,
+				02315B3B1D0865A600CC22A0 /* AffineStore.hpp */,
+			);
+			name = AffineStore;
 			sourceTree = "<group>";
 		};
 		0245CD5A1C3F83DE00FF5E33 /* Rotate */ = {
@@ -400,6 +468,8 @@
 		02648EA61CF804E300E4E948 /* class */ = {
 			isa = PBXGroup;
 			children = (
+				02315B391D08655F00CC22A0 /* AffineStore */,
+				0225C9321CFFC8DA00356EA6 /* EstimateAffine */,
 				02E437171CF8430D007C3605 /* MatchFeaturePoint */,
 				0245CD8C1C4233B100FF5E33 /* Transform */,
 				022D08B31CF5915F0032A92F /* ExtractFeaturePoint */,
@@ -431,6 +501,7 @@
 			children = (
 				0202346A1C4E1BAB00A4E282 /* libopencv_nonfree.dylib */,
 				020234681C4E1B7100A4E282 /* libopencv_features2d.dylib */,
+				0225C9331CFFF23500356EA6 /* libopencv_calib3d.dylib */,
 				020234641C4E1B2C00A4E282 /* libopencv_imgproc.dylib */,
 				020234621C4E1B2500A4E282 /* libopencv_highgui.dylib */,
 				020234601C4E1B1C00A4E282 /* libopencv_core.dylib */,
@@ -444,6 +515,7 @@
 				029994131C72A9CB00792144 /* PlayVideo */,
 				026B3EB31CA1ABF4008B59CD /* ConvertGyro */,
 				02648EAC1CF8058A00E4E948 /* ExtractFeatureTest */,
+				0225C93B1D00071B00356EA6 /* AffineTest */,
 				028D79F81C30130B00790A10 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -461,6 +533,7 @@
 				029994121C72A9CB00792144 /* PlayVideo */,
 				026B3EB21CA1ABF4008B59CD /* ConvertGyro */,
 				02648EAB1CF8058A00E4E948 /* ExtractFeatureTest */,
+				0225C93A1D00071B00356EA6 /* AffineTest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -508,6 +581,23 @@
 			name = Test;
 			productName = Test;
 			productReference = 02206DE11C356B0400733203 /* Test */;
+			productType = "com.apple.product-type.tool";
+		};
+		0225C9391D00071B00356EA6 /* AffineTest */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 0225C93E1D00071B00356EA6 /* Build configuration list for PBXNativeTarget "AffineTest" */;
+			buildPhases = (
+				0225C9361D00071B00356EA6 /* Sources */,
+				0225C9371D00071B00356EA6 /* Frameworks */,
+				0225C9381D00071B00356EA6 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = AffineTest;
+			productName = AffineTest;
+			productReference = 0225C93A1D00071B00356EA6 /* AffineTest */;
 			productType = "com.apple.product-type.tool";
 		};
 		0245CD5E1C3F848B00FF5E33 /* RotationTest */ = {
@@ -675,6 +765,9 @@
 					02206DE01C356B0400733203 = {
 						CreatedOnToolsVersion = 7.2;
 					};
+					0225C9391D00071B00356EA6 = {
+						CreatedOnToolsVersion = 7.2.1;
+					};
 					0245CD5E1C3F848B00FF5E33 = {
 						CreatedOnToolsVersion = 7.2;
 					};
@@ -726,6 +819,7 @@
 				029994111C72A9CB00792144 /* PlayVideo */,
 				026B3EB11CA1ABF4008B59CD /* ConvertGyro */,
 				02648EAA1CF8058A00E4E948 /* ExtractFeatureTest */,
+				0225C9391D00071B00356EA6 /* AffineTest */,
 			);
 		};
 /* End PBXProject section */
@@ -739,6 +833,16 @@
 				0245CDAB1C4780D200FF5E33 /* Rotate.cpp in Sources */,
 				02206DE41C356B0400733203 /* main.cpp in Sources */,
 				020409661C5502A000389583 /* Match.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		0225C9361D00071B00356EA6 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0276EF461D016FB30013ADF4 /* Transform.cpp in Sources */,
+				02315B3F1D086A2500CC22A0 /* AffineStore.cpp in Sources */,
+				0225C93D1D00071B00356EA6 /* main.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -792,7 +896,9 @@
 				02E4371D1CF845D7007C3605 /* ExtractFeaturePoint.cpp in Sources */,
 				02E437161CF84303007C3605 /* MatchFeaturePoint.cpp in Sources */,
 				02648EB21CF807E800E4E948 /* Transform.cpp in Sources */,
+				0225C9311CFFC8CC00356EA6 /* EstimateAffine.cpp in Sources */,
 				02648EAE1CF8058A00E4E948 /* main.cpp in Sources */,
+				02315B3E1D086A2400CC22A0 /* AffineStore.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -813,7 +919,9 @@
 				02E437151CF84303007C3605 /* MatchFeaturePoint.cpp in Sources */,
 				0245CD951C43B4BC00FF5E33 /* Match.cpp in Sources */,
 				028D79FB1C30130B00790A10 /* main.cpp in Sources */,
+				0225C9301CFFC8CC00356EA6 /* EstimateAffine.cpp in Sources */,
 				020FE6C91CA6DA6E00A650CE /* InputGyro.cpp in Sources */,
+				02315B3C1D0865A600CC22A0 /* AffineStore.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -849,6 +957,28 @@
 			buildSettings = {
 				HEADER_SEARCH_PATHS = "$(inherited)";
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		0225C93F1D00071B00356EA6 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					/usr/local/Cellar/opencv/2.4.12_2/lib,
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		0225C9401D00071B00356EA6 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					/usr/local/Cellar/opencv/2.4.12_2/lib,
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
@@ -1048,7 +1178,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				HEADER_SEARCH_PATHS = "$(inherited)";
-				LIBRARY_SEARCH_PATHS = "$(inherited)";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					/usr/local/Cellar/opencv/2.4.12_2/lib,
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -1057,7 +1190,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				HEADER_SEARCH_PATHS = "$(inherited)";
-				LIBRARY_SEARCH_PATHS = "$(inherited)";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					/usr/local/Cellar/opencv/2.4.12_2/lib,
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
@@ -1110,6 +1246,15 @@
 			buildConfigurations = (
 				02206DE51C356B0400733203 /* Debug */,
 				02206DE61C356B0400733203 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		0225C93E1D00071B00356EA6 /* Build configuration list for PBXNativeTarget "AffineTest" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				0225C93F1D00071B00356EA6 /* Debug */,
+				0225C9401D00071B00356EA6 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

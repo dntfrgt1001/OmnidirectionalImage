@@ -43,14 +43,15 @@ void ExtractFeaturePoint::extractRoiFeaturePoint
     rotate.rotateXAng(rotAngle, img, rotImg);
     
     detector->detect(rotImg(roi), roiKeyPoints);
+    
+    roiKeyPoints.erase(roiKeyPoints.begin(), roiKeyPoints.begin()+10);
+    
     extractor->compute(rotImg(roi), roiKeyPoints, roiDescriptors);
     
 //    std::cout << (descriptors.type() == CV_32F) << std::endl;
  
     // ROIの座標から(回転後の)大域の座標に変換
-    for (int i=0; i<roiKeyPoints.size(); i++) {
-        roiKeyPoints[i].pt.y += (frameSize.height - validHeight)/2;
-    }
+    roiCoord2GlobalCoord(roiKeyPoints);
     
     filterLowLatitue(roiKeyPoints, roiDescriptors);
     
@@ -71,6 +72,15 @@ void ExtractFeaturePoint::extractRoiFeaturePoint
     cv::namedWindow("keypoint");
     cv::imshow("keypoint", outImg);
 //    cv::waitKey(-1);
+}
+
+void ExtractFeaturePoint::extractRectRoiFeaturePoint
+(std::vector<cv::KeyPoint> &keyPoints, cv::Mat &descriptors)
+{
+    detector->detect(img(roi), keyPoints);
+    extractor->compute(img(roi), keyPoints, descriptors);
+    
+    roiCoord2GlobalCoord(keyPoints);
 }
 
 void ExtractFeaturePoint::extractFeaturePoint
@@ -94,6 +104,14 @@ void ExtractFeaturePoint::extractFeaturePoint
         
     }
 
+}
+
+void ExtractFeaturePoint::roiCoord2GlobalCoord
+(std::vector<cv::KeyPoint> &keyPoints)
+{
+    for (int i=0; i<keyPoints.size(); i++) {
+        keyPoints[i].pt.y += (frameSize.height - validHeight)/2;
+    }
 }
 
 void ExtractFeaturePoint::keyPointCat
