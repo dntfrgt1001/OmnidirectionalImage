@@ -115,17 +115,12 @@ void Transform::orth2d2orth2dWithRotMat
     if (vr < 0) vr = 0; if(frameSize.height <= vr) vr = frameSize.height-1;
 }
 
-#include <iostream>
-
 void Transform::rotateImgWithRotMat
 (const cv::Mat &img, cv::Mat &rotImg, const cv::Mat &rotMat)
 {
     rotImg = cv::Mat(frameSize, CV_8UC3);
     
     cv::Mat invRotMat = rotMat.inv();
-    
-    std::cout << rotMat << std::endl;
-    std::cout << invRotMat << std::endl ;
     
     for (int ur=0; ur<frameSize.width; ur++) {
         for (int vr=0; vr<frameSize.height; vr++) {

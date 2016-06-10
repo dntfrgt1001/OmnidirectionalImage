@@ -47,4 +47,14 @@ void MatchFeaturePoint::crossMatch
     }
 }
 
-
+void MatchFeaturePoint::filterMatch
+(std::vector<cv::DMatch> &dMatches, int threshold)
+{
+    for (int i=0; i<dMatches.size();  ) {
+        if (dMatches[i].distance < threshold) {
+            dMatches.erase(dMatches.begin() + i);
+        } else {
+            i++;
+        }
+    }
+}

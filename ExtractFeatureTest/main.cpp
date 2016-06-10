@@ -12,18 +12,19 @@
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/calib3d/calib3d.hpp>
+
 #include "Transform.hpp"
 #include "Rotate.hpp"
 #include "ExtractFeaturePoint.hpp"
 #include "MatchFeaturePoint.hpp"
-#include "AffineStore.hpp"
+#include "Affine.hpp"
 
 int main(int argc, const char * argv[])
 {
     const std::string workDir = "/Users/masakazu/Desktop/";
     const std::string imgName1 = "img1.jpg";
-    const std::string imgName2 = "img2.jpg";
-    const cv::Size frameSize(4000, 2000);
+    const std::string imgName2 = "img4.jpg";
+    const cv::Size frameSize(3000, 1500);
     
     cv::Mat input1, input2;
     cv::Mat img1, img2;
@@ -57,23 +58,40 @@ int main(int argc, const char * argv[])
     std::vector<cv::DMatch> dMatches;
     matchFeature.match(descriptors1, descriptors2, dMatches);
     
+    int matchThreshold = 30;
+    matchFeature.filterMatch(dMatches, matchThreshold);
+    
+
+
+    
+    
+    /*
     std::vector<cv::DMatch> dMatchesSub;
     for (int i=0; i<dMatches.size(); i++) {
         if (dMatches[i].distance < 30) {
             dMatchesSub.push_back(dMatches[i]);
         }
     }
-    
+*/
+    /*
     cv::Mat drawMatchImg;
     cv::drawMatches
     (img1, keyPoints1, img2, keyPoints2, dMatchesSub, drawMatchImg,
      cv::Scalar::all(-1), cv::Scalar::all(0));
+     */
 //     cv::DrawMatchesFlags::NOT_DRAW_SINGLE_POINTS);
     
     
-    std::vector<cv::Point2f> point2ds1, point2ds2;
-    std::vector<cv::Point3f> point3ds1, point3ds2;
+    Affine affine(transform);
     
+    //std::vector<cv::Point2f> point2ds1, point2ds2;
+    std::vector<cv::Point3f> for3DPoints, lat3DPoints;
+    
+    affine.get3DPointPair
+    (keyPoints1, keyPoints2, dMatches, for3DPoints, lat3DPoints);
+    
+    
+    /*
     for (int i=0; i<dMatchesSub.size(); i++) {
         cv::Point2f tmpPoint2d1 = keyPoints1[dMatchesSub[i].queryIdx].pt;
         point2ds1.push_back(tmpPoint2d1);
@@ -87,38 +105,45 @@ int main(int argc, const char * argv[])
         transform.orth2d2orth3d(tmpPoint2d2, tmpPoint3d2);
         point3ds2.push_back(tmpPoint3d2);
     }
+    */
     
+    /*
     for (int i=0; i<point2ds1.size(); i++) {
         std::cout << point2ds1[i] << " -> " << point2ds2[i] << ",  diff = " <<
         ((point2ds2[i].x - point2ds1[i].x) > 0?
         (point2ds2[i].x - point2ds1[i].x):
         0)
-         //frameSize.width - (point2ds1[i].x - point2ds2[i].x))
+        frameSize.width - (point2ds1[i].x - point2ds2[i].x))
         << std::endl;
     }
+     */
     /*
     for (int i=0; i<point3ds1.size(); i++) {
         std::cout << point3ds1[i] << " -> " << point3ds2[i] << std::endl;
     }
     */
     
-    cv::Mat affineMat;
-    std::vector<uchar> inliers;
+    cv::Mat affMat;
+//    std::vector<uchar> inliers;
     
-    cv::estimateAffine3D(point3ds1, point3ds2, affineMat, inliers);
+    affine.estimate3DAffineMat(for3DPoints, lat3DPoints, affMat);
+    
+//    cv::estimateAffine3D(point3ds1, point3ds2, affineMat, inliers);
 
-    std::cout << affineMat << std::endl;
+//    std::cout << affineMat << std::endl;
     
-    AffineStore affStore;
+
+    
     
     cv::Mat rotMat;
-    affStore.extractRotMatFromAffineMat(affineMat, rotMat);
-   
-    std::cout << "rotMat.inv() = " << rotMat.inv() << std::endl;
     
-    std::cout << (rotMat.type() == CV_32FC1) << std::endl;
-    std::cout << (rotMat.type() == CV_64FC1) << std::endl;
+    //affStore.extractRotMatFromAffineMat(affineMat, rotMat);
     
+    affine.extractRotMatFromAffineMat(affMat, rotMat);
+ 
+    std::cout << "rotMat = " << rotMat << std::endl;
+    
+
     cv::Mat rotImg;
     transform.rotateImgWithRotMat(img2, rotImg, rotMat);
     
@@ -131,13 +156,13 @@ int main(int argc, const char * argv[])
     cv::namedWindow("mod img2");
     cv::imshow("mod img2", rotImg);
     
-//    std::cout << "rotMat = " << rotMat << std::endl;
+//  std::cout << "rotMat = " << rotMat << std::endl;
     
     
     
     cv::Size drawSize(1500, 800);
     cv::Mat drawImg;
-    cv::resize(drawMatchImg, drawImg, drawSize);
+//   cv::resize(drawMatchImg, drawImg, drawSize);
     
     cv::namedWindow("match");
     cv::imshow("match", drawImg);

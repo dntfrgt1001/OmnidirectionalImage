@@ -26,10 +26,13 @@ public:
     void match
     (const cv::Mat descriptors1, const cv::Mat descriptors2,
      std::vector<cv::DMatch>& dMatches);
+    // 1->2，2->1へのクロスマッチ
     void crossMatch
     (const std::vector<cv::DMatch>& dMatches1,
      const std::vector<cv::DMatch>& dMatches2,
      std::vector<cv::DMatch>& dMatches);
+    // マッチングの距離が閾値以下のものはフィルタリング
+    void filterMatch(std::vector<cv::DMatch>& dMatches, int thereshold);
     
 private:
     const cv::Size& frameSize;
