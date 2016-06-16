@@ -13,49 +13,50 @@ frameSize(frameSize)
 {
 }
 
-int Transform::theta2u(double theta) const
+int Transform::theta2u(float theta) const
 {
     return (int)round(theta*frameSize.width/(2.0*M_PI) + frameSize.width/2.0);
 }
 
-int Transform::phi2v(double phi) const
+int Transform::phi2v(float phi) const
 {
     return (int)round((-1.0)*phi*frameSize.height/M_PI + frameSize.height/2.0);
 }
 
-double Transform::u2theta(int u) const
+float Transform::u2theta(int u) const
 {
     return (u - frameSize.width/2.0) * 2.0*M_PI/frameSize.width;
 }
 
-double Transform::v2phi(int v) const
+float Transform::v2phi(int v) const
 {
     return (-1.0) * (v - frameSize.height/2.0) * M_PI/frameSize.height;
 }
 
-void Transform::ang2orth(double theta, double phi, int &u, int &v) const
+void Transform::ang2orth(float theta, float phi, int &u, int &v) const
 {
     u = theta2u(theta);
     v = phi2v(phi);
 }
 
-void Transform::orth2ang(int u, int v, double &theta, double &phi) const
+void Transform::orth2ang(int u, int v, float &theta, float &phi) const
 {
     theta = u2theta(u);
     phi = v2phi(v);
 }
 
-int Transform::dtheta2u(double theta) const
+int Transform::dtheta2u(float theta) const
 {
     return (int) round(theta * frameSize.width / (2.0 * M_PI));
 }
 
-int Transform::dphi2v(double phi) const
+int Transform::dphi2v(float phi) const
 {
     return (int) round(phi * frameSize.height / M_PI);
 }
 
-void Transform::orth2d2orth3d(const cv::Point2f &point2d, cv::Point3f &point3d)
+void Transform::orth2d2orth3d
+(const cv::Point2f &point2d, cv::Point3f &point3d) const
 {
     float u = point2d.x;
     float v = point2d.y;
@@ -68,7 +69,8 @@ void Transform::orth2d2orth3d(const cv::Point2f &point2d, cv::Point3f &point3d)
     point3d.z = cosf(theta) * cosf(phi);
 }
 
-void Transform::orth3d2orth2d(const cv::Point3f &point3d, cv::Point2f &point2d)
+void Transform::orth3d2orth2d
+(const cv::Point3f &point3d, cv::Point2f &point2d) const
 {
     float x = point3d.x;
     float y = point3d.y;
@@ -88,6 +90,7 @@ void Transform::orth3d2orth2d(const cv::Point3f &point3d, cv::Point2f &point2d)
 
 void Transform::orth2d2orth2dWithRotMat
 (const cv::Point2f &forPoint2d, cv::Point2f &latPoint2d, const cv::Mat &rotMat)
+const
 {
     cv::Point3f forPoint3d, latPoint3d;
     
@@ -99,7 +102,7 @@ void Transform::orth2d2orth2dWithRotMat
 }
 
 void Transform::orth2d2orth2dWithRotMat
-(int u, int v, int &ur, int &vr, const cv::Mat &rotMat)
+(int u, int v, int &ur, int &vr, const cv::Mat &rotMat) const
 {
     cv::Point2f forPoint2d;
     forPoint2d.x = u;
@@ -116,7 +119,7 @@ void Transform::orth2d2orth2dWithRotMat
 }
 
 void Transform::rotateImgWithRotMat
-(const cv::Mat &img, cv::Mat &rotImg, const cv::Mat &rotMat)
+(const cv::Mat &img, cv::Mat &rotImg, const cv::Mat &rotMat) const
 {
     rotImg = cv::Mat(frameSize, CV_8UC3);
     
@@ -133,7 +136,75 @@ void Transform::rotateImgWithRotMat
     }
 }
 
-double Transform::normalizeTheta(double rawTheta) const
+void Transform::rotateVerticalImg
+(float chi, const cv::Mat &img, cv::Mat &rotImg) const
+{
+    rotImg = cv::Mat(frameSize.height, frameSize.width, CV_8UC3);
+    
+    for (int ur=0; ur<frameSize.width; ur++) {
+        for (int vr=0; vr<frameSize.height; vr++) {
+            int u, v;
+            
+            rotateVerticalOrthDot(-1.0 * chi, ur, vr, u, v);
+            rotImg.at<cv::Vec3b>(vr, ur) = img.at<cv::Vec3b>(v, u);
+        }
+    }
+    
+    int halfWidth = frameSize.width / 2;
+    // 幅が偶数の場合の幅中心の画素の補間
+    if (frameSize.width % 2 == 0) {
+        for (int vr=0; vr<frameSize.height; vr++) {
+            rotImg.at<cv::Vec3b>(vr, halfWidth-1) =
+                2.0/3.0 * rotImg.at<cv::Vec3b>(vr, halfWidth-2) +
+                1.0/3.0 * rotImg.at<cv::Vec3b>(vr, halfWidth+1);
+            rotImg.at<cv::Vec3b>(vr, halfWidth) =
+                1.0/3.0 * rotImg.at<cv::Vec3b>(vr, halfWidth-2) +
+                2.0/3.0 * rotImg.at<cv::Vec3b>(vr, halfWidth+1);
+        }
+    // 幅が奇数の場合の幅中心の画素の補間
+    } else {
+        for (int vr=0; vr<frameSize.height; vr++) {
+            rotImg.at<cv::Vec3b>(vr, halfWidth) =
+            1.0/2.0 * rotImg.at<cv::Vec3b>(vr, halfWidth-1) +
+            1.0/2.0 * rotImg.at<cv::Vec3b>(vr, halfWidth+1);
+        }
+    }
+}
+
+void Transform::rotateVerticalOrthDot(float chi, int u, int v, int &ur, int &vr)
+const
+{
+    float theta, phi;
+    float thetar, phir;
+    
+    orth2ang(u, v, theta, phi);
+    rotateVerticalAngDot(chi, theta, phi, thetar, phir);
+    ang2orth(thetar, phir, ur, vr);
+    
+    if (ur < 0) ur = 0;
+    if (frameSize.width-1 < ur) ur = frameSize.width-1;
+    if (vr < 0) vr = 0;
+    if (frameSize.height-1 < vr) vr = frameSize.height-1;
+}
+
+void Transform::rotateVerticalAngDot
+(float chi, float theta, float phi, float &thetar, float &phir) const
+{
+    float thetarDenomi = -sinf(chi)*sinf(phi) + cosf(chi)*cosf(theta)*cosf(phi);
+    if (thetarDenomi == 0.0) thetar = M_PI * 1.0/2.0;
+    else thetar = atanf(sinf(theta)*cosf(phi) / thetarDenomi);
+    
+    // thetaの定義域はarctanの定義の定義域よりも広いので場合分け
+    if (0 <= theta && thetar < 0) thetar += M_PI;
+    if (theta < 0 && 0 <= thetar) thetar -= M_PI;
+    
+    float AsinInput = cosf(chi)*sinf(phi) + sinf(chi)*cosf(theta)*cosf(phi);
+    if (AsinInput < -1)      phir = -1.0 * M_PI * 1.0/ 2.0;
+    else if (1 <= AsinInput) phir = M_PI * 1.0/2.0;
+    else                     phir = asinf(AsinInput);
+}
+
+double Transform::normalizeTheta(float rawTheta) const
 {
     while (rawTheta < -1.0 * M_PI) rawTheta += 2.0*M_PI;
     while (M_PI <= rawTheta)       rawTheta -= 2.0*M_PI;
@@ -153,7 +224,7 @@ int Transform::normalizeU(int rawU) const
     return rawU;
 }
 
-double Transform::normalizePhi(double rawPhi) const
+double Transform::normalizePhi(float rawPhi) const
 {
     while (rawPhi < -1.0 * M_PI / 2.0) rawPhi += M_PI / 2.0;
     while (M_PI / 2.0 <= rawPhi)       rawPhi -= M_PI / 2.0;

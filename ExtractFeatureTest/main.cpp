@@ -14,17 +14,18 @@
 #include <opencv2/calib3d/calib3d.hpp>
 
 #include "Transform.hpp"
-#include "Rotate.hpp"
 #include "ExtractFeaturePoint.hpp"
 #include "MatchFeaturePoint.hpp"
 #include "Affine.hpp"
+#include "Quarternion.hpp"
 
 int main(int argc, const char * argv[])
 {
+    
     const std::string workDir = "/Users/masakazu/Desktop/";
     const std::string imgName1 = "img1.jpg";
-    const std::string imgName2 = "img4.jpg";
-    const cv::Size frameSize(3000, 1500);
+    const std::string imgName2 = "outImg123.jpg";
+    const cv::Size frameSize(1960, 960);
     
     cv::Mat input1, input2;
     cv::Mat img1, img2;
@@ -34,118 +35,75 @@ int main(int argc, const char * argv[])
     cv::resize(input2, img2, frameSize);
     
     Transform transform(frameSize);
-    Rotate rotate(frameSize, transform);
-    MatchFeaturePoint matchFeature(frameSize);
+    int divNum = 6;
+    ExtractFeaturePoint(frameSize, transform, divNum);
+    MatchFeaturePoint(frameSize, transform);
+    Affine affine(transform);
+    
+    
+    float theta = M_PI / 8.0;
+    cv::Vec3f axis(1, 2, 1);
+    
+    Quarternion quart(theta, axis);
+    
+    cv::Mat trueRotMat;
+    Quarternion::Quart2RotMat(quart, trueRotMat);
+    
+    std::cout << "true rotMat = " << std::endl << trueRotMat << std::endl;
+    
+//1    transform.rotateImgWithRotMat(img1, img2, trueRotMat);
     
     int divNum = 6;
-    ExtractFeaturePoint extractFeature(frameSize, divNum, transform, rotate);
+    ExtractFeaturePoint extractFeature(frameSize, transform, divNum);
     
-    extractFeature.setImage(img1);
     std::vector<cv::KeyPoint> keyPoints1;
     cv::Mat descriptors1;
-//    extractFeature.extractFeaturePoint(keyPoints1, descriptors1);
-//    extractFeature.extractRoiFeaturePoint(divNum/2, keyPoints1, descriptors1);
-    extractFeature.extractRectRoiFeaturePoint(keyPoints1, descriptors1);
+    extractFeature.extractRectRoiFeaturePoint(img1, keyPoints1, descriptors1);
     
-    extractFeature.setImage(img2);
     std::vector<cv::KeyPoint> keyPoints2;
     cv::Mat descriptors2;
-//    extractFeature.extractFeaturePoint(keyPoints2, descriptors2);
-//    extractFeature.extractRoiFeaturePoint(divNum/2, keyPoints2, descriptors2);
-    extractFeature.extractRectRoiFeaturePoint(keyPoints2, descriptors2);
+    extractFeature.extractRectRoiFeaturePoint(img2, keyPoints2, descriptors2);
     
+    MatchFeaturePoint matchFeature(frameSize, transform);
     
     std::vector<cv::DMatch> dMatches;
     matchFeature.match(descriptors1, descriptors2, dMatches);
     
-    int matchThreshold = 30;
-    matchFeature.filterMatch(dMatches, matchThreshold);
+    int distanceThreshold = 75;
+    matchFeature.filterMatchDistance(dMatches, distanceThreshold);
+    float coordThreshold = 0.3;
+    matchFeature.filterMatchCoordinate
+    (keyPoints1, keyPoints2, dMatches, coordThreshold);
     
-
-
-    
-    
-    /*
-    std::vector<cv::DMatch> dMatchesSub;
-    for (int i=0; i<dMatches.size(); i++) {
-        if (dMatches[i].distance < 30) {
-            dMatchesSub.push_back(dMatches[i]);
-        }
-    }
-*/
-    /*
     cv::Mat drawMatchImg;
     cv::drawMatches
-    (img1, keyPoints1, img2, keyPoints2, dMatchesSub, drawMatchImg,
+    (img1, keyPoints1, img2, keyPoints2, dMatches, drawMatchImg,
      cv::Scalar::all(-1), cv::Scalar::all(0));
-     */
-//     cv::DrawMatchesFlags::NOT_DRAW_SINGLE_POINTS);
     
-    
+
     Affine affine(transform);
     
-    //std::vector<cv::Point2f> point2ds1, point2ds2;
     std::vector<cv::Point3f> for3DPoints, lat3DPoints;
     
     affine.get3DPointPair
     (keyPoints1, keyPoints2, dMatches, for3DPoints, lat3DPoints);
     
-    
-    /*
-    for (int i=0; i<dMatchesSub.size(); i++) {
-        cv::Point2f tmpPoint2d1 = keyPoints1[dMatchesSub[i].queryIdx].pt;
-        point2ds1.push_back(tmpPoint2d1);
-        cv::Point3f tmpPoint3d1;
-        transform.orth2d2orth3d(tmpPoint2d1, tmpPoint3d1);
-        point3ds1.push_back(tmpPoint3d1);
-        
-        cv::Point2f tmpPoint2d2 = keyPoints2[dMatchesSub[i].trainIdx].pt;
-        point2ds2.push_back(tmpPoint2d2);
-        cv::Point3f tmpPoint3d2;
-        transform.orth2d2orth3d(tmpPoint2d2, tmpPoint3d2);
-        point3ds2.push_back(tmpPoint3d2);
-    }
-    */
-    
-    /*
-    for (int i=0; i<point2ds1.size(); i++) {
-        std::cout << point2ds1[i] << " -> " << point2ds2[i] << ",  diff = " <<
-        ((point2ds2[i].x - point2ds1[i].x) > 0?
-        (point2ds2[i].x - point2ds1[i].x):
-        0)
-        frameSize.width - (point2ds1[i].x - point2ds2[i].x))
-        << std::endl;
-    }
-     */
-    /*
-    for (int i=0; i<point3ds1.size(); i++) {
-        std::cout << point3ds1[i] << " -> " << point3ds2[i] << std::endl;
-    }
-    */
-    
     cv::Mat affMat;
-//    std::vector<uchar> inliers;
-    
     affine.estimate3DAffineMat(for3DPoints, lat3DPoints, affMat);
     
-//    cv::estimateAffine3D(point3ds1, point3ds2, affineMat, inliers);
-
-//    std::cout << affineMat << std::endl;
-    
-
-    
-    
     cv::Mat rotMat;
-    
-    //affStore.extractRotMatFromAffineMat(affineMat, rotMat);
-    
     affine.extractRotMatFromAffineMat(affMat, rotMat);
- 
-    std::cout << "rotMat = " << rotMat << std::endl;
     
+    Quarternion::normalizeRotMat(rotMat);
 
     cv::Mat rotImg;
     transform.rotateImgWithRotMat(img2, rotImg, rotMat);
+    
+    std::cout << "estimated rotMat = " << std::endl << rotMat.inv() << std::endl;
+    
+    Quarternion::normalizeRotMat(rotMat);
+    std::cout << "normalized estimated rotMat = " << std::endl << rotMat.inv() << std::endl;
+
     
     
     
@@ -156,14 +114,10 @@ int main(int argc, const char * argv[])
     cv::namedWindow("mod img2");
     cv::imshow("mod img2", rotImg);
     
-//  std::cout << "rotMat = " << rotMat << std::endl;
-    
-    
     
     cv::Size drawSize(1500, 800);
     cv::Mat drawImg;
-//   cv::resize(drawMatchImg, drawImg, drawSize);
-    
+    cv::resize(drawMatchImg, drawImg, drawSize);
     cv::namedWindow("match");
     cv::imshow("match", drawImg);
     

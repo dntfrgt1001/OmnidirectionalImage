@@ -9,10 +9,8 @@
 #include "ExtractFeaturePoint.hpp"
 
 ExtractFeaturePoint::ExtractFeaturePoint
-(const cv::Size& frameSize, int divNum,
- Transform& transform, Rotate& rotate):
-frameSize(frameSize), divNum(divNum),
-transform(transform), rotate(rotate),
+(const cv::Size& frameSize, Transform& transform, int divNum):
+frameSize(frameSize), transform(transform), divNum(divNum),
 validHeight(transform.dphi2v(M_PI)/divNum)
 {
     roi = cv::Rect(0, (frameSize.height - validHeight)/2,
@@ -26,13 +24,16 @@ ExtractFeaturePoint::~ExtractFeaturePoint()
 {
 }
 
+/*
 void ExtractFeaturePoint::setImage(const cv::Mat &newImg)
 {
     newImg.copyTo(img);
 }
+*/
 
 void ExtractFeaturePoint::extractRoiFeaturePoint
-(int number, std::vector<cv::KeyPoint>& roiKeyPoints, cv::Mat& roiDescriptors)
+(const cv::Mat& img, std::vector<cv::KeyPoint>& roiKeyPoints,
+ cv::Mat& roiDescriptors, int number)
 {
     assert(number < divNum);
     
@@ -40,7 +41,7 @@ void ExtractFeaturePoint::extractRoiFeaturePoint
     double invRotAngle = (-1) * rotAngle;
     
     cv::Mat rotImg(frameSize, CV_8UC3);
-    rotate.rotateXAng(rotAngle, img, rotImg);
+    transform.rotateVerticalImg(rotAngle, img, rotImg);
     
     detector->detect(rotImg(roi), roiKeyPoints);
     
@@ -61,7 +62,7 @@ void ExtractFeaturePoint::extractRoiFeaturePoint
         u = roiKeyPoints[i].pt.x;
         v = roiKeyPoints[i].pt.y;
         
-        rotate.rotateXOrthNearDot(invRotAngle, u, v, ur, vr);
+        transform.rotateVerticalOrthDot(invRotAngle, u, v, ur, vr);
         
         roiKeyPoints[i].pt = cv::Point2f(ur, vr);
     }
@@ -75,7 +76,7 @@ void ExtractFeaturePoint::extractRoiFeaturePoint
 }
 
 void ExtractFeaturePoint::extractRectRoiFeaturePoint
-(std::vector<cv::KeyPoint> &keyPoints, cv::Mat &descriptors)
+(const cv::Mat& img, std::vector<cv::KeyPoint> &keyPoints, cv::Mat &descriptors)
 {
     detector->detect(img(roi), keyPoints);
     extractor->compute(img(roi), keyPoints, descriptors);
@@ -84,7 +85,7 @@ void ExtractFeaturePoint::extractRectRoiFeaturePoint
 }
 
 void ExtractFeaturePoint::extractFeaturePoint
-(std::vector<cv::KeyPoint> &keyPoints, cv::Mat& descriptors)
+(const cv::Mat& img, std::vector<cv::KeyPoint> &keyPoints, cv::Mat& descriptors)
 {
     
     for (int i=0; i<divNum; i++) {
@@ -93,9 +94,9 @@ void ExtractFeaturePoint::extractFeaturePoint
         cv::Mat roiDescriptors;
 
         if (i == 0) {
-            extractRoiFeaturePoint(i, keyPoints, descriptors);
+            extractRoiFeaturePoint(img, keyPoints, descriptors, i);
         } else {
-            extractRoiFeaturePoint(i, roiKeyPoints, roiDescriptors);
+            extractRoiFeaturePoint(img, roiKeyPoints, roiDescriptors, i);
         
             keyPointCat(keyPoints, roiKeyPoints);
             descriptorCat(descriptors, roiDescriptors);

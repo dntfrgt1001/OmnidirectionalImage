@@ -14,104 +14,59 @@
 #include <opencv2/nonfree/nonfree.hpp>
 
 #include "Transform.hpp"
-#include "Rotate.hpp"
-#include "Match.hpp"
+#include "ExtractFeaturePoint.hpp"
+#include "MatchFeaturePoint.hpp"
+#include "Affine.hpp"
+#include "MatchImagePair.hpp"
 
 int main(int argc, const char * argv[])
 {
-    std::string workDir = "/Users/masakazu/Desktop/working/";
-    std::string inputName = "R0010050.JPG";
+    const std::string path = "/Users/masakazu/Desktop/phi/";
+    const std::string imgName1 = "phi10.jpg";
+    const std::string imgName2 = "phi15.jpg";
     
-    const cv::Size frameSize(960, 480);
+    const cv::Size frameSize(1920, 960);
     
-    cv::Mat input, stdImg;
-    
-    input = cv::imread(workDir + inputName);
-    cv::resize(input, stdImg, frameSize);
-
-
     Transform transform(frameSize);
-    Rotate rotate(frameSize, transform);
-    int divNum = 8;
-    Match match(frameSize, stdImg, transform, rotate, divNum);
     
-    double chiX = M_PI / 6.0;
-    double chiY = M_PI / 2.0;
+    int divNum = 4;
+    ExtractFeaturePoint extractFeature(frameSize, transform, divNum);
     
-    cv::Mat rotXImg(frameSize, CV_8UC3);
-    cv::Mat rotXYImg(frameSize, CV_8UC3);
-    rotate.rotateXAng(chiX, stdImg, rotXImg);
-    rotate.rotateYAng(chiY, rotXImg, rotXYImg);
+    int distThreshold = 100;
+    float coordThreshold = 0.6;
+    MatchFeaturePoint
+    matchFeature(frameSize, transform, distThreshold, coordThreshold);
     
-    cv::namedWindow("rotated Image", CV_WINDOW_AUTOSIZE|CV_WINDOW_FREERATIO);
-    cv::imshow("rotated Image", rotXYImg);
+    Affine affine(transform);
     
-    int matchOrthHeight = transform.dphi2v(M_PI / divNum);
-    cv::Rect roi(0, frameSize.height/2 - matchOrthHeight/2,
-                 frameSize.width, matchOrthHeight);
+    MatchImagePair matchImgPair
+    (transform, extractFeature, matchFeature, affine);
     
-    cv::Mat stdRoiImg = stdImg(roi);
-    cv::Mat rotRoiImg = rotXYImg(roi);
     
-    cv::Ptr<cv::FeatureDetector> detector;
-    detector = cv::FeatureDetector::create("SIFT");
-    cv::Ptr<cv::DescriptorExtractor> extractor;
-    extractor = cv::DescriptorExtractor::create("SIFT");
-    cv::Ptr<cv::DescriptorMatcher> matcher;
-    matcher = cv::DescriptorMatcher::create("BruteForce");
+    cv::Mat input1, input2;
+    cv::Mat img1, img2;
+    input1 = cv::imread(path + imgName1);
+    cv::resize(input1, img1, frameSize);
+    input2 = cv::imread(path + imgName2);
+    cv::resize(input2, img2, frameSize);
     
-    std::vector<cv::KeyPoint> stdRoiKeyPoints;
-    cv::Mat stdRoiDescriptor;
-    detector->detect(stdRoiImg, stdRoiKeyPoints);
-    extractor->compute(stdRoiImg, stdRoiKeyPoints, stdRoiDescriptor);
+    cv::Mat modImg2;
     
-    std::vector<cv::KeyPoint> rotRoiKeyPoints;
-    cv::Mat rotRoiDescriptor;
-    detector->detect(rotRoiImg, rotRoiKeyPoints);
-    extractor->compute(rotRoiImg, rotRoiKeyPoints, rotRoiDescriptor);
+    matchImgPair.ModifylatterImg(img1, img2, modImg2);
     
-    std::vector<cv::DMatch> dmatches1, dmatches2, dmatches;
-    matcher->match(stdRoiDescriptor, rotRoiDescriptor, dmatches1);
-    matcher->match(rotRoiDescriptor, stdRoiDescriptor, dmatches2);
-    for (int i=0; i<dmatches1.size(); i++) {
-        cv::DMatch forward = dmatches1[i];
-        cv::DMatch backward = dmatches2[forward.trainIdx];
-        
-        if (forward.queryIdx == backward.trainIdx) {
-            if (forward.distance < 100) {
-                dmatches.push_back(forward);
-            }
-        }
-    }
-
-    std::vector<float> stdVec, rotVec;
-    std::vector<float> moveVec;
-    for (int i=0; i<dmatches.size(); i++) {
-        cv::Point2f pt1 = stdRoiKeyPoints[dmatches[i].queryIdx].pt;
-        cv::Point2f pt2 = rotRoiKeyPoints[dmatches[i].trainIdx].pt;
-        
-        cv::Point2f tmpVec;
-        if (pt1.x <= pt2.x) tmpVec = pt2 - pt1;
-        else                tmpVec = pt2 - pt1 + cv::Point2f(frameSize.width, 0);
-        
-        moveVec.push_back(tmpVec.x);
-        
-        stdVec.push_back(pt1.x);
-        rotVec.push_back(pt2.x);
-    }
+    cv::namedWindow("img1");
+    cv::namedWindow("img2");
+    cv::namedWindow("mod img2");
     
-    std::sort(moveVec.begin(), moveVec.end());
-    
-    cv::Mat drawOutput;
-    
-    cv::drawMatches(stdRoiImg, stdRoiKeyPoints, rotRoiImg, rotRoiKeyPoints,
-                    dmatches, drawOutput, cv::Scalar::all(0),
-                    cv::Scalar::all(255));
-    
-    cv::namedWindow("Test", CV_WINDOW_AUTOSIZE|CV_WINDOW_FREERATIO);
-    cv::imshow("Test", drawOutput);
-    
+    cv::imshow("img1", img1);
+    cv::imshow("img2", img2);
+    cv::imshow("mod img2", modImg2);
+  
     cv::waitKey(-1);
+    
+//    cv::imwrite(path + "modOutImg1.jpg", modImg2);
+    
+//    cv::waitKey(-1);
     
     return 0;
 }

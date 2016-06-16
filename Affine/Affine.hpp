@@ -10,6 +10,7 @@
 #define Affine_hpp
 
 #include <stdio.h>
+#include <iostream>
 
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
@@ -25,6 +26,9 @@ public:
     Affine(Transform& transform);
     ~Affine();
     
+    void estimate3DRotMat
+    (std::vector<cv::Point3f>& forPoints, std::vector<cv::Point3f>& latPoints,
+     cv::Mat& estRotMat);
     // アフィン行列から回転行列を取り出す
     void extractRotMatFromAffineMat(const cv::Mat& affMat, cv::Mat& rotMat);
     // 現在の回転行列を集約する
@@ -40,6 +44,9 @@ public:
      const std::vector<cv::DMatch>& dMatches,
      std::vector<cv::Point3f>& for3DPoints,
      std::vector<cv::Point3f>& lat3DPoints);
+    
+    // 誤差の乗った回転行列を正規化
+    void normalizeRotMat(cv::Mat& rotMat);
     
 private:
     Transform& transform;

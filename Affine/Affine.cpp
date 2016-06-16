@@ -19,6 +19,25 @@ Affine::~Affine()
     
 }
 
+void Affine::estimate3DRotMat
+(std::vector<cv::Point3f> &forPoints, std::vector<cv::Point3f> &latPoints,
+ cv::Mat &estRotMat)
+{
+    // 三次元アフィン行列を推定
+    cv::Mat estAffMat;
+    estimate3DAffineMat(forPoints, latPoints, estAffMat);
+    
+    // 回転行列を取り出す
+    extractRotMatFromAffineMat(estAffMat, estRotMat);
+    
+    std::cout << "rowRotMat = " << std::endl << estRotMat.inv() << std::endl;
+    
+    // 回転行列を正規化
+    normalizeRotMat(estRotMat);
+    
+    std::cout << "normRotMat = " << std::endl << estRotMat.inv() << std::endl;
+}
+
 void Affine::extractRotMatFromAffineMat
 (const cv::Mat &affMat, cv::Mat &rotMat)
 {
@@ -64,5 +83,31 @@ void Affine::get3DPointPair
         lat2DPoint = latKeyPoints[dMatches[i].trainIdx].pt;
         transform.orth2d2orth3d(lat2DPoint, lat3DPoint);
         lat3DPoints.push_back(lat3DPoint);
+    }
+}
+
+void Affine::normalizeRotMat(cv::Mat &rotMat)
+{
+    cv::Vec3f a, b, c;
+    cv::Vec3f e1, e2, e3;
+    cv::Vec3f f1, f2, f3;
+    
+    a = rotMat.col(0);
+    b = rotMat.col(1);
+    c = rotMat.col(2);
+    
+    f1 = a;
+    e1 = 1.0/cv::norm(f1) * f1;
+    
+    f2 = b - b.dot(e1) * e1;
+    e2 = 1.0/cv::norm(f2) * f2;
+    
+    f3 = c - c.dot(e1) * e1 - c.dot(e2) * e2;
+    e3 = 1.0/cv::norm(f3) * f3;
+    
+    for (int v=0; v<3; v++) {
+        rotMat.at<float>(v, 0) = e1[v];
+        rotMat.at<float>(v, 1) = e2[v];
+        rotMat.at<float>(v, 2) = e3[v];
     }
 }

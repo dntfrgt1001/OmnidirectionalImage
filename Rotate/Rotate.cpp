@@ -152,8 +152,12 @@ void Rotate::rotateXAng(double chi, const cv::Mat& img, cv::Mat& rotImg)
     int halfWidth = frameSize.width / 2;
     if (frameSize.width % 2 == 0) {
         for (int vr=0; vr<frameSize.height; vr++) {
-            rotImg.at<cv::Vec3b>(vr, halfWidth-1) = 2.0/3.0*rotImg.at<cv::Vec3b>(vr, halfWidth-2) + 1.0/3.0*rotImg.at<cv::Vec3b>(vr, halfWidth+1);
-            rotImg.at<cv::Vec3b>(vr, halfWidth) = 1.0/3.0*rotImg.at<cv::Vec3b>(vr, halfWidth-2) + 2.0/3.0*rotImg.at<cv::Vec3b>(vr, halfWidth+1);
+            rotImg.at<cv::Vec3b>(vr, halfWidth-1) =
+            2.0/3.0*rotImg.at<cv::Vec3b>(vr, halfWidth-2) +
+            1.0/3.0*rotImg.at<cv::Vec3b>(vr, halfWidth+1);
+            rotImg.at<cv::Vec3b>(vr, halfWidth) =
+            1.0/3.0*rotImg.at<cv::Vec3b>(vr, halfWidth-2) +
+            2.0/3.0*rotImg.at<cv::Vec3b>(vr, halfWidth+1);
         }
     }else{
         for (int vr=0; vr<frameSize.height; vr++) {
