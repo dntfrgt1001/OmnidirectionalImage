@@ -17,7 +17,7 @@
 #include "ExtractFeaturePoint.hpp"
 #include "MatchFeaturePoint.hpp"
 #include "Affine.hpp"
-#include "MatchImagePair.hpp"
+#include "MatchMain.hpp"
 
 int main(int argc, const char * argv[])
 {
@@ -39,8 +39,7 @@ int main(int argc, const char * argv[])
     
     Affine affine(transform);
     
-    MatchImagePair matchImgPair
-    (transform, extractFeature, matchFeature, affine);
+    MatchMain matchMain(transform, extractFeature, matchFeature, affine);
     
     
     cv::Mat input1, input2;
@@ -52,7 +51,7 @@ int main(int argc, const char * argv[])
     
     cv::Mat modImg2;
     
-    matchImgPair.ModifylatterImg(img1, img2, modImg2);
+    matchMain.ModifylatterImg(img1, img2, modImg2);
     
     cv::namedWindow("img1");
     cv::namedWindow("img2");

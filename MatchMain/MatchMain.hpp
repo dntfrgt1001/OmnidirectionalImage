@@ -1,13 +1,13 @@
 //
-//  MatchImagePair.hpp
+//  MatchMain.hpp
 //  OmnidirectionalImage
 //
 //  Created by masakazu nakazawa on 2016/06/15.
 //  Copyright © 2016年 masakazu. All rights reserved.
 //
 
-#ifndef MatchImagePair_hpp
-#define MatchImagePair_hpp
+#ifndef MatchMain_hpp
+#define MatchMain_hpp
 
 #include <stdio.h>
 #include <iostream>
@@ -20,13 +20,13 @@
 #include "Affine.hpp"
 
 
-class MatchImagePair
+class MatchMain
 {
 public:
-    MatchImagePair
+    MatchMain
     (Transform& transform, ExtractFeaturePoint& extractFeature,
      MatchFeaturePoint& matchFeature, Affine& affine);
-    ~MatchImagePair();
+    ~MatchMain();
     
     void ModifylatterImg
     (const cv::Mat& forImg, const cv::Mat& latImg, cv::Mat& modLatImg);
@@ -38,4 +38,4 @@ private:
     Affine& affine;
 };
 
-#endif /* MatchImagePair_hpp */
+#endif /* MatchMain_hpp */

@@ -54,6 +54,7 @@ void MatchFeaturePoint::crossMatch
 void MatchFeaturePoint::filterMatchDistance
 (std::vector<cv::DMatch> &dMatches) const
 {
+    // .eraseに注意
     for (int i=0; i<dMatches.size();  ) {
         if (dMatches[i].distance > distThreshold) {
             dMatches.erase(dMatches.begin() + i);
@@ -64,35 +65,15 @@ void MatchFeaturePoint::filterMatchDistance
 }
 
 void MatchFeaturePoint::filterMatchCoordinate
-(std::vector<cv::KeyPoint> &forKeyPoints,
- std::vector<cv::KeyPoint> &latKeyPoints,
- std::vector<cv::DMatch> &dMatches) const
-{
-    for (int i=0; i<dMatches.size();  ) {
-        cv::Point2f forPoint2d, latPoint2d;
-        cv::Point3f forPoint3d, latPoint3d;
-        
-        forPoint2d = forKeyPoints[dMatches[i].queryIdx].pt;
-        latPoint2d = latKeyPoints[dMatches[i].trainIdx].pt;
-        
-        transform.orth2d2orth3d(forPoint2d, forPoint3d);
-        transform.orth2d2orth3d(latPoint2d, latPoint3d);
-        
-        if (cv::norm(forPoint3d - latPoint3d) > coordThreshold) {
-            dMatches.erase(dMatches.begin() + i);
-        } else {
-            i++;
-        }
-    }
-}
-
-void MatchFeaturePoint::filterMatchCoordinate
 (std::vector<cv::Point3f> &for3DPoints, std::vector<cv::Point3f> &lat3DPoints)
 {
-    for (int i=0; i<for3DPoints.size(); i++) {
+    // .eraseに注意
+    for (int i=0; i<for3DPoints.size(); ) {
         if (cv::norm(for3DPoints[i] - lat3DPoints[i]) > coordThreshold) {
             for3DPoints.erase(for3DPoints.begin() + i);
             lat3DPoints.erase(lat3DPoints.begin() + i);
+        } else {
+            i++;
         }
     }
 }

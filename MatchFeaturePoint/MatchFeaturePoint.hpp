@@ -40,10 +40,6 @@ public:
     (std::vector<cv::DMatch>& dMatches) const;
     // マッチングの座標が大きく離れているものはフィルタリング
     void filterMatchCoordinate
-    (std::vector<cv::KeyPoint>& forKeyPoints,
-     std::vector<cv::KeyPoint>& latKeyPoints,
-     std::vector<cv::DMatch>& dMatches) const;
-    void filterMatchCoordinate
     (std::vector<cv::Point3f>& for3DPoints,
      std::vector<cv::Point3f>& lat3DPoints);
     
