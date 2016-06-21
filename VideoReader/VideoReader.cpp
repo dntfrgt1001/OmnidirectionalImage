@@ -13,8 +13,10 @@ VideoReader::VideoReader
 frameSize(frameSize), hasChecked(false)
 {
     video.open(videoName);
-    
-    if (!video.isOpened()) exit(1);
+    if (!video.isOpened()) {
+        std::cout << "video open error" << std::endl;
+        exit(1);
+    }
 }
 
 VideoReader::~VideoReader()
@@ -40,25 +42,24 @@ bool VideoReader::hasNext()
     if (hasChecked) {
         return isAvailable;
     } else {
-        isAvailable = video.grab();
         hasChecked = true;
         
+        cv::Mat input;
+        video >> input;
+        
+        if (input.empty()) {
+            isAvailable = false;
+        } else {
+            isAvailable = true;
+            cv::resize(input, nextFrame, frameSize);
+        }
+
         return isAvailable;
     }
 }
 
 void VideoReader::readImg(cv::Mat &img)
 {
-    /*
-    if (curInput.empty()) {
-        bool isNext
-    }
-    
-    cv::resize(curInput, img, frameSize);
-    
-    curInput.release();
-     */
-    
     // 未チェック
     if (!hasChecked) {
         hasNext();
@@ -70,9 +71,10 @@ void VideoReader::readImg(cv::Mat &img)
         exit(1);
     }
     
+    // 未チェックに
     hasChecked = false;
     
-    cv::Mat input;
-    video.retrieve(input);
-    cv::resize(input, img, frameSize);
+    img = nextFrame.clone();
 }
+
+

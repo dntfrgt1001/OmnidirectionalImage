@@ -30,12 +30,10 @@ void Affine::estimate3DRotMat
     // 回転行列を取り出す
     extractRotMatFromAffineMat(estAffMat, estRotMat);
     
-    std::cout << "rowRotMat = " << std::endl << estRotMat.inv() << std::endl;
+    std::cout << "raw estRotMat = " << std::endl << estRotMat << std::endl;
     
     // 回転行列を正規化
     normalizeRotMat(estRotMat);
-    
-    std::cout << "normRotMat = " << std::endl << estRotMat.inv() << std::endl;
 }
 
 void Affine::extractRotMatFromAffineMat

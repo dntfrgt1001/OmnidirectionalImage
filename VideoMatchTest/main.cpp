@@ -14,12 +14,44 @@
 #include <opencv2/features2d/features2d.hpp>
 #include <opencv2/nonfree/nonfree.hpp>
 
-#include "Rotate.hpp"
 #include "Transform.hpp"
-#include "Match.hpp"
+#include "ExtractFeaturePoint.hpp"
+#include "MatchFeaturePoint.hpp"
+#include "Affine.hpp"
+#include "MatchMain.hpp"
+#include "VideoReader.hpp"
+#include "VideoWriter.hpp"
 
 int main(int argc, const char * argv[])
 {
+    const std::string path = "/Users/masakazu/Desktop/phi/";
+    const std::string inputVideoName = "phi.mp4";
+    const std::string outputVideoName = "phimod.mov";
+    
+    const cv::Size frameSize(1920, 960);
+    
+    Transform transform(frameSize);
+    
+    int divNum = 4;
+    ExtractFeaturePoint extract(frameSize, transform, divNum);
+    
+    int distThreshold = 120;
+    float coordThreshold = 0.5;
+    MatchFeaturePoint match(frameSize, transform, distThreshold, coordThreshold);
+    
+    Affine affine(transform);
+    
+    MatchMain matchMain(transform, extract, match, affine);
+    
+    VideoReader vr(frameSize, path + inputVideoName);
+    VideoWriter vw(frameSize, path + outputVideoName);
+    
+    matchMain.ModifyVideo(vr, vw);
+    
+
+    
+    /*
+    
     const std::string workDir = "/Users/masakazu/Desktop/working/";
     
     const cv::Size frameSize(1280, 640);
@@ -75,6 +107,7 @@ int main(int argc, const char * argv[])
 //        cv::waitKey(-1);
     }
     
-    
+    */
+     
     return 0;
 }

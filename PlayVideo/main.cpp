@@ -17,7 +17,7 @@
 
 int main(int argc, const char * argv[])
 {
-    const std::string path = "/Users/masakazu/Desktop/";
+    const std::string path = "/Users/masakazu/Desktop/phi/";
     const cv::Size frameSize(1920, 960);
     const std::string inputName = "phi.mp4";
 //    const std::string outputName = "out.mov";
@@ -29,7 +29,7 @@ int main(int argc, const char * argv[])
     
     cv::namedWindow("img");
     
-    int i=0;
+       int i=0;
     while (videoReader.hasNext()) {
         cv::Mat img;
         
@@ -37,13 +37,14 @@ int main(int argc, const char * argv[])
         
 //        videoWriter.writeImg(img);
         
-        cv::imwrite(outputPath + outputPrefix + std::to_string(i) + ".jpg", img);
+        //cv::imwrite(outputPath + outputPrefix + std::to_string(i) + ".jpg", img);
         
         cv::imshow("img", img);
         
-        if (cv::waitKey(50) > 0) break;
+        cv::waitKey(-1);
         
         i++;
+
         
         std::cout << i << std::endl;
     }

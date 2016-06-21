@@ -23,7 +23,7 @@ int main(int argc, const char * argv[])
     std::string workDir = "/Users/masakazu/Documents/Koike lab/product/OmnidirectionalImage/working/";
     std::string inputName = "R0010050.JPG";
     
-    const cv::Size frameSize(1960, 980);
+    const cv::Size frameSize(1920, 960);
     
     cv::Mat input, img;
     input = cv::imread(workDir + inputName);

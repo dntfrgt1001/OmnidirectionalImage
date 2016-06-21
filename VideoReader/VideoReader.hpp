@@ -21,15 +21,20 @@
 class VideoReader
 {
 public:
-    VideoReader(const cv::Size& frameSize, const std::string& videoName);
+//    enum V_METHOD {VR_VIDEO, VR_ARRAY,};
+    
+    VideoReader
+    (const cv::Size& frameSize, const std::string& videoName);
     ~VideoReader();
     
     bool hasNext();
     void readImg(cv::Mat& img);
     
+    
 private:
     const cv::Size& frameSize;
     cv::VideoCapture video;
+    cv::Mat nextFrame;
     bool hasChecked;
     bool isAvailable;
 };

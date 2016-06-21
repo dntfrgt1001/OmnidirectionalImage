@@ -12,7 +12,8 @@ MatchMain::MatchMain
 (Transform& transform, ExtractFeaturePoint& extractFeature,
  MatchFeaturePoint& matchFeature, Affine& affine):
 transform(transform), extractFeature(extractFeature),
-matchFeature(matchFeature), affine(affine)
+matchFeature(matchFeature), affine(affine),
+accMat(cv::Mat::eye(3, 3, CV_32FC1))
 {
     
 }
@@ -52,6 +53,76 @@ void MatchMain::ModifylatterImg
     cv::Mat estRotMat;
     affine.estimate3DRotMat(for3DPoints, lat3DPoints, estRotMat);
     
+    // 回転行列を集積
+    accMat = accMat * estRotMat;
+    std::cout << "---------------------------------------" << std::endl;
+    std::cout << "estRotMat = " << std::endl << estRotMat << std::endl;
+    std::cout << "accMat = " << std::endl << accMat << std::endl;
+    std::cout << "---------------------------------------" << std::endl;
+    
     // 修正画像を出力
-    transform.rotateImgWithRotMat(latImg, modLatImg, estRotMat);
+//    transform.rotateImgWithRotMat(latImg, modLatImg, estRotMat);
+    transform.rotateImgWithRotMat(latImg, modLatImg, accMat);
+    
+}
+
+void MatchMain::ModifyVideo(VideoReader &vr, VideoWriter &vw)
+{
+    const int stride = 3;
+    
+    int i = 0;
+    
+    cv::Mat stdImg;
+    vr.hasNext();
+//    vr.readImg(stdImg);
+    
+//    cv::namedWindow("standard image", CV_WINDOW_AUTOSIZE|CV_WINDOW_FREERATIO);
+//    cv::namedWindow("current image", CV_WINDOW_AUTOSIZE|CV_WINDOW_FREERATIO);
+//    cv::namedWindow("current modified image", CV_WINDOW_AUTOSIZE|CV_WINDOW_FREERATIO);
+  
+    cv::namedWindow("pre image");
+    cv::namedWindow("cur image");
+    cv::namedWindow("mod cur image");
+    
+    cv::Mat prevImg, curImg;
+  
+    vr.readImg(curImg);
+    
+    while (vr.hasNext()) {
+        i++;
+      
+        prevImg = curImg.clone();
+        
+        vr.readImg(curImg);
+        
+        cv::Mat curModImg;
+        ModifylatterImg(prevImg, curImg, curModImg);
+        
+        cv::imshow("pre image", prevImg);
+        cv::imshow("cur image", curImg);
+        cv::imshow("mod cur image", curModImg);
+        
+        vw.writeImg(curModImg);
+        
+//        cv::waitKey(-1);
+        
+        /*
+        // 標準画像に合わせて現在の画像を修正
+        cv::Mat curImg, modCurImg;
+        vr.readImg(curImg);
+        ModifylatterImg(stdImg, curImg, modCurImg);
+        
+        // 修正した現在の画像を出力
+        vw.writeImg(modCurImg);
+        
+        // strideの間隔で標準画像を変更
+        if (i % stride == 0) {
+            modCurImg.copyTo(stdImg);
+        }
+        
+        cv::imshow("standard image", stdImg);
+        cv::imshow("current image", curImg);
+        cv::imshow("current modified image", modCurImg);
+         */
+    }
 }

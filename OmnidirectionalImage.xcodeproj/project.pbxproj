@@ -47,12 +47,24 @@
 		02C57BF91D104B4100F428F2 /* libopencv_highgui.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 02C57BF81D104B4100F428F2 /* libopencv_highgui.dylib */; };
 		02C57BFB1D104B4A00F428F2 /* libopencv_imgproc.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 02C57BFA1D104B4A00F428F2 /* libopencv_imgproc.dylib */; };
 		02C57BFD1D104B5A00F428F2 /* libopencv_nonfree.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 02C57BFC1D104B5A00F428F2 /* libopencv_nonfree.dylib */; };
-		02C57C061D105B6300F428F2 /* ExtractFeaturePoint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 02E4371C1CF845D7007C3605 /* ExtractFeaturePoint.cpp */; };
+		02C768851D17E7D80069E8C3 /* VideoReader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 02C57BE91D0FB0D100F428F2 /* VideoReader.cpp */; };
+		02C768861D17E7DB0069E8C3 /* VideoWriter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 02C57BEE1D0FDED300F428F2 /* VideoWriter.cpp */; };
+		02C768871D17E7E10069E8C3 /* Affine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 02315B411D09937600CC22A0 /* Affine.cpp */; };
+		02C768881D17E7F00069E8C3 /* MatchFeaturePoint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 02E437131CF84303007C3605 /* MatchFeaturePoint.cpp */; };
+		02C768891D17E7F40069E8C3 /* ExtractFeaturePoint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 02E4371C1CF845D7007C3605 /* ExtractFeaturePoint.cpp */; };
+		02C7688A1D17E8210069E8C3 /* libopencv_core.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 02C57BF41D104B2C00F428F2 /* libopencv_core.dylib */; };
+		02C7688B1D17E8280069E8C3 /* libopencv_imgproc.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 02C57BFA1D104B4A00F428F2 /* libopencv_imgproc.dylib */; };
+		02C7688C1D17E82B0069E8C3 /* libopencv_highgui.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 02C57BF81D104B4100F428F2 /* libopencv_highgui.dylib */; };
+		02C7688D1D17E8390069E8C3 /* libopencv_features2d.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 02C57BF61D104B3800F428F2 /* libopencv_features2d.dylib */; };
+		02C7688E1D17E83D0069E8C3 /* libopencv_calib3d.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 02C57BF21D104B1500F428F2 /* libopencv_calib3d.dylib */; };
+		02C7688F1D17E8400069E8C3 /* libopencv_nonfree.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 02C57BFC1D104B5A00F428F2 /* libopencv_nonfree.dylib */; };
+		02C768911D17E8680069E8C3 /* MatchMain.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0290BBB21D12A08900C83FF2 /* MatchMain.cpp */; };
+		02C768921D17EA650069E8C3 /* VideoWriter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 02C57BEE1D0FDED300F428F2 /* VideoWriter.cpp */; };
+		02C768931D17EA690069E8C3 /* VideoReader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 02C57BE91D0FB0D100F428F2 /* VideoReader.cpp */; };
 		02C7A51A1D1108CB00DC7B73 /* libopencv_core.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 02C57BF41D104B2C00F428F2 /* libopencv_core.dylib */; };
 		02C7A51B1D1108DA00DC7B73 /* libopencv_imgproc.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 02C57BFA1D104B4A00F428F2 /* libopencv_imgproc.dylib */; };
 		02C7A51C1D1108F200DC7B73 /* libopencv_highgui.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 02C57BF81D104B4100F428F2 /* libopencv_highgui.dylib */; };
 		02C7A51D1D1108FA00DC7B73 /* libopencv_features2d.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 02C57BF61D104B3800F428F2 /* libopencv_features2d.dylib */; };
-		02C7A51E1D11194D00DC7B73 /* Transform.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0245CD8D1C4233E000FF5E33 /* Transform.cpp */; };
 		02C7A51F1D111A6000DC7B73 /* libopencv_core.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 02C57BF41D104B2C00F428F2 /* libopencv_core.dylib */; };
 		02C7A5201D111A6400DC7B73 /* libopencv_imgproc.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 02C57BFA1D104B4A00F428F2 /* libopencv_imgproc.dylib */; };
 		02C7A5211D111A6C00DC7B73 /* libopencv_highgui.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 02C57BF81D104B4100F428F2 /* libopencv_highgui.dylib */; };
@@ -276,6 +288,12 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				02C7688A1D17E8210069E8C3 /* libopencv_core.dylib in Frameworks */,
+				02C7688E1D17E83D0069E8C3 /* libopencv_calib3d.dylib in Frameworks */,
+				02C7688B1D17E8280069E8C3 /* libopencv_imgproc.dylib in Frameworks */,
+				02C7688D1D17E8390069E8C3 /* libopencv_features2d.dylib in Frameworks */,
+				02C7688C1D17E82B0069E8C3 /* libopencv_highgui.dylib in Frameworks */,
+				02C7688F1D17E8400069E8C3 /* libopencv_nonfree.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -848,7 +866,9 @@
 			files = (
 				0245CDAC1C4780D700FF5E33 /* Transform.cpp in Sources */,
 				02C7A5281D112B6D00DC7B73 /* Affine.cpp in Sources */,
+				02C768931D17EA690069E8C3 /* VideoReader.cpp in Sources */,
 				02C7A5271D112B6A00DC7B73 /* MatchFeaturePoint.cpp in Sources */,
+				02C768921D17EA650069E8C3 /* VideoWriter.cpp in Sources */,
 				02C7A5261D112B6700DC7B73 /* ExtractFeaturePoint.cpp in Sources */,
 				0290BBB31D12A08900C83FF2 /* MatchMain.cpp in Sources */,
 				02206DE41C356B0400733203 /* main.cpp in Sources */,
@@ -896,8 +916,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				02C768911D17E8680069E8C3 /* MatchMain.cpp in Sources */,
+				02C768861D17E7DB0069E8C3 /* VideoWriter.cpp in Sources */,
+				02C768881D17E7F00069E8C3 /* MatchFeaturePoint.cpp in Sources */,
+				02C768871D17E7E10069E8C3 /* Affine.cpp in Sources */,
+				02C768891D17E7F40069E8C3 /* ExtractFeaturePoint.cpp in Sources */,
 				0245CDA71C43E24200FF5E33 /* Transform.cpp in Sources */,
 				0245CD9E1C43DF3700FF5E33 /* main.cpp in Sources */,
+				02C768851D17E7D80069E8C3 /* VideoReader.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -950,9 +976,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				02C7A51E1D11194D00DC7B73 /* Transform.cpp in Sources */,
 				02C57BEC1D0FB9A300F428F2 /* VideoReader.cpp in Sources */,
-				02C57C061D105B6300F428F2 /* ExtractFeaturePoint.cpp in Sources */,
 				029994151C72A9CB00792144 /* main.cpp in Sources */,
 				02C57BF11D10402A00F428F2 /* VideoWriter.cpp in Sources */,
 			);
@@ -1067,7 +1091,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				HEADER_SEARCH_PATHS = "$(inherited)";
-				LIBRARY_SEARCH_PATHS = "$(inherited)";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					/usr/local/Cellar/opencv/2.4.13/lib,
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -1076,7 +1103,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				HEADER_SEARCH_PATHS = "$(inherited)";
-				LIBRARY_SEARCH_PATHS = "$(inherited)";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					/usr/local/Cellar/opencv/2.4.13/lib,
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;

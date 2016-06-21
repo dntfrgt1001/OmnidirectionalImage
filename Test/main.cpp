@@ -22,8 +22,8 @@
 int main(int argc, const char * argv[])
 {
     const std::string path = "/Users/masakazu/Desktop/phi/";
-    const std::string imgName1 = "phi10.jpg";
-    const std::string imgName2 = "phi15.jpg";
+    const std::string imgName1 = "phi1.jpg";
+    const std::string imgName2 = "phi2.jpg";
     
     const cv::Size frameSize(1920, 960);
     
@@ -32,7 +32,7 @@ int main(int argc, const char * argv[])
     int divNum = 4;
     ExtractFeaturePoint extractFeature(frameSize, transform, divNum);
     
-    int distThreshold = 100;
+    int distThreshold = 200;
     float coordThreshold = 0.6;
     MatchFeaturePoint
     matchFeature(frameSize, transform, distThreshold, coordThreshold);
