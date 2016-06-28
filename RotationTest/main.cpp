@@ -13,112 +13,51 @@
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 
-#include "Rotate.hpp"
+
 #include "Transform.hpp"
+#include "Quarternion.hpp"
 
 int main(int argc, const char * argv[])
 {
-    std::string workDir = "/Users/masakazu/Desktop/";
-    std::string inputName = "img1.jpg";
+ 
+    const cv::Size frameSize(2000, 1000);
     
-    const cv::Size frameSize(5376, 2688);
+    Transform transform(frameSize);
     
-    cv::Mat input, img;
+    float theta = M_PI / 4.0;
+    cv::Vec3f axis(0, 0, 1);
     
-    input = cv::imread(workDir + inputName);
-    cv::resize(input, img, frameSize);
+    cv::Mat rotMat;
+    Quarternion::arbRotMat(theta, axis, rotMat);
     
-    const Transform transform(frameSize);
-    Rotate rot(frameSize, transform);
+    std::cout << "true R = " << std::endl << rotMat << std::endl;
     
-    cv::Mat rotImg;
-
-//    cv::namedWindow("rotImg", CV_WINDOW_AUTOSIZE|CV_WINDOW_FREERATIO);
+    std::vector<cv::Point3f> forPoints, latPoints;
+    cv::Point3f p1(1.0, 0.0, 0.0); forPoints.push_back(p1);
+    cv::Point3f p2(0.0, 1.0, 0.0); forPoints.push_back(p2);
+    cv::Point3f p3(0.0, 0.0, 1.0); forPoints.push_back(p3);
     
-    img.copyTo(rotImg);
-//    cv::imshow("rotImg", rotImg);
-//    cv::waitKey(-1);
-
-    double deltaPhi = M_PI * 1.0 / 3.0;
-//    rot.rotateYAng(deltaPhi, img, rotImg);
-  
-    rot.rotateXAng(deltaPhi, img, rotImg);
+    for (int i=0; i<forPoints.size(); i++) {
+        cv::Point3f tmpPoint;
+        transform.orth3d2orth3dWithRotMat(forPoints[i], tmpPoint, rotMat);
+        latPoints.push_back(tmpPoint);
+    }
     
-    std::string outputName = "newImg.jpg";
-    cv::imwrite(workDir + outputName, rotImg);
-    
-    /*
-    double deltaXChi = M_PI * 1.0/60.0;
-    double deltaYChi = M_PI * 1.0/60.0;
-    
-    int limit = 300;
-    for (int i=0; i<limit; i++) {
-        double curXChi = deltaXChi * i;
-        double curYChi = deltaYChi * i;
+    cv::Mat accMat = cv::Mat::zeros(3, 3, CV_32FC1);
+    for (int i=0; i<forPoints.size(); i++) {
+        cv::Vec3f forVec = cv::Mat1f(forPoints[i]);
+        cv::Vec3f latVec = cv::Mat1f(latPoints[i]);
         
-        rot.rotateXYAng(curXChi, curYChi, img, rotImg);
-        cv::imshow("rotImg", rotImg);
-        
-        if (cv::waitKey(10) > 0) break;
-     }
-    */
+        accMat = accMat + cv::Mat(latVec * forVec.t());
+    }
     
+    cv::Mat u, w, vt;
+    cv::SVD::compute(accMat, w, u, vt);
     
-    /*
-    rot.rotateYOrth(thetaChi, rotThetaImg);
-    
-    rot.setImage(&rotThetaImg);
-    
-    rot.rotateXOrth(phiChi, rotPhiImg);
-    
-    cv::namedWindow("input", CV_WINDOW_AUTOSIZE|CV_WINDOW_FREERATIO);
-    //    cv::namedWindow("rotTheta", CV_WINDOW_AUTOSIZE|CV_WINDOW_FREERATIO);
-    cv::namedWindow("rotPhi", CV_WINDOW_AUTOSIZE|CV_WINDOW_FREERATIO);
-    
-    cv::imshow("input", img);
-    //    cv::imshow("rotTheta", rotThetaImg);
-    cv::imshow("rotPhi", rotPhiImg);
-    
-    double deltaChi = M_PI * 1.0/40.0;
-    double angWidth = M_PI * 3.0/2.0;
-    std::string outputName = "out.mp4";
-    
-    rot.writeRotateYMovie(deltaChi, angWidth, workDir+outputName, 150);
-    */
-    //    rot.showotateYMovie(deltaChi, angWidth);
-    
-    
-    //    std::string outputName = "lattice30.png";
-    //    cv::imwrite(workDir + outputName, rotateImg);
-    
-    /*
-     cv::Mat zero = cv::Mat::zeros(frameSize, CV_8UC1);
-     
-     int n = 30;
-     
-     float thetar = M_PI * 1.0/1.1 * (-1);
-     float phir = M_PI * 1.0/2.1 ;
-     int ur, vr;
-     rot.ang2orth(thetar, phir, ur, vr);
-     
-     cv::circle(zero, cv::Point(ur, vr), 5, cv::Scalar(255));
-     
-     for (int i=0; i<n; i++) {
-     float chi = 2*M_PI * (float)i/n;
-     
-     int u, v;
-     rot.rotateReverse(chi, ur, vr, u, v);
-     
-     std::cout << "(u, v) = (" << u << ", " << v << ")" << std::endl;
-     
-     cv::circle(zero, cv::Point(u,v), 3, cv::Scalar(125));
-     }
-     
-     cv::namedWindow("test", CV_WINDOW_AUTOSIZE|CV_WINDOW_FREERATIO);
-     
-     cv::imshow("test", zero);
-     */
-
+    std::cout << "u = " << std::endl << u << std::endl;
+    std::cout << "w = " << std::endl << w << std::endl;
+    std::cout << "vt = " << std::endl << vt << std::endl;
+    std::cout << "est R = " << std::endl << u * vt <<std::endl;
     
     return 0;
 }

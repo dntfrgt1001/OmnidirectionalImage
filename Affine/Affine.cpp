@@ -11,7 +11,8 @@
 Affine::Affine(Transform& transform):
 transform(transform), accMat(cv::Mat::eye(3, 3, CV_32FC1))
 {
-    
+    // RANSACの乱数用
+    srand((unsigned int) time(NULL));
 }
 
 Affine::~Affine()
@@ -19,6 +20,7 @@ Affine::~Affine()
     
 }
 
+#include <iostream>
 void Affine::estimate3DRotMat
 (std::vector<cv::Point3f> &forPoints, std::vector<cv::Point3f> &latPoints,
  cv::Mat &estRotMat)
@@ -26,6 +28,8 @@ void Affine::estimate3DRotMat
     // 三次元アフィン行列を推定
     cv::Mat estAffMat;
     estimate3DAffineMat(forPoints, latPoints, estAffMat);
+    
+    std::cout << "affine mat = " << std::endl << estAffMat << std::endl;
     
     // 回転行列を取り出す
     extractRotMatFromAffineMat(estAffMat, estRotMat);
@@ -62,28 +66,6 @@ void Affine::estimate3DAffineMat
     cv::estimateAffine3D(forPoints, latPoints, affMat, inliers);
 }
 
-void Affine::get3DPointPair
-(const std::vector<cv::KeyPoint> &forKeyPoints,
- const std::vector<cv::KeyPoint> &latKeyPoints,
- const std::vector<cv::DMatch> &dMatches,
- std::vector<cv::Point3f> &for3DPoints, std::vector<cv::Point3f> &lat3DPoints)
-{
-    
-    for (int i=0; i<dMatches.size(); i++) {
-        cv::Point2f for2DPoint, lat2DPoint;
-        cv::Point3f for3DPoint, lat3DPoint;
-        
-        // 回転前の3次元座標
-        for2DPoint = forKeyPoints[dMatches[i].queryIdx].pt;
-        transform.orth2d2orth3d(for2DPoint, for3DPoint);
-        for3DPoints.push_back(for3DPoint);
-        // 回転後の3次元座標
-        lat2DPoint = latKeyPoints[dMatches[i].trainIdx].pt;
-        transform.orth2d2orth3d(lat2DPoint, lat3DPoint);
-        lat3DPoints.push_back(lat3DPoint);
-    }
-}
-
 void Affine::normalizeRotMat(cv::Mat &rotMat)
 {
     cv::Vec3f a, b, c;
@@ -109,3 +91,132 @@ void Affine::normalizeRotMat(cv::Mat &rotMat)
         rotMat.at<float>(v, 2) = e3[v];
     }
 }
+
+void Affine::estimate3DRotMatSVD
+(std::vector<cv::Point3f> &forPoints, std::vector<cv::Point3f> &latPoints,
+ cv::Mat& estRotMat)
+{
+    int sampleSize = 5;
+    cv::Mat betRotMat = cv::Mat(3, 3, CV_32FC1);
+    float betError = FLT_MAX;
+    
+    // ランダムにサンプリングした点から推定を行う
+    for (int i=0; i<5; i++) {
+        std::vector<cv::Point3f> forPointx, latPointx;
+        getRondomPoint(forPoints, latPoints, forPointx, latPointx, sampleSize);
+        
+        cv::Mat curEstRotMat;
+        estimate3DRotMatSVDPartial(forPointx, latPointx, curEstRotMat);
+        
+        float curError;
+        curError = evalEstRotMat(forPoints, latPoints, curEstRotMat);
+        std::cout << "current error = " << curError << std::endl;
+        std::cout << "current mat = " << std::endl <<  curEstRotMat << std::endl;
+        
+        if (curError < betError) {
+            betError = curError;
+            curEstRotMat.copyTo(betRotMat);
+        }
+    }
+    
+    // 最も高いスコアの行列を用いてインライアーを求める
+    std::vector<cv::Point3f> inForPoints, inLatPoints;
+    removeOutlier
+    (forPoints, latPoints, inForPoints, inLatPoints, betError/sampleSize);
+    
+    // インライアーから回転行列を推定する
+    estRotMat = cv::Mat(3, 3, CV_32FC1);
+    estimate3DRotMatSVDPartial(inForPoints, inLatPoints, estRotMat);
+    
+    
+    /*
+    cv::Mat corMat = cv::Mat::zeros(3, 3, CV_32FC1);
+    
+    for (int i=0; i<forPoints.size(); i++) {
+        cv::Vec3f forVec = cv::Mat1f(forPoints[i]);
+        cv::Vec3f latVec = cv::Mat1f(latPoints[i]);
+        
+        corMat = corMat + cv::Mat(forVec * latVec.t());
+    }
+    
+    cv::Mat u, w, vt;
+    cv::SVD::compute(corMat, w, u, vt);
+    cv::Mat est = u * vt;
+    
+    estRotMat = cv::Mat(3, 3, CV_32FC1);
+    est.copyTo(estRotMat);
+     */
+}
+
+void Affine::getRondomPoint
+(const std::vector<cv::Point3f> &forPoints,
+ const std::vector<cv::Point3f> &latPoints,
+ std::vector<cv::Point3f> &forPointx, std::vector<cv::Point3f> &latPointx,
+ size_t getSize)
+{
+    forPointx.clear();
+    latPointx.clear();
+    
+    for (int i=0; i<getSize; i++) {
+        int randIdx = rand() % forPoints.size();
+        
+        forPointx.push_back(forPoints[randIdx]);
+        latPointx.push_back(latPoints[randIdx]);
+    }
+}
+
+void Affine::estimate3DRotMatSVDPartial
+(const std::vector<cv::Point3f> &forPointx,
+ const std::vector<cv::Point3f> &latPointx, cv::Mat &estRotMatPart)
+{
+    cv::Mat corMat = cv::Mat::zeros(3, 3, CV_32FC1);
+    
+    for (int i=0; i<forPointx.size(); i++) {
+        cv::Vec3f forVec = cv::Mat1f(forPointx[i]);
+        cv::Vec3f latVec = cv::Mat1f(latPointx[i]);
+        
+        corMat = corMat + cv::Mat(forVec * latVec.t());
+    }
+    
+    cv::Mat u, w, vt;
+    cv::SVD::compute(corMat, w, u, vt);
+    
+    cv::Mat est = u * vt;
+    
+    estRotMatPart = cv::Mat(3, 3, CV_32FC1);
+    
+    est.copyTo(estRotMatPart);
+}
+
+float Affine::evalEstRotMat
+(const std::vector<cv::Point3f> &forPoints,
+ const std::vector<cv::Point3f> &latPoints, const cv::Mat &estRotMat)
+{
+    float accErr = 0.0;
+    for (int i=0; i<forPoints.size(); i++) {
+        cv::Point3f modLatPoint;
+        transform.orth3d2orth3dWithRotMat(latPoints[i], modLatPoint, estRotMat);
+        
+        accErr += cv::norm(forPoints[i] - modLatPoint);
+    }
+    
+    return accErr;
+}
+
+void Affine::removeOutlier
+(const std::vector<cv::Point3f> &forPoints,
+ const std::vector<cv::Point3f> &latPoints,
+ std::vector<cv::Point3f> &inForPoints, std::vector<cv::Point3f> &inLatPoints,
+ float normThre)
+{
+    inForPoints.clear();
+    inLatPoints.clear();
+    
+    for (int i=0; i<forPoints.size(); i++) {
+        if (cv::norm(forPoints[i] - latPoints[i]) < normThre) {
+            inForPoints.push_back(forPoints[i]);
+            inLatPoints.push_back(latPoints[i]);
+        }
+    }
+}
+

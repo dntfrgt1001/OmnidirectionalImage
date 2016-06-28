@@ -32,7 +32,7 @@ int main(int argc, const char * argv[])
     int divNum = 4;
     ExtractFeaturePoint extractFeature(frameSize, transform, divNum);
     
-    int distThreshold = 200;
+    int distThreshold = 150;
     float coordThreshold = 0.6;
     MatchFeaturePoint
     matchFeature(frameSize, transform, distThreshold, coordThreshold);
@@ -40,7 +40,6 @@ int main(int argc, const char * argv[])
     Affine affine(transform);
     
     MatchMain matchMain(transform, extractFeature, matchFeature, affine);
-    
     
     cv::Mat input1, input2;
     cv::Mat img1, img2;

@@ -10,6 +10,10 @@
 		020FE6C91CA6DA6E00A650CE /* InputGyro.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 020FE6C71CA6DA6E00A650CE /* InputGyro.cpp */; };
 		02206DE41C356B0400733203 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 02206DE31C356B0400733203 /* main.cpp */; };
 		0225C93D1D00071B00356EA6 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0225C93C1D00071B00356EA6 /* main.cpp */; };
+		0230A2F11D1BFC3F0036EDA1 /* Quarternion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0298B47A1D0A89C000B68032 /* Quarternion.cpp */; };
+		0230A2F21D1BFC4C0036EDA1 /* libopencv_core.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 02C57BF41D104B2C00F428F2 /* libopencv_core.dylib */; };
+		0230A2F31D1BFC4F0036EDA1 /* libopencv_imgproc.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 02C57BFA1D104B4A00F428F2 /* libopencv_imgproc.dylib */; };
+		0230A2F41D1BFC510036EDA1 /* libopencv_highgui.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 02C57BF81D104B4100F428F2 /* libopencv_highgui.dylib */; };
 		02315B431D09937600CC22A0 /* Affine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 02315B411D09937600CC22A0 /* Affine.cpp */; };
 		0245CD621C3F848B00FF5E33 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0245CD611C3F848B00FF5E33 /* main.cpp */; };
 		0245CD711C3F866D00FF5E33 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0245CD701C3F866D00FF5E33 /* main.cpp */; };
@@ -267,6 +271,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0230A2F21D1BFC4C0036EDA1 /* libopencv_core.dylib in Frameworks */,
+				0230A2F31D1BFC4F0036EDA1 /* libopencv_imgproc.dylib in Frameworks */,
+				0230A2F41D1BFC510036EDA1 /* libopencv_highgui.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -890,6 +897,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				0245CD911C423D9D00FF5E33 /* Transform.cpp in Sources */,
+				0230A2F11D1BFC3F0036EDA1 /* Quarternion.cpp in Sources */,
 				0245CD621C3F848B00FF5E33 /* main.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1037,7 +1045,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				HEADER_SEARCH_PATHS = "$(inherited)";
-				LIBRARY_SEARCH_PATHS = "$(inherited)";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					/usr/local/Cellar/opencv/2.4.13/lib,
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -1046,7 +1057,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				HEADER_SEARCH_PATHS = "$(inherited)";
-				LIBRARY_SEARCH_PATHS = "$(inherited)";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					/usr/local/Cellar/opencv/2.4.13/lib,
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;

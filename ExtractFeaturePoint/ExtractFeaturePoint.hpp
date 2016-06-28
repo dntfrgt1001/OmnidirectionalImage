@@ -28,8 +28,11 @@ public:
     (const cv::Size& frameSize, Transform& transform, int divNum);
     ~ExtractFeaturePoint();
     
-    // 画像を変更する
-//    void setImage(const cv::Mat& newImg);
+    // 低緯度の矩形部分の特徴点を抽出
+    void extractRectRoiFeaturePoint
+    (const cv::Mat& img, std::vector<cv::KeyPoint>& keyPoints,
+     cv::Mat& descriptors);
+
     // numberで指定された部分の特徴点を抽出（基準画像における座標）
     void extractRoiFeaturePoint
     (const cv::Mat& img, std::vector<cv::KeyPoint>& roiKeyPoints,
@@ -38,10 +41,10 @@ public:
     void extractFeaturePoint
     (const cv::Mat& img, std::vector<cv::KeyPoint>& keyPoints,
      cv::Mat& descriptors);
-    // 低緯度の矩形部分の特徴点を抽出
-    void extractRectRoiFeaturePoint
-    (const cv::Mat& img, std::vector<cv::KeyPoint>& keyPoints,
-     cv::Mat& descriptors);
+    
+    // 回転前の座標の特徴点から回転後の座標の特徴点に変換
+    void rotateKeyPointCoord
+    (std::vector<cv::KeyPoint>& keyPoints, float angle);
     // ROIの座標から大域の座標に変換
     void roiCoord2GlobalCoord(std::vector<cv::KeyPoint>& keyPoints);
     // 特徴点を連結させる

@@ -29,10 +29,24 @@ public:
     // 画像座標と極座標の長さの変換
     int dtheta2u(float theta) const;
     int dphi2v(float phi) const;
+    
+    // ２次元画像上の点群を３次元空間上の点群に変換
+    void orth2d2orth3d
+    (const std::vector<cv::Point2f>& points2d,
+     std::vector<cv::Point3f>& points3d);
     // ２次元画像上の点を３次元空間上の点に変換
     void orth2d2orth3d(const cv::Point2f& point2d, cv::Point3f& point3d) const;
+    // ３次元空間上の点群を２次元画像上の点群に変換
+    void orth3d2orth2d
+    (const std::vector<cv::Point3f>& points3d,
+     std::vector<cv::Point2f>& points2d);
     // ３次元空間上の点を２次元画像上の点に変換
     void orth3d2orth2d(const cv::Point3f& point3d, cv::Point2f& point2d) const;
+
+    // 回転行列を使って３次元空間で変換
+    void orth3d2orth3dWithRotMat
+    (const cv::Point3f& forPoint3d, cv::Point3f& latPoint3d,
+     const cv::Mat& rotMat) const;
     // 回転行列を使って画像座標を変換
     void orth2d2orth2dWithRotMat
     (const cv::Point2f& forPoint2d, cv::Point2f& latPoint2d,

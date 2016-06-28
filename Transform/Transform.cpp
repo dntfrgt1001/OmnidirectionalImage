@@ -56,6 +56,15 @@ int Transform::dphi2v(float phi) const
 }
 
 void Transform::orth2d2orth3d
+(const std::vector<cv::Point2f> &points2d, std::vector<cv::Point3f> &points3d){
+    for (int i=0; i<points2d.size(); i++) {
+        cv::Point3f point3d;
+        orth2d2orth3d(points2d[i], point3d);
+        points3d.push_back(point3d);
+    }
+}
+
+void Transform::orth2d2orth3d
 (const cv::Point2f &point2d, cv::Point3f &point3d) const
 {
     float u = point2d.x;
@@ -67,6 +76,16 @@ void Transform::orth2d2orth3d
     point3d.x = sinf(theta) * cosf(phi);
     point3d.y = (-1) * sinf(phi);           // 左上原点座標系
     point3d.z = cosf(theta) * cosf(phi);
+}
+
+void Transform::orth3d2orth2d
+(const std::vector<cv::Point3f> &points3d, std::vector<cv::Point2f> &points2d)
+{
+    for (int i=0; i<points3d.size(); i++) {
+        cv::Point2f point2d;
+        orth3d2orth2d(points3d[i], point2d);
+        points2d.push_back(point2d);
+    }
 }
 
 void Transform::orth3d2orth2d
@@ -88,6 +107,13 @@ void Transform::orth3d2orth2d
     point2d.y = phi2v(phi);
 }
 
+void Transform::orth3d2orth3dWithRotMat
+(const cv::Point3f &forPoint3d, cv::Point3f &latPoint3d, const cv::Mat &rotMat)
+const
+{
+    latPoint3d = (cv::Point3f) cv::Mat1f(rotMat * cv::Mat1f(forPoint3d));
+}
+
 void Transform::orth2d2orth2dWithRotMat
 (const cv::Point2f &forPoint2d, cv::Point2f &latPoint2d, const cv::Mat &rotMat)
 const
@@ -95,8 +121,8 @@ const
     cv::Point3f forPoint3d, latPoint3d;
     
     orth2d2orth3d(forPoint2d, forPoint3d);
-    
-    latPoint3d = (cv::Point3f) cv::Mat1f(rotMat * cv::Mat1f(forPoint3d));
+  
+    orth3d2orth3dWithRotMat(forPoint3d, latPoint3d, rotMat);
     
     orth3d2orth2d(latPoint3d, latPoint2d);
 }
@@ -129,7 +155,8 @@ void Transform::rotateImgWithRotMat
         for (int vr=0; vr<frameSize.height; vr++) {
             int u, v;
             
-            orth2d2orth2dWithRotMat(ur, vr, u, v, rotMat);
+            // 逆の回転行列によって回転後の画素が回転前のどの画素に対応するか求める
+            orth2d2orth2dWithRotMat(ur, vr, u, v, rotMat.inv());
             
             rotImg.at<cv::Vec3b>(vr, ur) = img.at<cv::Vec3b>(v, u);
         }

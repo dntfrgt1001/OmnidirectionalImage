@@ -42,6 +42,27 @@ public:
     void filterMatchCoordinate
     (std::vector<cv::Point3f>& for3DPoints,
      std::vector<cv::Point3f>& lat3DPoints);
+    // デバッグ用のフィルタ
+    void filterMatchCoordinateDebug
+    (std::vector<cv::KeyPoint>& forKeyPoints,
+     std::vector<cv::KeyPoint>& latKeyPoints, std::vector<cv::DMatch>& dMatches);
+    // マッチの描画 (画像を縦に並べる)
+    void drawMatchesVertical
+    (const cv::Mat& img1, const std::vector<cv::KeyPoint>& keyPoints1,
+     const cv::Mat& img2, const std::vector<cv::KeyPoint>& keyPoints2,
+     const std::vector<cv::DMatch>& dMatches, cv::Mat& outImg);
+    // マッチの描画 DMatchなし
+    void drawMatchesVertical
+    (const cv::Mat& img1, const std::vector<cv::Point2f>& for2DPoints,
+     const cv::Mat& img2, const std::vector<cv::Point2f>& lat2DPoints,
+     cv::Mat& outImg);
+    // 対になるように特徴点を並べ替え，２次元座標のみ出力
+    void sortMatchedPair
+    (const std::vector<cv::KeyPoint>& forKeyPoints,
+     const std::vector<cv::KeyPoint>& latKeyPoints,
+     const std::vector<cv::DMatch>& dMatches,
+     std::vector<cv::Point2f>& for2DPoints,
+     std::vector<cv::Point2f>& lat2DPoints);
     
 private:
     const cv::Size& frameSize;
