@@ -20,6 +20,7 @@ int main(int argc, const char * argv[])
     const cv::Size frameSize(800, 400);
     
     cv::Mat input, img;
+    
     input = cv::imread(path + fileName);
 
     cv::resize(input, img, frameSize);
