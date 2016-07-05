@@ -39,6 +39,11 @@
 			<key>orderHint</key>
 			<integer>5</integer>
 		</dict>
+		<key>RotateVideo.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>10</integer>
+		</dict>
 		<key>RotationTest.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
@@ -118,6 +123,11 @@
 			<true/>
 		</dict>
 		<key>028D7A041C301B9700790A10</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>02963FE01D2B9B700041F000</key>
 		<dict>
 			<key>primary</key>
 			<true/>

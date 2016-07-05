@@ -42,6 +42,14 @@
 		0290BBAF1D1262D100C83FF2 /* libopencv_imgproc.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 02C57BFA1D104B4A00F428F2 /* libopencv_imgproc.dylib */; };
 		0290BBB01D1262D500C83FF2 /* libopencv_highgui.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 02C57BF81D104B4100F428F2 /* libopencv_highgui.dylib */; };
 		0290BBB31D12A08900C83FF2 /* MatchMain.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0290BBB21D12A08900C83FF2 /* MatchMain.cpp */; };
+		02963FE41D2B9B700041F000 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 02963FE31D2B9B700041F000 /* main.cpp */; };
+		02963FE81D2B9F130041F000 /* VideoReader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 02C57BE91D0FB0D100F428F2 /* VideoReader.cpp */; };
+		02963FE91D2B9F1A0041F000 /* Rotation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 020D73071D2A62E800BC61BD /* Rotation.cpp */; };
+		02963FEA1D2B9F1E0041F000 /* Transform.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0245CD8D1C4233E000FF5E33 /* Transform.cpp */; };
+		02963FEB1D2B9F250041F000 /* libopencv_core.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 02C57BF41D104B2C00F428F2 /* libopencv_core.dylib */; };
+		02963FEC1D2B9F2B0041F000 /* libopencv_imgproc.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 02C57BFA1D104B4A00F428F2 /* libopencv_imgproc.dylib */; };
+		02963FED1D2B9F2E0041F000 /* libopencv_highgui.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 02C57BF81D104B4100F428F2 /* libopencv_highgui.dylib */; };
+		02963FEE1D2B9F390041F000 /* Quarternion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0298B47A1D0A89C000B68032 /* Quarternion.cpp */; };
 		0298B4781D0A822D00B68032 /* Affine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 02315B411D09937600CC22A0 /* Affine.cpp */; };
 		0298B47C1D0A89C000B68032 /* Quarternion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0298B47A1D0A89C000B68032 /* Quarternion.cpp */; };
 		0298B47E1D0AB2D000B68032 /* Quarternion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0298B47A1D0A89C000B68032 /* Quarternion.cpp */; };
@@ -205,6 +213,15 @@
 			);
 			runOnlyForDeploymentPostprocessing = 1;
 		};
+		02963FDF1D2B9B700041F000 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
 		029994101C72A9CB00792144 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -252,6 +269,8 @@
 		028D7A131C302CE200790A10 /* Rotate.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Rotate.hpp; sourceTree = "<group>"; };
 		0290BBB11D12A08100C83FF2 /* MatchMain.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = MatchMain.hpp; path = MatchMain/MatchMain.hpp; sourceTree = "<group>"; };
 		0290BBB21D12A08900C83FF2 /* MatchMain.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MatchMain.cpp; path = MatchMain/MatchMain.cpp; sourceTree = "<group>"; };
+		02963FE11D2B9B700041F000 /* RotateVideo */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = RotateVideo; sourceTree = BUILT_PRODUCTS_DIR; };
+		02963FE31D2B9B700041F000 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		0298B47A1D0A89C000B68032 /* Quarternion.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Quarternion.cpp; path = Quarternion/Quarternion.cpp; sourceTree = "<group>"; };
 		0298B47B1D0A89C000B68032 /* Quarternion.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = Quarternion.hpp; path = Quarternion/Quarternion.hpp; sourceTree = "<group>"; };
 		029994121C72A9CB00792144 /* PlayVideo */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = PlayVideo; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -387,6 +406,16 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		02963FDE1D2B9B700041F000 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				02963FEB1D2B9F250041F000 /* libopencv_core.dylib in Frameworks */,
+				02963FEC1D2B9F2B0041F000 /* libopencv_imgproc.dylib in Frameworks */,
+				02963FED1D2B9F2E0041F000 /* libopencv_highgui.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -567,6 +596,7 @@
 				02648EAC1CF8058A00E4E948 /* ExtractFeatureTest */,
 				0225C93B1D00071B00356EA6 /* AffineTest */,
 				020D72FD1D2A4ADA00BC61BD /* ExtractFrame */,
+				02963FE21D2B9B700041F000 /* RotateVideo */,
 				028D79F81C30130B00790A10 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -587,6 +617,7 @@
 				0225C93A1D00071B00356EA6 /* AffineTest */,
 				020D72FC1D2A4ADA00BC61BD /* ExtractFrame */,
 				0282E5C61D2B85A30014F4DB /* TestTarget */,
+				02963FE11D2B9B700041F000 /* RotateVideo */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -597,6 +628,14 @@
 				028D79FA1C30130B00790A10 /* main.cpp */,
 			);
 			path = OmnidirectionalImage;
+			sourceTree = "<group>";
+		};
+		02963FE21D2B9B700041F000 /* RotateVideo */ = {
+			isa = PBXGroup;
+			children = (
+				02963FE31D2B9B700041F000 /* main.cpp */,
+			);
+			path = RotateVideo;
 			sourceTree = "<group>";
 		};
 		0298B4791D0A897700B68032 /* old class */ = {
@@ -870,6 +909,23 @@
 			productReference = 028D7A051C301B9700790A10 /* Rotate */;
 			productType = "com.apple.product-type.tool";
 		};
+		02963FE01D2B9B700041F000 /* RotateVideo */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 02963FE71D2B9B700041F000 /* Build configuration list for PBXNativeTarget "RotateVideo" */;
+			buildPhases = (
+				02963FDD1D2B9B700041F000 /* Sources */,
+				02963FDE1D2B9B700041F000 /* Frameworks */,
+				02963FDF1D2B9B700041F000 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = RotateVideo;
+			productName = RotateVideo;
+			productReference = 02963FE11D2B9B700041F000 /* RotateVideo */;
+			productType = "com.apple.product-type.tool";
+		};
 		029994111C72A9CB00792144 /* PlayVideo */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 029994161C72A9CB00792144 /* Build configuration list for PBXNativeTarget "PlayVideo" */;
@@ -932,6 +988,9 @@
 					028D7A041C301B9700790A10 = {
 						CreatedOnToolsVersion = 7.2;
 					};
+					02963FE01D2B9B700041F000 = {
+						CreatedOnToolsVersion = 7.2.1;
+					};
 					029994111C72A9CB00792144 = {
 						CreatedOnToolsVersion = 7.2.1;
 					};
@@ -962,6 +1021,7 @@
 				0225C9391D00071B00356EA6 /* AffineTest */,
 				020D72FB1D2A4ADA00BC61BD /* ExtractFrame */,
 				0282E5C51D2B85A30014F4DB /* TestTarget */,
+				02963FE01D2B9B700041F000 /* RotateVideo */,
 			);
 		};
 /* End PBXProject section */
@@ -1095,6 +1155,18 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		02963FDD1D2B9B700041F000 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				02963FE81D2B9F130041F000 /* VideoReader.cpp in Sources */,
+				02963FE41D2B9B700041F000 /* main.cpp in Sources */,
+				02963FEA1D2B9F1E0041F000 /* Transform.cpp in Sources */,
+				02963FEE1D2B9F390041F000 /* Quarternion.cpp in Sources */,
+				02963FE91D2B9F1A0041F000 /* Rotation.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1430,6 +1502,28 @@
 			};
 			name = Release;
 		};
+		02963FE51D2B9B700041F000 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					/usr/local/Cellar/opencv/2.4.13/lib,
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		02963FE61D2B9B700041F000 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					/usr/local/Cellar/opencv/2.4.13/lib,
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
 		029994171C72A9CB00792144 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -1543,6 +1637,7 @@
 				0282E5CC1D2B85A30014F4DB /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		028D79F21C30130B00790A10 /* Build configuration list for PBXProject "OmnidirectionalImage" */ = {
 			isa = XCConfigurationList;
@@ -1570,6 +1665,14 @@
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
+		};
+		02963FE71D2B9B700041F000 /* Build configuration list for PBXNativeTarget "RotateVideo" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				02963FE51D2B9B700041F000 /* Debug */,
+				02963FE61D2B9B700041F000 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
 		};
 		029994161C72A9CB00792144 /* Build configuration list for PBXNativeTarget "PlayVideo" */ = {
 			isa = XCConfigurationList;

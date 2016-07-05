@@ -25,18 +25,18 @@
 int main(int argc, const char * argv[])
 {
     const std::string path = "/Users/masakazu/Desktop/20160701/";
-    const std::string inputVideoName = "sample2.mp4";
+    const std::string inputVideoName = "sample4.mp4";
     const std::string outputVideoName = "mod.mov";
     
 //    const cv::Size frameSize(1920, 960);
-    const cv::Size frameSize(1000, 500);
+    const cv::Size frameSize(800, 400);
     
     Transform transform(frameSize);
     
     int divNum = 6;
     ExtractFeaturePoint extract(frameSize, transform, divNum);
     
-    int matchThres = 180;
+    int matchThres = 200;
     float coordThres = 0.4;
     MatchFeaturePoint match(frameSize, transform, matchThres, coordThres);
     
