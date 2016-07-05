@@ -37,7 +37,6 @@
 		02648EB21CF807E800E4E948 /* Transform.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0245CD8D1C4233E000FF5E33 /* Transform.cpp */; };
 		026B3EB51CA1ABF4008B59CD /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 026B3EB41CA1ABF4008B59CD /* main.cpp */; };
 		0276EF461D016FB30013ADF4 /* Transform.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0245CD8D1C4233E000FF5E33 /* Transform.cpp */; };
-		0282E5C91D2B85A30014F4DB /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0282E5C81D2B85A30014F4DB /* main.cpp */; };
 		028D79FB1C30130B00790A10 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 028D79FA1C30130B00790A10 /* main.cpp */; };
 		0290BBAE1D1262CD00C83FF2 /* libopencv_core.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 02C57BF41D104B2C00F428F2 /* libopencv_core.dylib */; };
 		0290BBAF1D1262D100C83FF2 /* libopencv_imgproc.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 02C57BFA1D104B4A00F428F2 /* libopencv_imgproc.dylib */; };
@@ -246,7 +245,6 @@
 		026B3EB21CA1ABF4008B59CD /* ConvertGyro */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = ConvertGyro; sourceTree = BUILT_PRODUCTS_DIR; };
 		026B3EB41CA1ABF4008B59CD /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		0282E5C61D2B85A30014F4DB /* TestTarget */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = TestTarget; sourceTree = BUILT_PRODUCTS_DIR; };
-		0282E5C81D2B85A30014F4DB /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		028D79F71C30130B00790A10 /* OmnidirectionalImage */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = OmnidirectionalImage; sourceTree = BUILT_PRODUCTS_DIR; };
 		028D79FA1C30130B00790A10 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		028D7A051C301B9700790A10 /* Rotate */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Rotate; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -549,14 +547,6 @@
 			path = ConvertGyro;
 			sourceTree = "<group>";
 		};
-		0282E5C71D2B85A30014F4DB /* TestTarget */ = {
-			isa = PBXGroup;
-			children = (
-				0282E5C81D2B85A30014F4DB /* main.cpp */,
-			);
-			path = TestTarget;
-			sourceTree = "<group>";
-		};
 		028D79EE1C30130B00790A10 = {
 			isa = PBXGroup;
 			children = (
@@ -577,7 +567,6 @@
 				02648EAC1CF8058A00E4E948 /* ExtractFeatureTest */,
 				0225C93B1D00071B00356EA6 /* AffineTest */,
 				020D72FD1D2A4ADA00BC61BD /* ExtractFrame */,
-				0282E5C71D2B85A30014F4DB /* TestTarget */,
 				028D79F81C30130B00790A10 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -1082,7 +1071,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0282E5C91D2B85A30014F4DB /* main.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
