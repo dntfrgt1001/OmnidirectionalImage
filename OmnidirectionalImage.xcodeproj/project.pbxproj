@@ -16,7 +16,6 @@
 		020D730B1D2A642D00BC61BD /* Rotation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 020D73071D2A62E800BC61BD /* Rotation.cpp */; };
 		020D730C1D2A669200BC61BD /* Quarternion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0298B47A1D0A89C000B68032 /* Quarternion.cpp */; };
 		020FE6C91CA6DA6E00A650CE /* InputGyro.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 020FE6C71CA6DA6E00A650CE /* InputGyro.cpp */; };
-		02206DE41C356B0400733203 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 02206DE31C356B0400733203 /* main.cpp */; };
 		0225C93D1D00071B00356EA6 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0225C93C1D00071B00356EA6 /* main.cpp */; };
 		0230A2F11D1BFC3F0036EDA1 /* Quarternion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0298B47A1D0A89C000B68032 /* Quarternion.cpp */; };
 		0230A2F21D1BFC4C0036EDA1 /* libopencv_core.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 02C57BF41D104B2C00F428F2 /* libopencv_core.dylib */; };
@@ -216,7 +215,6 @@
 		020FE6C71CA6DA6E00A650CE /* InputGyro.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = InputGyro.cpp; path = InputGyro/InputGyro.cpp; sourceTree = "<group>"; };
 		020FE6C81CA6DA6E00A650CE /* InputGyro.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = InputGyro.hpp; path = InputGyro/InputGyro.hpp; sourceTree = "<group>"; };
 		02206DE11C356B0400733203 /* Test */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Test; sourceTree = BUILT_PRODUCTS_DIR; };
-		02206DE31C356B0400733203 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		0225C93A1D00071B00356EA6 /* AffineTest */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = AffineTest; sourceTree = BUILT_PRODUCTS_DIR; };
 		0225C93C1D00071B00356EA6 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		02315B411D09937600CC22A0 /* Affine.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Affine.cpp; path = Affine/Affine.cpp; sourceTree = "<group>"; };
@@ -415,14 +413,6 @@
 			name = InputGyro;
 			sourceTree = "<group>";
 		};
-		02206DE21C356B0400733203 /* Test */ = {
-			isa = PBXGroup;
-			children = (
-				02206DE31C356B0400733203 /* main.cpp */,
-			);
-			path = Test;
-			sourceTree = "<group>";
-		};
 		0225C93B1D00071B00356EA6 /* AffineTest */ = {
 			isa = PBXGroup;
 			children = (
@@ -551,7 +541,6 @@
 				02C57BF41D104B2C00F428F2 /* libopencv_core.dylib */,
 				02648EA61CF804E300E4E948 /* class */,
 				028D79F91C30130B00790A10 /* OmnidirectionalImage */,
-				02206DE21C356B0400733203 /* Test */,
 				0245CD601C3F848B00FF5E33 /* RotationTest */,
 				0245CD6F1C3F866D00FF5E33 /* WriteVideo */,
 				0245CD7E1C41382500FF5E33 /* MatchTest */,
@@ -959,7 +948,6 @@
 				02C768921D17EA650069E8C3 /* VideoWriter.cpp in Sources */,
 				02C7A5261D112B6700DC7B73 /* ExtractFeaturePoint.cpp in Sources */,
 				0290BBB31D12A08900C83FF2 /* MatchMain.cpp in Sources */,
-				02206DE41C356B0400733203 /* main.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1414,6 +1402,7 @@
 				020D73021D2A4ADA00BC61BD /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		02206DE71C356B0400733203 /* Build configuration list for PBXNativeTarget "Test" */ = {
 			isa = XCConfigurationList;
