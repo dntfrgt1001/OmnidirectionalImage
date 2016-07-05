@@ -31,33 +31,31 @@ public:
     (const cv::Mat descriptors1, const cv::Mat descriptors2,
      std::vector<cv::DMatch>& dMatches) const;
     // 1->2，2->1へのクロスマッチ
-    void crossMatch
+    static void crossMatch
     (const std::vector<cv::DMatch>& dMatches1,
      const std::vector<cv::DMatch>& dMatches2,
-     std::vector<cv::DMatch>& dMatches) const;
-    // マッチングの距離が閾値以下のものはフィルタリング
+     std::vector<cv::DMatch>& dMatches) ;
+    // マッチング距離が閾値以下のものはフィルタリング
     void filterMatchDistance
     (std::vector<cv::DMatch>& dMatches) const;
-    // マッチングの座標が大きく離れているものはフィルタリング
-    void filterMatchCoordinate
+    // 座標距離が大きく離れているものはフィルタリング
+    void filterCoordDistance
     (std::vector<cv::Point3f>& for3DPoints,
-     std::vector<cv::Point3f>& lat3DPoints);
-    // デバッグ用のフィルタ
-    void filterMatchCoordinateDebug
-    (std::vector<cv::KeyPoint>& forKeyPoints,
-     std::vector<cv::KeyPoint>& latKeyPoints, std::vector<cv::DMatch>& dMatches);
+     std::vector<cv::Point3f>& lat3DPoints) const;
     // マッチの描画 (画像を縦に並べる)
-    void drawMatchesVertical
+    static void drawMatchVertical
     (const cv::Mat& img1, const std::vector<cv::KeyPoint>& keyPoints1,
      const cv::Mat& img2, const std::vector<cv::KeyPoint>& keyPoints2,
      const std::vector<cv::DMatch>& dMatches, cv::Mat& outImg);
     // マッチの描画 DMatchなし
-    void drawMatchesVertical
+    static void drawMatchesVertical
     (const cv::Mat& img1, const std::vector<cv::Point2f>& for2DPoints,
      const cv::Mat& img2, const std::vector<cv::Point2f>& lat2DPoints,
      cv::Mat& outImg);
+    static void drawMatchLine
+    (const cv::Point2f& forPoint, const cv::Point2f& latPoint, cv::Mat& outImg);
     // 対になるように特徴点を並べ替え，２次元座標のみ出力
-    void sortMatchedPair
+    static void sortMatchedPair
     (const std::vector<cv::KeyPoint>& forKeyPoints,
      const std::vector<cv::KeyPoint>& latKeyPoints,
      const std::vector<cv::DMatch>& dMatches,
@@ -68,7 +66,7 @@ private:
     const cv::Size& frameSize;
     const Transform& transform;
     
-    cv::Ptr<cv::DescriptorMatcher> matcher;
+    const cv::Ptr<cv::DescriptorMatcher> matcher;
     const int distThreshold;
     const float coordThreshold;
 };

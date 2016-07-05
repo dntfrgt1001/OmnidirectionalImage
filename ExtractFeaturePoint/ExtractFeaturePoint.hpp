@@ -25,50 +25,61 @@ class ExtractFeaturePoint
 {
 public:
     ExtractFeaturePoint
-    (const cv::Size& frameSize, Transform& transform, int divNum);
+    (const cv::Size& frameSize, const Transform& transform, int divNum);
     ~ExtractFeaturePoint();
     
     // 低緯度の矩形部分の特徴点を抽出
     void extractRectRoiFeaturePoint
     (const cv::Mat& img, std::vector<cv::KeyPoint>& keyPoints,
-     cv::Mat& descriptors);
+     cv::Mat& descriptors) const;
 
     // numberで指定された部分の特徴点を抽出（基準画像における座標）
     void extractRoiFeaturePoint
     (const cv::Mat& img, std::vector<cv::KeyPoint>& roiKeyPoints,
-     cv::Mat& roiDescriptors, int number);
+     cv::Mat& roiDescriptors, int number) const;
     // 基準画像を回転させながらすべての領域の特徴点を抽出
     void extractFeaturePoint
     (const cv::Mat& img, std::vector<cv::KeyPoint>& keyPoints,
-     cv::Mat& descriptors);
+     cv::Mat& descriptors) const;
     
     // 回転前の座標の特徴点から回転後の座標の特徴点に変換
     void rotateKeyPointCoord
-    (std::vector<cv::KeyPoint>& keyPoints, float angle);
+    (std::vector<cv::KeyPoint>& keyPoints, float angle) const;
     // ROIの座標から大域の座標に変換
-    void roiCoord2GlobalCoord(std::vector<cv::KeyPoint>& keyPoints);
+    void roiCoord2GlobalCoord(std::vector<cv::KeyPoint>& keyPoints) const {
+        for (int i=0; i<keyPoints.size(); i++)
+            keyPoints[i].pt.y += (frameSize.height - validHeight)/2;
+    };
     // 特徴点を連結させる
-    void keyPointCat
-    (std::vector<cv::KeyPoint>& dest, const std::vector<cv::KeyPoint>& src);
+    static void keyPointConcat
+    (std::vector<cv::KeyPoint>& dest,
+     const std::vector<cv::KeyPoint>& src) {
+        std::copy(src.begin(), src.end(), std::back_inserter(dest));
+    };
     // 特徴点記述子を連結させる
-    void descriptorCat(cv::Mat& dest, const cv::Mat& src);
+    static void descriptorConcat(cv::Mat& dest, const cv::Mat& src) {
+        cv::vconcat(dest, src, dest);
+    };
     // 有効範囲にある特徴点のみを取り出す
     void filterLowLatitue
-    (std::vector<cv::KeyPoint>& keyPoints, cv::Mat& descriptors);
-    bool isInLowLatitude(int u, int v);
-    bool isInLowLatitude(const cv::Point2f point);
+    (std::vector<cv::KeyPoint>& keyPoints, cv::Mat& descriptors) const;
+    // 特徴点が有効範囲にあるか
+    bool isInLowLatitude(float u, float v) const;
+    bool isInLowLatitude(const cv::Point2f point) const {
+        return isInLowLatitude(point.x, point.y);
+    };
     
 private:
     const cv::Size& frameSize;
-    Transform& transform;
+    const Transform& transform;
     
     const int validHeight;
     
-    cv::Ptr<cv::FeatureDetector> detector;
-    cv::Ptr<cv::DescriptorExtractor> extractor;
+    const cv::Ptr<cv::FeatureDetector> detector;
+    const cv::Ptr<cv::DescriptorExtractor> extractor;
     
     const int divNum;
-    cv::Rect roi;
+    const cv::Rect roi;
 };
 
 #endif /* ExtractFeaturePoint_hpp */

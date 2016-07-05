@@ -17,7 +17,7 @@
 #include "Transform.hpp"
 #include "ExtractFeaturePoint.hpp"
 #include "MatchFeaturePoint.hpp"
-#include "Affine.hpp"
+#include "Rotation.hpp"
 #include "VideoReader.hpp"
 #include "VideoWriter.hpp"
 
@@ -25,8 +25,8 @@ class MatchMain
 {
 public:
     MatchMain
-    (Transform& transform, ExtractFeaturePoint& extractFeature,
-     MatchFeaturePoint& matchFeature, Affine& affine);
+    (const Transform& transform, const ExtractFeaturePoint& extractFeature,
+     const MatchFeaturePoint& matchFeature, const Rotation& rotation);
     ~MatchMain();
     
     // １つ目の画像に合わせて２つ目の画像を修正する
@@ -36,10 +36,10 @@ public:
     void ModifyVideo(VideoReader& vr, VideoWriter& vw);
     
 private:
-    Transform& transform;
-    ExtractFeaturePoint& extractFeature;
-    MatchFeaturePoint& matchFeature;
-    Affine& affine;
+    const Transform& transform;
+    const ExtractFeaturePoint& extractFeature;
+    const MatchFeaturePoint& matchFeature;
+    const Rotation& rotation;
     cv::Mat accMat;
 };
 

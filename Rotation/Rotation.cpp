@@ -1,99 +1,32 @@
 //
-//  Affine.cpp
+//  Rotation.cpp
 //  OmnidirectionalImage
 //
-//  Created by masakazu nakazawa on 2016/06/09.
+//  Created by masakazu nakazawa on 2016/07/04.
 //  Copyright © 2016年 masakazu. All rights reserved.
 //
 
-#include "Affine.hpp"
+#include "Rotation.hpp"
 
-Affine::Affine(const Transform& transform):
+Rotation::Rotation(const Transform& transform):
 transform(transform)
 {
     // RANSACの乱数用
     srand((unsigned int) time(NULL));
 }
 
-Affine::~Affine()
-{
-    
-}
+Rotation::~Rotation(){}
 
-#include <iostream>
-void Affine::estimate3DRotMat
-(std::vector<cv::Point3f> &forPoints, std::vector<cv::Point3f> &latPoints,
- cv::Mat &estRotMat) const
-{
-    // 三次元アフィン行列を推定
-    cv::Mat estAffMat;
-    estimate3DAffineMat(forPoints, latPoints, estAffMat);
-    
-    std::cout << "affine mat = " << std::endl << estAffMat << std::endl;
-    
-    // 回転行列を取り出す
-    extractRotMatFromAffineMat(estAffMat, estRotMat);
-    
-    std::cout << "raw estRotMat = " << std::endl << estRotMat << std::endl;
-    
-    // 回転行列を正規化
-    normalizeRotMat(estRotMat);
-}
-
-void Affine::extractRotMatFromAffineMat
-(const cv::Mat &affMat, cv::Mat &rotMat) const
-{
-    rotMat = cv::Mat(3, 3, CV_32FC1);
-    
-    for (int u=0; u<3; u++) {
-        for (int v=0; v<3; v++) {
-            rotMat.at<float>(v, u) = (float) affMat.at<double>(v, u);
-        }
-    }
-}
-
-void Affine::estimate3DAffineMat
-(std::vector<cv::Point3f> &forPoints, std::vector<cv::Point3f> &latPoints,
- cv::Mat &affMat) const
-{
-    std::vector<uchar> inliers;
-    
-    cv::estimateAffine3D(forPoints, latPoints, affMat, inliers);
-}
-
-void Affine::normalizeRotMat(cv::Mat &rotMat) const
-{
-    cv::Vec3f a, b, c;
-    cv::Vec3f e1, e2, e3;
-    cv::Vec3f f1, f2, f3;
-    
-    a = rotMat.col(0);
-    b = rotMat.col(1);
-    c = rotMat.col(2);
-    
-    f1 = a;
-    e1 = 1.0/cv::norm(f1) * f1;
-    
-    f2 = b - b.dot(e1) * e1;
-    e2 = 1.0/cv::norm(f2) * f2;
-    
-    f3 = c - c.dot(e1) * e1 - c.dot(e2) * e2;
-    e3 = 1.0/cv::norm(f3) * f3;
-    
-    for (int v=0; v<3; v++) {
-        rotMat.at<float>(v, 0) = e1[v];
-        rotMat.at<float>(v, 1) = e2[v];
-        rotMat.at<float>(v, 2) = e3[v];
-    }
-}
-
-void Affine::estimate3DRotMatSVD
+void Rotation::estimate3DRotMatSVD
 (std::vector<cv::Point3f> &forPoints, std::vector<cv::Point3f> &latPoints,
  cv::Mat& estRotMat) const
 {
-    int sampleSize = 5;
+    int sampleSize = 6;
     cv::Mat betRotMat = cv::Mat(3, 3, CV_32FC1);
-    float betError = FLT_MAX;
+    size_t betInlierSize = 0;
+    std::vector<cv::Point3f> betInForPoints, betInLatPoints;
+    
+//    float betError = FLT_MAX;
     
     // ランダムにサンプリングした点から推定を行う
     for (int i=0; i<sampleSize; i++) {
@@ -103,35 +36,59 @@ void Affine::estimate3DRotMatSVD
         cv::Mat curEstRotMat;
         estimate3DRotMatSVDPartial(forPointx, latPointx, curEstRotMat);
         
-        float curError;
-        curError = evalEstRotMat(forPoints, latPoints, curEstRotMat);
-        std::cout << "current error = " << curError << std::endl;
-        std::cout << "current mat = " << std::endl <<  curEstRotMat << std::endl;
+        float error;
+        error = evalEstRotMat(forPoints, latPoints, curEstRotMat);
+//        std::cout << "current error = " << curError << std::endl;
+//        std::cout << "current mat = " << std::endl <<  curEstRotMat << std::endl;
         
+        std::vector<cv::Point3f> inForPoints, inLatPoints;
+        size_t inLierSize =  removeOutlier(forPoints, latPoints, inForPoints, inLatPoints, error/forPoints.size(), curEstRotMat);
+        
+        if (inLierSize > betInlierSize) {
+            betInlierSize = inLierSize;
+            curEstRotMat.copyTo(betRotMat);
+            betInForPoints.clear();
+            std::copy
+            (inForPoints.begin(), inForPoints.end(),
+             std::back_inserter(betInForPoints));
+            betInLatPoints.clear();
+            std::copy
+            (inLatPoints.begin(), inLatPoints.end(),
+             std::back_inserter(betInLatPoints));
+        }
+        
+        std::cout <<  i << "-th sample (error, inlier) = ("
+        << error << ", " << inLierSize << ")" << std::endl;
+        std::cout << "mat = " << std::endl << curEstRotMat << std::endl;
+        
+        /*
         if (curError < betError) {
             betError = curError;
             curEstRotMat.copyTo(betRotMat);
         }
+         */
     }
-    
+    /*
     // 最も高いスコアの行列を用いてインライアーを求める
     std::vector<cv::Point3f> inForPoints, inLatPoints;
     removeOutlier
     (forPoints, latPoints, inForPoints, inLatPoints,
-     betError/sampleSize, betRotMat);
+     betError/forPoints.size(), betRotMat);
+    */
     
-    std::cout << "(all, inlier) = (" << forPoints.size() << ", " << inForPoints.size() << ")" << std::endl;
+    std::cout << "(all, inlier) = (" << forPoints.size() << ", "
+              << betInlierSize << ")" << std::endl;
     
     // インライアーから回転行列を推定する
     estRotMat = cv::Mat(3, 3, CV_32FC1);
-    estimate3DRotMatSVDPartial(inForPoints, inLatPoints, estRotMat);
+    estimate3DRotMatSVDPartial(betInForPoints, betInLatPoints, estRotMat);
 }
 
-void Affine::getRondomPoint
+void Rotation::getRondomPoint
 (const std::vector<cv::Point3f> &forPoints,
  const std::vector<cv::Point3f> &latPoints,
  std::vector<cv::Point3f> &forPointx, std::vector<cv::Point3f> &latPointx,
- size_t getSize) const
+ size_t getSize)
 {
     forPointx.clear();
     latPointx.clear();
@@ -144,9 +101,9 @@ void Affine::getRondomPoint
     }
 }
 
-void Affine::estimate3DRotMatSVDPartial
+void Rotation::estimate3DRotMatSVDPartial
 (const std::vector<cv::Point3f> &forPointx,
- const std::vector<cv::Point3f> &latPointx, cv::Mat &estRotMatPart) const
+ const std::vector<cv::Point3f> &latPointx, cv::Mat &estRotMatPart)
 {
     cv::Mat corMat = cv::Mat::zeros(3, 3, CV_32FC1);
     
@@ -167,7 +124,7 @@ void Affine::estimate3DRotMatSVDPartial
     est.copyTo(estRotMatPart);
 }
 
-float Affine::evalEstRotMat
+float Rotation::evalEstRotMat
 (const std::vector<cv::Point3f> &forPoints,
  const std::vector<cv::Point3f> &latPoints, const cv::Mat &estRotMat) const
 {
@@ -182,7 +139,7 @@ float Affine::evalEstRotMat
     return accErr;
 }
 
-void Affine::removeOutlier
+size_t Rotation::removeOutlier
 (const std::vector<cv::Point3f> &forPoints,
  const std::vector<cv::Point3f> &latPoints,
  std::vector<cv::Point3f> &inForPoints, std::vector<cv::Point3f> &inLatPoints,
@@ -203,5 +160,11 @@ void Affine::removeOutlier
             inLatPoints.push_back(latPoints[i]);
         }
     }
+    
+    return inForPoints.size();
 }
 
+void Rotation::normalRotMat(cv::Mat &rotMat)
+{
+    Quarternion::normalRotMat(rotMat);
+}

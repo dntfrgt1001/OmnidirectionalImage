@@ -21,19 +21,19 @@
 
 int main(int argc, const char * argv[])
 {
-    const std::string path = "/Users/masakazu/Desktop/phi/";
-    const std::string imgName1 = "phi1.jpg";
-    const std::string imgName2 = "phi2.jpg";
+    const std::string path = "/Users/masakazu/Desktop/";
+    const std::string imgName1 = "frame1.jpg";
+    const std::string imgName2 = "frame2.jpg";
     
-    const cv::Size frameSize(1920, 960);
+    const cv::Size frameSize(800, 400);
     
     Transform transform(frameSize);
     
-    int divNum = 4;
+    int divNum = 6;
     ExtractFeaturePoint extractFeature(frameSize, transform, divNum);
     
-    int distThreshold = 150;
-    float coordThreshold = 0.6;
+    int distThreshold = 100;
+    float coordThreshold = 0.3;
     MatchFeaturePoint
     matchFeature(frameSize, transform, distThreshold, coordThreshold);
     

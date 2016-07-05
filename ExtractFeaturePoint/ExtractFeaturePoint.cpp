@@ -9,15 +9,14 @@
 #include "ExtractFeaturePoint.hpp"
 
 ExtractFeaturePoint::ExtractFeaturePoint
-(const cv::Size& frameSize, Transform& transform, int divNum):
+(const cv::Size& frameSize, const Transform& transform, int divNum):
 frameSize(frameSize), transform(transform), divNum(divNum),
-validHeight(transform.dphi2v(M_PI)/divNum)
+validHeight(transform.dphi2v(M_PI)/divNum),
+roi(cv::Rect(0, (frameSize.height - validHeight)/2,
+             frameSize.width, validHeight)),
+detector(cv::FeatureDetector::create("SIFT")),
+extractor(cv::DescriptorExtractor::create("SIFT"))
 {
-    roi = cv::Rect(0, (frameSize.height - validHeight)/2,
-                   frameSize.width, validHeight);
-    
-    detector = cv::FeatureDetector::create("SIFT");
-    extractor = cv::DescriptorExtractor::create("SIFT");
 }
 
 ExtractFeaturePoint::~ExtractFeaturePoint()
@@ -25,7 +24,8 @@ ExtractFeaturePoint::~ExtractFeaturePoint()
 }
 
 void ExtractFeaturePoint::extractRectRoiFeaturePoint
-(const cv::Mat& img, std::vector<cv::KeyPoint> &keyPoints, cv::Mat &descriptors)
+(const cv::Mat& img, std::vector<cv::KeyPoint> &keyPoints,
+ cv::Mat &descriptors) const
 {
     detector->detect(img(roi), keyPoints);
     extractor->compute(img(roi), keyPoints, descriptors);
@@ -35,12 +35,11 @@ void ExtractFeaturePoint::extractRectRoiFeaturePoint
 
 void ExtractFeaturePoint::extractRoiFeaturePoint
 (const cv::Mat& img, std::vector<cv::KeyPoint>& roiKeyPoints,
- cv::Mat& roiDescriptors, int number)
+ cv::Mat& roiDescriptors, int number) const
 {
     assert(number < divNum);
     
-    double rotAngle = (-1) * M_PI / 2 +  M_PI * ((float)number / divNum);
-    double invRotAngle = (-1) * rotAngle;
+    float rotAngle = -1 * M_PI /2 +  M_PI*((float)number / divNum);
     
     cv::Mat rotImg(frameSize, CV_8UC3);
     transform.rotateVerticalImg(rotAngle, img, rotImg);
@@ -54,14 +53,14 @@ void ExtractFeaturePoint::extractRoiFeaturePoint
     // 重なりがでないようにtanの条件を適用
     filterLowLatitue(roiKeyPoints, roiDescriptors);
     
-    rotateKeyPointCoord(roiKeyPoints, invRotAngle);
+    rotateKeyPointCoord(roiKeyPoints, -1 * rotAngle);
 }
 
 void ExtractFeaturePoint::rotateKeyPointCoord
-(std::vector<cv::KeyPoint> &keyPoints, float angle)
+(std::vector<cv::KeyPoint> &keyPoints, float angle) const
 {
     for (int i=0; i<keyPoints.size(); i++) {
-        int u, v, ur, vr;
+        float u, v, ur, vr;
         
         u = keyPoints[i].pt.x;
         v = keyPoints[i].pt.y;
@@ -73,10 +72,10 @@ void ExtractFeaturePoint::rotateKeyPointCoord
 }
 
 void ExtractFeaturePoint::extractFeaturePoint
-(const cv::Mat& img, std::vector<cv::KeyPoint> &keyPoints, cv::Mat& descriptors)
+(const cv::Mat& img, std::vector<cv::KeyPoint> &keyPoints,
+ cv::Mat& descriptors) const
 {
     for (int i=0; i<divNum; i++) {
-        
         std::vector<cv::KeyPoint> roiKeyPoints;
         cv::Mat roiDescriptors;
 
@@ -85,14 +84,17 @@ void ExtractFeaturePoint::extractFeaturePoint
         } else {
             extractRoiFeaturePoint(img, roiKeyPoints, roiDescriptors, i);
         
-            keyPointCat(keyPoints, roiKeyPoints);
-            descriptorCat(descriptors, roiDescriptors);
+            keyPointConcat(keyPoints, roiKeyPoints);
+            descriptorConcat(descriptors, roiDescriptors);
+            
+            std::cout << keyPoints.size() << std::endl;
         }
     }
 }
 
+/*
 void ExtractFeaturePoint::roiCoord2GlobalCoord
-(std::vector<cv::KeyPoint> &keyPoints)
+(std::vector<cv::KeyPoint> &keyPoints) const
 {
     for (int i=0; i<keyPoints.size(); i++) {
         keyPoints[i].pt.y += (frameSize.height - validHeight)/2;
@@ -100,7 +102,7 @@ void ExtractFeaturePoint::roiCoord2GlobalCoord
 }
 
 void ExtractFeaturePoint::keyPointCat
-(std::vector<cv::KeyPoint> &dest, const std::vector<cv::KeyPoint> &src)
+(std::vector<cv::KeyPoint> &dest, const std::vector<cv::KeyPoint> &src) const
 {
     std::copy(src.begin(), src.end(), std::back_inserter(dest));
 }
@@ -112,60 +114,44 @@ void ExtractFeaturePoint::descriptorCat(cv::Mat &dest, const cv::Mat &src)
     
     dest = conMat.clone();
 }
+*/
 
 void ExtractFeaturePoint::filterLowLatitue
-(std::vector<cv::KeyPoint> &keyPoints, cv::Mat &descriptors)
+(std::vector<cv::KeyPoint> &keyPoints, cv::Mat &descriptors) const
 {
-    int incAmount = 100;
+    cv::Mat destDescriptors(cv::Size(128, descriptors.rows), CV_32FC1);
     
-    cv::Mat destDescriptors(cv::Size(128, incAmount), CV_32F);
-    
-    // 無効範囲のキーポイントの記述子を削除
-    int count = 0;
-    int incCount = 1;
-    for (int i=0; i<keyPoints.size(); i++) {
+    for (int i=0, j=0; i<keyPoints.size(); j++) {
+        // 有効範囲内の記述子をコピーする
         if (isInLowLatitude(keyPoints[i].pt)) {
-            descriptors.row(i).copyTo(destDescriptors.row(count));
-            
-            count++;
-            if (count >= incAmount * incCount) {
-                incCount++;
-                destDescriptors.resize(incAmount * incCount);
-            }
-        }
-    }
-    //　空白行をなくす
-    destDescriptors.resize(count);
-    
-    // 無効範囲のキーポイントを削除
-    for (int i=0; i<keyPoints.size();    ) {
-        if (!isInLowLatitude(keyPoints[i].pt)){
-            keyPoints.erase(keyPoints.begin() + i);
-        } else {
+            descriptors.row(j).copyTo(destDescriptors.row(i));
             i++;
+        // 有効範囲外のキーポイントを削除する
+        } else {
+            keyPoints.erase(keyPoints.begin() + i);
         }
     }
-    
-    descriptors = destDescriptors;
-    
+    // 空白行をなくす
+    destDescriptors.resize(keyPoints.size());
+    descriptors = destDescriptors.clone();
 }
 
-bool ExtractFeaturePoint::isInLowLatitude(const cv::Point2f point)
+/*
+bool ExtractFeaturePoint::isInLowLatitude(const cv::Point2f point) const
 {
     return isInLowLatitude(point.x, point.y);
 }
-
-bool ExtractFeaturePoint::isInLowLatitude(int u, int v)
+*/
+ 
+bool ExtractFeaturePoint::isInLowLatitude(float u, float v) const
 {
-    double theta = transform.u2theta(u);
-    double phi = transform.v2phi(v);
-    double latitude = atan(tan(phi)/cos(theta));
+    float theta = transform.u2theta(u);
+    float phi = transform.v2phi(v);
+    float latitude = atan(tan(phi)/cos(theta));
     
-    double validHeightPhi = M_PI / divNum;
+    float validPhi = M_PI / divNum;
     
-    if (-1.0 * validHeightPhi/2.0 <= latitude &&
-        latitude <= validHeightPhi/2.0)
-    {
+    if (-1.0 * validPhi/2.0 <= latitude && latitude <= validPhi/2.0) {
         return true;
     } else {
         return false;

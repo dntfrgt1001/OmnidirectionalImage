@@ -39,7 +39,7 @@ int main(int argc, const char * argv[])
     
     for (int i=0; i<forPoints.size(); i++) {
         cv::Point3f tmpPoint;
-        transform.orth3d2orth3dWithRotMat(forPoints[i], tmpPoint, rotMat);
+        transform.orth3D2orth3DWithRotMat(forPoints[i], tmpPoint, rotMat);
         latPoints.push_back(tmpPoint);
     }
     

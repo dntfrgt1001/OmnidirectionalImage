@@ -16,18 +16,26 @@
 class Quarternion
 {
 public:
+    Quarternion();
     Quarternion(float theta, cv::Vec3f& axis);
     ~Quarternion();
+    
+    // 大きさ
+    static float norm(Quarternion& quart);
+    // 逆回転を表す四元数
     void transCounterRot();
-    // クオータニオンを回転行列へ変換
+    // 四元数を回転行列へ変換
     static void Quart2RotMat(const Quarternion& quart, cv::Mat& rotMat);
-    // 回転行列をクオータニオンへ変換
-//    static void RotMat2Quart(const cv::Mat& rotMat, Quarternion& quart);
+    // 回転行列を四元数へ変換
+    static void RotMat2Quart(const cv::Mat& rotMat, Quarternion& quart);
     // 任意軸回転行列を生成
     static void arbRotMat
     (float theta, cv::Vec3f& axis, cv::Mat& rotMat);
+    
+    // 誤差を含む四元数を正規化
+    static void normalQuart(Quarternion& quart);
     // 誤差を含む回転行列を正規化
-    static void normalizeRotMat(cv::Mat& rotMat);
+    static void normalRotMat(cv::Mat& rotMat);
     
 private:
     float t;

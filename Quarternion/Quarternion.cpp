@@ -8,6 +8,13 @@
 
 #include "Quarternion.hpp"
 
+Quarternion::Quarternion()
+{
+    float theta = 0.0;
+    cv::Vec3f axis(1.0, 1.0, 1.0);
+    Quarternion(theta, axis);
+}
+
 Quarternion::Quarternion(float theta, cv::Vec3f& axis)
 {
     float norm = cv::norm(axis);
@@ -21,6 +28,12 @@ Quarternion::Quarternion(float theta, cv::Vec3f& axis)
 Quarternion::~Quarternion()
 {
     
+}
+
+float Quarternion::norm(Quarternion &quart)
+{
+    return sqrtf(quart.t*quart.t + quart.x*quart.x +
+                 quart.y*quart.y + quart.z*quart.z);
 }
 
 void Quarternion::transCounterRot()
@@ -44,6 +57,18 @@ void Quarternion::Quart2RotMat
     rotMat.at<float>(0, 2) = 2*(quart.x*quart.z + quart.t*quart.y);
     rotMat.at<float>(1, 2) = 2*(quart.y*quart.z - quart.t*quart.x);
     rotMat.at<float>(2, 2) = 1 - 2*(quart.x*quart.x + quart.y*quart.y);
+    
+}
+
+void Quarternion::RotMat2Quart(const cv::Mat &rotMat, Quarternion &quart)
+{
+    float trace = (cv::trace(rotMat))(0);
+    
+    quart.t = sqrtf(trace + 1) / 2.0;
+    
+    quart.x = (rotMat.at<float>(2, 1) - rotMat.at<float>(1, 2)) / (4 * quart.t);
+    quart.y = (rotMat.at<float>(0, 2) - rotMat.at<float>(2, 0)) / (4 * quart.t);
+    quart.z = (rotMat.at<float>(1, 0) - rotMat.at<float>(0, 1)) / (4 * quart.t);
 }
 
 void Quarternion::arbRotMat(float theta, cv::Vec3f& axis, cv::Mat &rotMat)
@@ -70,30 +95,22 @@ void Quarternion::arbRotMat(float theta, cv::Vec3f& axis, cv::Mat &rotMat)
     rotMat.at<float>(2, 2) = nz*nz*icost + cost;
 }
 
-void Quarternion::normalizeRotMat(cv::Mat &rotMat)
+void Quarternion::normalQuart(Quarternion &quart)
 {
-    cv::Vec3f a, b, c;
-    cv::Vec3f e1, e2, e3;
-    cv::Vec3f f1, f2, f3;
+    float qnorm = norm(quart);
     
-    a = rotMat.col(0);
-    b = rotMat.col(1);
-    c = rotMat.col(2);
+    quart.t /= qnorm; quart.x /= qnorm; quart.y /= qnorm; quart.z /= qnorm;
+}
+
+void Quarternion::normalRotMat(cv::Mat &rotMat)
+{
+    Quarternion quart;
     
-    f1 = a;
-    e1 = 1.0/cv::norm(f1) * f1;
+    RotMat2Quart(rotMat, quart);
     
-    f2 = b - b.dot(e1) * e1;
-    e2 = 1.0/cv::norm(f2) * f2;
+    normalQuart(quart);
     
-    f3 = c - c.dot(e1) * e1 - c.dot(e2) * e2;
-    e3 = 1.0/cv::norm(f3) * f3;
-    
-    for (int v=0; v<3; v++) {
-        rotMat.at<float>(v, 0) = e1[v];
-        rotMat.at<float>(v, 1) = e2[v];
-        rotMat.at<float>(v, 2) = e3[v];
-    }
+    Quart2RotMat(quart, rotMat);
 }
 
 

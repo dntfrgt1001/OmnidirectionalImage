@@ -17,9 +17,9 @@
 
 int main(int argc, const char * argv[])
 {
-    const std::string path = "/Users/masakazu/Desktop/phi/";
-    const cv::Size frameSize(1920, 960);
-    const std::string inputName = "phi.mp4";
+    const std::string path = "/Users/masakazu/Desktop/";
+    const cv::Size frameSize(800, 400);
+    const std::string inputName = "R0010010_er.MP4";
 //    const std::string outputName = "out.mov";
     const std::string outputPath = "/Users/masakazu/Desktop/phi/";
     const std::string outputPrefix = "phi";
@@ -44,7 +44,6 @@ int main(int argc, const char * argv[])
         cv::waitKey(-1);
         
         i++;
-
         
         std::cout << i << std::endl;
     }

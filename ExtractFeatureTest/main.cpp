@@ -19,9 +19,43 @@
 #include "Affine.hpp"
 #include "Quarternion.hpp"
 
+#include <random>
+
 int main(int argc, const char * argv[])
 {
+    float theta = M_PI / 3.0;
+    cv::Vec3f axis(1.0, 1.0, 1.0);
     
+    cv::Mat rot;
+    Quarternion::arbRotMat(theta, axis, rot);
+    
+    std::cout << "true = " << std::endl << rot << std::endl;
+    
+    std::random_device seed_gen;
+    std::mt19937 engine(seed_gen());
+    std::normal_distribution<> dist(0.0, 0.25);
+    
+    for (int u=0; u<rot.cols; u++) {
+        for (int v=0; v<rot.rows; v++) {
+            rot.at<float>(v, u) += dist(engine);
+        }
+    }
+    
+    std::cout << "trace = " << cv::trace(rot) << std::endl;
+    
+    std::cout << "before = " << std::endl << rot << std::endl;
+    
+    Quarternion::normalRotMat(rot);
+    
+    std::cout << "after = " << std::endl << rot << std::endl;
+    
+    std::cout << cv::norm(rot.col(0)) << std::endl;
+    std::cout << cv::norm(rot.col(1)) << std::endl;
+    std::cout << cv::norm(rot.col(2)) << std::endl;
+    
+    cv::waitKey(-1);
+    
+    /*
     const std::string workDir = "/Users/masakazu/Desktop/phi/";
     const std::string imgName1 = "phi0.jpg";
     const std::string imgName2 = "phi1.jpg";
@@ -139,6 +173,8 @@ int main(int argc, const char * argv[])
     cv::imshow("match", drawImg);
     
     cv::waitKey(-1);
+    
+    */
     
     return 0;
 }

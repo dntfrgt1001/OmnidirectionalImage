@@ -12,14 +12,13 @@ MatchFeaturePoint::MatchFeaturePoint
 (const cv::Size& frameSize, const Transform& transform,
  int distThreshold, float coordThreshold):
 frameSize(frameSize), transform(transform),
-distThreshold(distThreshold), coordThreshold(coordThreshold)
+distThreshold(distThreshold), coordThreshold(coordThreshold),
+matcher(cv::DescriptorMatcher::create("BruteForce"))
 {
-    matcher = cv::DescriptorMatcher::create("BruteForce");
 }
 
 MatchFeaturePoint::~MatchFeaturePoint()
 {
-    
 }
 
 void MatchFeaturePoint::match
@@ -37,7 +36,7 @@ void MatchFeaturePoint::match
 void MatchFeaturePoint::crossMatch
 (const std::vector<cv::DMatch> &dMatches1,
  const std::vector<cv::DMatch> &dMatches2,
- std::vector<cv::DMatch> &dMatches) const
+ std::vector<cv::DMatch> &dMatches)
 {
     dMatches.clear();
     
@@ -45,9 +44,7 @@ void MatchFeaturePoint::crossMatch
         cv::DMatch forward = dMatches1[i];
         cv::DMatch backward = dMatches2[forward.trainIdx];
         
-        if (forward.queryIdx == backward.trainIdx) {
-            dMatches.push_back(forward);
-        }
+        if (forward.queryIdx == backward.trainIdx) dMatches.push_back(forward);
     }
 }
 
@@ -56,16 +53,16 @@ void MatchFeaturePoint::filterMatchDistance
 {
     // .eraseに注意
     for (int i=0; i<dMatches.size();  ) {
-        if (dMatches[i].distance > distThreshold) {
+        if (dMatches[i].distance > distThreshold)
             dMatches.erase(dMatches.begin() + i);
-        } else {
+        else
             i++;
-        }
     }
 }
 
-void MatchFeaturePoint::filterMatchCoordinate
-(std::vector<cv::Point3f> &for3DPoints, std::vector<cv::Point3f> &lat3DPoints)
+void MatchFeaturePoint::filterCoordDistance
+(std::vector<cv::Point3f> &for3DPoints,
+ std::vector<cv::Point3f> &lat3DPoints) const
 {
     // .eraseに注意
     for (int i=0; i<for3DPoints.size(); ) {
@@ -78,29 +75,7 @@ void MatchFeaturePoint::filterMatchCoordinate
     }
 }
 
-void MatchFeaturePoint::filterMatchCoordinateDebug
-(std::vector<cv::KeyPoint> &forKeyPoints,
- std::vector<cv::KeyPoint> &latKeyPoints, std::vector<cv::DMatch> &dMatches)
-{
-    // .eraseに注意
-    for (int i=0; i<dMatches.size(); ) {
-        cv::Point2f for2DPoint, lat2DPoint;
-        cv::Point3f for3DPoint, lat3DPoint;
-        
-        for2DPoint = forKeyPoints[dMatches[i].queryIdx].pt;
-        transform.orth2d2orth3d(for2DPoint, for3DPoint);
-        lat2DPoint = latKeyPoints[dMatches[i].trainIdx].pt;
-        transform.orth2d2orth3d(lat2DPoint, lat3DPoint);
-        
-        if (cv::norm(for3DPoint - lat3DPoint) > coordThreshold) {
-            dMatches.erase(dMatches.begin() + i);
-        } else {
-            i++;
-        }
-    }
-}
-
-void MatchFeaturePoint::drawMatchesVertical
+void MatchFeaturePoint::drawMatchVertical
 (const cv::Mat &img1, const std::vector<cv::KeyPoint> &keyPoints1,
  const cv::Mat &img2, const std::vector<cv::KeyPoint> &keyPoints2,
  const std::vector<cv::DMatch> &dMatches, cv::Mat &outImg)
@@ -110,10 +85,11 @@ void MatchFeaturePoint::drawMatchesVertical
     for (int i=0; i<dMatches.size(); i++) {
         cv::Point2f dpt1 = keyPoints1[dMatches[i].queryIdx].pt;
         cv::Point2f dpt2 = keyPoints2[dMatches[i].trainIdx].pt;
+        
         // 縦に重ねる分の座標を足す
         dpt2.y = dpt2.y + img1.rows;
         
-        cv::line(outImg, dpt1, dpt2, cv::Scalar(rand()%256, rand()%256, rand()%256), 2, CV_AA);
+        drawMatchLine(dpt1, dpt2, outImg);
     }
 }
 
@@ -130,8 +106,17 @@ void MatchFeaturePoint::drawMatchesVertical
         
         dpt2.y = dpt2.y + img1.rows;
         
-        cv::line(outImg, dpt1, dpt2, cv::Scalar(rand()%256, rand()%256, rand()%256), 2, CV_AA);
+        drawMatchLine(dpt1, dpt2, outImg);
     }
+}
+
+void MatchFeaturePoint::drawMatchLine
+(const cv::Point2f &forPoint, const cv::Point2f &latPoint,
+ cv::Mat &outImg)
+{
+    cv::line
+    (outImg, forPoint, latPoint,
+     cv::Scalar(rand()%256, rand()%256, rand()%256), 2, CV_AA);
 }
 
 void MatchFeaturePoint::sortMatchedPair
@@ -145,3 +130,5 @@ void MatchFeaturePoint::sortMatchedPair
         lat2DPoints.push_back(latKeyPoints[dMatch.trainIdx].pt);
     }
 }
+
+

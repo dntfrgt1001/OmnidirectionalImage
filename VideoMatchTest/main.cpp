@@ -17,32 +17,32 @@
 #include "Transform.hpp"
 #include "ExtractFeaturePoint.hpp"
 #include "MatchFeaturePoint.hpp"
-#include "Affine.hpp"
+#include "Rotation.hpp"
 #include "MatchMain.hpp"
 #include "VideoReader.hpp"
 #include "VideoWriter.hpp"
 
 int main(int argc, const char * argv[])
 {
-    const std::string path = "/Users/masakazu/Desktop/theta/";
-    const std::string inputVideoName = "theta.mp4";
-    const std::string outputVideoName = "theta.mov";
+    const std::string path = "/Users/masakazu/Desktop/20160701/";
+    const std::string inputVideoName = "sample2.mp4";
+    const std::string outputVideoName = "mod.mov";
     
 //    const cv::Size frameSize(1920, 960);
-    const cv::Size frameSize(800, 400);
+    const cv::Size frameSize(1000, 500);
     
     Transform transform(frameSize);
     
     int divNum = 6;
     ExtractFeaturePoint extract(frameSize, transform, divNum);
     
-    int distThreshold = 100;
-    float coordThreshold = 0.5;
-    MatchFeaturePoint match(frameSize, transform, distThreshold, coordThreshold);
+    int matchThres = 180;
+    float coordThres = 0.4;
+    MatchFeaturePoint match(frameSize, transform, matchThres, coordThres);
     
-    Affine affine(transform);
+    Rotation rotation(transform);
     
-    MatchMain matchMain(transform, extract, match, affine);
+    MatchMain matchMain(transform, extract, match, rotation);
     
     VideoReader vr(frameSize, path + inputVideoName);
     VideoWriter vw(frameSize, path + outputVideoName);
@@ -50,7 +50,6 @@ int main(int argc, const char * argv[])
     matchMain.ModifyVideo(vr, vw);
     
 
-    
     /*
     
     const std::string workDir = "/Users/masakazu/Desktop/working/";
