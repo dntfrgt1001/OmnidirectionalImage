@@ -25,7 +25,7 @@ class MatchMain
 {
 public:
     MatchMain
-    (const Transform& transform, const ExtractFeaturePoint& extractFeature,
+    (const Transform& origTransform, const Transform& transform, const ExtractFeaturePoint& extractFeature,
      const MatchFeaturePoint& matchFeature, const Rotation& rotation);
     ~MatchMain();
     
@@ -36,6 +36,7 @@ public:
     void ModifyVideo(VideoReader& vr, VideoWriter& vw);
     
 private:
+    const Transform& origTransform;
     const Transform& transform;
     const ExtractFeaturePoint& extractFeature;
     const MatchFeaturePoint& matchFeature;

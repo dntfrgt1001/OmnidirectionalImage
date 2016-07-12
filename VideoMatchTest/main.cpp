@@ -25,11 +25,11 @@
 int main(int argc, const char * argv[])
 {
     const std::string path = "/Users/masakazu/Desktop/20160701/";
-    const std::string inputVideoName = "sample4.mp4";
+    const std::string inputVideoName = "sample1.mp4";
     const std::string outputVideoName = "mod.mov";
     
-//    const cv::Size frameSize(1920, 960);
-    const cv::Size frameSize(800, 400);
+    const cv::Size origFrameSize(1920, 960);
+    const cv::Size frameSize(1000, 500);
     
     Transform transform(frameSize);
     
@@ -42,10 +42,10 @@ int main(int argc, const char * argv[])
     
     Rotation rotation(transform);
     
-    MatchMain matchMain(transform, extract, match, rotation);
+    MatchMain matchMain(origFrameSize,transform, extract, match, rotation);
     
-    VideoReader vr(frameSize, path + inputVideoName);
-    VideoWriter vw(frameSize, path + outputVideoName);
+    VideoReader vr(origFrameSize, path + inputVideoName);
+    VideoWriter vw(origFrameSize, path + outputVideoName);
     
     matchMain.ModifyVideo(vr, vw);
     

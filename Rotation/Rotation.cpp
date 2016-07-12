@@ -18,8 +18,8 @@ transform(transform)
 Rotation::~Rotation(){}
 
 void Rotation::estimate3DRotMatSVD
-(std::vector<cv::Point3f> &forPoints, std::vector<cv::Point3f> &latPoints,
- cv::Mat& estRotMat) const
+(const std::vector<cv::Point3f> &forPoints,
+ const std::vector<cv::Point3f> &latPoints, cv::Mat& estRotMat) const
 {
     int sampleSize = 6;
     cv::Mat betRotMat = cv::Mat(3, 3, CV_32FC1);
@@ -162,9 +162,4 @@ size_t Rotation::removeOutlier
     }
     
     return inForPoints.size();
-}
-
-void Rotation::normalRotMat(cv::Mat &rotMat)
-{
-    Quarternion::normalRotMat(rotMat);
 }

@@ -29,8 +29,8 @@ public:
     
     // 特異値分解により回転行列を推定する [forP] = [R]*[latP]
     void estimate3DRotMatSVD
-    (std::vector<cv::Point3f>& forPoints, std::vector<cv::Point3f>& latPoints,
-     cv::Mat& estRotMat) const;
+    (const std::vector<cv::Point3f>& forPoints,
+     const std::vector<cv::Point3f>& latPoints, cv::Mat& estRotMat) const;
     // ランダムに点を取り出す
     static void getRondomPoint
     (const std::vector<cv::Point3f>& forPoints,

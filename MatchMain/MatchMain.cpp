@@ -9,8 +9,9 @@
 #include "MatchMain.hpp"
 
 MatchMain::MatchMain
-(const Transform& transform, const ExtractFeaturePoint& extractFeature,
+(const Transform& origTransform, const Transform& transform, const ExtractFeaturePoint& extractFeature,
  const MatchFeaturePoint& matchFeature, const Rotation& rotation):
+origTransform(origTransform),
 transform(transform), extractFeature(extractFeature),
 matchFeature(matchFeature), rotation(rotation),
 accMat(cv::Mat::eye(3, 3, CV_32FC1))
@@ -26,12 +27,17 @@ MatchMain::~MatchMain()
 void MatchMain::ModifylatterImg
 (const cv::Mat &forImg, const cv::Mat &latImg, cv::Mat &modLatImg)
 {
+    // 画像サイズを縮小
+    cv::Mat resForImg, resLatImg;
+    transform.resizeImg(forImg, resForImg);
+    transform.resizeImg(latImg, resLatImg);
+    
     // 特徴点と記述子の抽出
     std::vector<cv::KeyPoint> forKeyPoints, latKeyPoints;
     cv::Mat forDescriptors, latDescriptors;
 
-    extractFeature.extractFeaturePoint(forImg, forKeyPoints, forDescriptors);
-    extractFeature.extractFeaturePoint(latImg, latKeyPoints, latDescriptors);
+    extractFeature.extractFeaturePoint(resForImg, forKeyPoints, forDescriptors);
+    extractFeature.extractFeaturePoint(resLatImg, latKeyPoints, latDescriptors);
     
     // マッチング
     std::vector<cv::DMatch> dMatches;
@@ -61,7 +67,7 @@ void MatchMain::ModifylatterImg
     // 集積した回転行列を正規化
     rotation.normalRotMat(accMat);
     // 回転行列を使って画像を修正
-    transform.rotateImgWithRotMat(latImg, modLatImg, accMat);
+    origTransform.rotateImgWithRotMat(latImg, modLatImg, accMat);
     
     std::cout << "---------------------------------------" << std::endl;
     std::cout << "# match = " << for3DPoints.size() << std::endl;
@@ -75,7 +81,7 @@ void MatchMain::ModifylatterImg
     
     cv::Mat matchImg;
     matchFeature.drawMatchesVertical
-    (forImg, lastFor2DPoints, latImg, lastLat2DPoints, matchImg);
+    (resForImg, lastFor2DPoints, resLatImg, lastLat2DPoints, matchImg);
     cv::imshow("match", matchImg);
 }
 
@@ -105,10 +111,8 @@ void MatchMain::ModifyVideo(VideoReader &vr, VideoWriter &vw)
         
         vw.writeImg(curModImg);
         
-        std::cout << i << std::endl;
+        std::cout << i++ << "-th frame finished" <<std::endl;
         
         cv::waitKey(-1);
-        
-        i++;
     }
 }

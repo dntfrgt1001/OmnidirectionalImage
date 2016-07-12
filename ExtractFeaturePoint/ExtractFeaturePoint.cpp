@@ -147,7 +147,9 @@ bool ExtractFeaturePoint::isInLowLatitude(float u, float v) const
 {
     float theta = transform.u2theta(u);
     float phi = transform.v2phi(v);
-    float latitude = atan(tan(phi)/cos(theta));
+    
+    if (cosf(theta) == 0.0) return false;
+    float latitude = atanf(-tanf(phi)/cosf(theta));
     
     float validPhi = M_PI / divNum;
     

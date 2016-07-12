@@ -13,30 +13,43 @@
 
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
+#include <opencv2/imgproc/imgproc.hpp>
 
 class Transform{
 public:
     Transform(const cv::Size& frameSize);
     
+    // 画像の大きさを変換
+    void resizeImg(const cv::Mat& img, cv::Mat& resImg) const {
+        cv::resize(img, resImg, frameSize);
+    }
     // 画像座標と球面極座標の変換
-    float theta2u(float theta) const
-        { return theta*frameSize.width/(2.0*M_PI) + frameSize.width/2.0; }
-    float phi2v(float phi) const
-        { return -1.0*phi*frameSize.height/M_PI + frameSize.height/2.0; }
-    float u2theta(float u) const
-        { return (u - frameSize.width/2.0) * 2.0*M_PI/frameSize.width; }
-    float v2phi(float v) const
-        { return -1.0 * (v - frameSize.height/2.0) * M_PI/frameSize.height; }
+    float theta2u(float theta) const {
+        return theta*frameSize.width/(2.0*M_PI) + frameSize.width/2.0;
+    }
+    float phi2v(float phi) const {
+        return -1.0*phi*frameSize.height/M_PI + frameSize.height/2.0;
+    }
+    float u2theta(float u) const {
+        return (u - frameSize.width/2.0) * 2.0*M_PI/frameSize.width;
+    }
+    float v2phi(float v) const {
+        return -1.0 * (v - frameSize.height/2.0) * M_PI/frameSize.height;
+    }
     // 画像座標と極座標の変換 0<=u<width,0<=v<height,-pi<=theta<pi,-pi/2<=phi<pi/2
-    void ang2orth(float theta, float phi, float& u, float &v) const
-        { u = theta2u(theta); v = phi2v(phi); }
-    void orth2ang(float u, float v, float& theta, float& phi) const
-        { theta = u2theta(u); phi = v2phi(v); }
+    void ang2orth(float theta, float phi, float& u, float &v) const {
+        u = theta2u(theta); v = phi2v(phi);
+    }
+    void orth2ang(float u, float v, float& theta, float& phi) const {
+        theta = u2theta(u); phi = v2phi(v);
+    }
     // 画像座標と極座標の長さの変換
-    float dtheta2u(float theta) const
-        { return theta * frameSize.width / (2.0 * M_PI); }
-    float dphi2v(float phi) const
-        { return phi * frameSize.height / M_PI;}
+    float dtheta2u(float theta) const {
+        return theta * frameSize.width / (2.0 * M_PI);
+    }
+    float dphi2v(float phi) const {
+        return phi * frameSize.height / M_PI;
+    }
     
     // ２次元画像上の点群を３次元空間上の点群に変換
     void orth2D2orth3D

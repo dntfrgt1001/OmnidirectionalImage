@@ -24,6 +24,11 @@
 			<key>orderHint</key>
 			<integer>9</integer>
 		</dict>
+		<key>Mask.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>10</integer>
+		</dict>
 		<key>MatchTest.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
@@ -98,6 +103,11 @@
 			<true/>
 		</dict>
 		<key>02648EAA1CF8058A00E4E948</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>026516A71D2F7FF4004C7838</key>
 		<dict>
 			<key>primary</key>
 			<true/>
