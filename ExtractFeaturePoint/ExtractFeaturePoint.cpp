@@ -14,8 +14,7 @@ frameSize(frameSize), transform(transform), divNum(divNum),
 validHeight(transform.dphi2v(M_PI)/divNum),
 roi(cv::Rect(0, (frameSize.height - validHeight)/2,
              frameSize.width, validHeight)),
-detector(cv::FeatureDetector::create("SIFT")),
-extractor(cv::DescriptorExtractor::create("SIFT"))
+feature(cv::xfeatures2d::SIFT::create())
 {
 }
 
@@ -27,8 +26,8 @@ void ExtractFeaturePoint::extractRectRoiFeaturePoint
 (const cv::Mat& img, std::vector<cv::KeyPoint> &keyPoints,
  cv::Mat &descriptors) const
 {
-    detector->detect(img(roi), keyPoints);
-    extractor->compute(img(roi), keyPoints, descriptors);
+    feature->detect(img(roi), keyPoints);
+    feature->compute(img(roi), keyPoints, descriptors);
     
     roiCoord2GlobalCoord(keyPoints);
 }
@@ -44,8 +43,8 @@ void ExtractFeaturePoint::extractRoiFeaturePoint
     cv::Mat rotImg(frameSize, CV_8UC3);
     transform.rotateVerticalImg(rotAngle, img, rotImg);
     
-    detector->detect(rotImg(roi), roiKeyPoints);
-    extractor->compute(rotImg(roi), roiKeyPoints, roiDescriptors);
+    feature->detect(rotImg(roi), roiKeyPoints);
+    feature->compute(rotImg(roi), roiKeyPoints, roiDescriptors);
  
     // ROIの座標から(回転後の)大域の座標に変換
     roiCoord2GlobalCoord(roiKeyPoints);

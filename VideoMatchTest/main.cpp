@@ -8,11 +8,10 @@
 
 #include <iostream>
 
-#include <opencv2/core/core.hpp>
-#include <opencv2/highgui/highgui.hpp>
-#include <opencv2/imgproc/imgproc.hpp>
-#include <opencv2/features2d/features2d.hpp>
-#include <opencv2/nonfree/nonfree.hpp>
+#include <opencv2/core.hpp>
+#include <opencv2/highgui.hpp>
+#include <opencv2/imgproc.hpp>
+#include <opencv2/features2d.hpp>
 
 #include "Transform.hpp"
 #include "ExtractFeaturePoint.hpp"
@@ -28,7 +27,7 @@ int main(int argc, const char * argv[])
     const std::string inputVideoName = "sample1.mp4";
     const std::string outputVideoName = "mod.mov";
     
-    const cv::Size origFrameSize(1920, 960);
+    const cv::Size origFrameSize(1000, 500);
     const cv::Size frameSize(1000, 500);
     
     Transform transform(frameSize);

@@ -11,9 +11,9 @@
 
 #include <stdio.h>
 
-#include <opencv2/core/core.hpp>
-#include <opencv2/highgui/highgui.hpp>
-#include <opencv2/imgproc/imgproc.hpp>
+#include <opencv2/core.hpp>
+#include <opencv2/highgui.hpp>
+#include <opencv2/imgproc.hpp>
 
 class Transform{
 public:
@@ -89,12 +89,14 @@ public:
     void rotateVerticalAngDot
     (float chi, float theta, float phi, float& thetar, float& phir) const;
     
-    //return the theta value where -pi <= theta < pi
-    //return the u value where 0 <= u < width
+    // それぞれの座標を正規化する
     double normalizeTheta(float rawTheta) const;
     int normalizeU(int rawU) const;
     double normalizePhi(float rawPhi) const;
     int normalizeV(int rawV) const;
+    
+    // 片方のレンズ正面の画像を正規化画像座標に
+    void normalCoord(const cv::Mat& img, float trange, float prange);
     
 private:
     const cv::Size& frameSize;

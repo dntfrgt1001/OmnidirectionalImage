@@ -12,11 +12,11 @@
 #include <stdio.h>
 #include <iostream>
 
-#include <opencv2/core/core.hpp>
-#include <opencv2/highgui/highgui.hpp>
-#include <opencv2/imgproc/imgproc.hpp>
-#include <opencv2/features2d/features2d.hpp>
-#include <opencv2/nonfree/nonfree.hpp>
+#include <opencv2/core.hpp>
+#include <opencv2/highgui.hpp>
+#include <opencv2/imgproc.hpp>
+#include <opencv2/features2d.hpp>
+#include <opencv2/xfeatures2d.hpp>
 
 #include "Rotate.hpp"
 #include "Transform.hpp"
@@ -75,8 +75,7 @@ private:
     
     const int validHeight;
     
-    const cv::Ptr<cv::FeatureDetector> detector;
-    const cv::Ptr<cv::DescriptorExtractor> extractor;
+    const cv::Ptr<cv::Feature2D> feature;
     
     const int divNum;
     const cv::Rect roi;

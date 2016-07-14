@@ -163,3 +163,19 @@ size_t Rotation::removeOutlier
     
     return inForPoints.size();
 }
+
+void Rotation::normalRotMat(cv::Mat &rotMat)
+{
+    Quarternion quart;
+    Quarternion::RotMat2Quart(rotMat, quart);
+    Quarternion::normalQuart(quart);
+    Quarternion::Quart2RotMat(quart, rotMat);
+}
+
+void Rotation::estimate3DRotMatEssential
+(const std::vector<cv::Point3f> &forPoints,
+ const std::vector<cv::Point3f> &latPoints, cv::Mat &estRotMat) const
+{
+    
+    //cv::findEssentialMat(forPoints, latPoints);
+}

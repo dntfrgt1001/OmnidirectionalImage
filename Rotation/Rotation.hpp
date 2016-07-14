@@ -12,11 +12,11 @@
 #include <stdio.h>
 #include <iostream>
 
-#include <opencv2/core/core.hpp>
-#include <opencv2/highgui/highgui.hpp>
-#include <opencv2/imgproc/imgproc.hpp>
-#include <opencv2/features2d/features2d.hpp>
-#include <opencv2/calib3d/calib3d.hpp>
+#include <opencv2/core.hpp>
+#include <opencv2/highgui.hpp>
+#include <opencv2/imgproc.hpp>
+#include <opencv2//features2d.hpp>
+#include <opencv2/calib3d.hpp>
 
 #include "Transform.hpp"
 #include "Quarternion.hpp"
@@ -55,6 +55,11 @@ public:
      float normThre, const cv::Mat& estRotMat) const;
     // 四元数を使って回転行列を正規化
     static void normalRotMat(cv::Mat& rotMat);
+    
+    // 基本行列により回転行列を推定する
+    void estimate3DRotMatEssential
+    (const std::vector<cv::Point3f>& forPoints,
+     const std::vector<cv::Point3f>& latPoints, cv::Mat& estRotMat) const;
     
 private:
     const Transform& transform;

@@ -51,6 +51,14 @@ void MatchMain::ModifylatterImg
     matchFeature.sortMatchedPair
     (forKeyPoints, latKeyPoints, dMatches, for2DPoints, lat2DPoints);
     
+    
+    
+    // 正規化画像座標へマッピング
+    std::vector<cv::Point2f> forNorm2DPoints, latNorm2DPoints;
+    
+    
+    
+    
     // 三次元空間へのマッピング
     std::vector<cv::Point3f> for3DPoints, lat3DPoints;
     transform.orth2D2orth3D(for2DPoints, for3DPoints);
