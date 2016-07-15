@@ -13,51 +13,6 @@ frameSize(frameSize)
 {
 }
 
-/*
-float Transform::theta2u(float theta) const
-{
-    return theta*frameSize.width/(2.0*M_PI) + frameSize.width/2.0;
-}
-
- 
-float Transform::phi2v(float phi) const
-{
-    return (int)round((-1.0)*phi*frameSize.height/M_PI + frameSize.height/2.0);
-}
-
-float Transform::u2theta(float u) const
-{
-    return (u - frameSize.width/2.0) * 2.0*M_PI/frameSize.width;
-}
-
-float Transform::v2phi(float v) const
-{
-    return (-1.0) * (v - frameSize.height/2.0) * M_PI/frameSize.height;
-}
-
-void Transform::ang2orth(float theta, float phi, float &u, float &v) const
-{
-    u = theta2u(theta);
-    v = phi2v(phi);
-}
-
-void Transform::orth2ang(float u, float v, float &theta, float &phi) const
-{
-    theta = u2theta(u);
-    phi = v2phi(v);
-}
-
-float Transform::dtheta2u(float theta) const
-{
-    return theta * frameSize.width / (2.0 * M_PI);
-}
-
-float Transform::dphi2v(float phi) const
-{
-    return phi * frameSize.height / M_PI;
-}
-*/
-
 void Transform::orth2D2orth3D
 (const std::vector<cv::Point2f> &points2d, std::vector<cv::Point3f> &points3d)
 const

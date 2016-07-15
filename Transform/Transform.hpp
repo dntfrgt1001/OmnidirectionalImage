@@ -28,15 +28,16 @@ public:
         return theta*frameSize.width/(2.0*M_PI) + frameSize.width/2.0;
     }
     float phi2v(float phi) const {
-        return -1.0*phi*frameSize.height/M_PI + frameSize.height/2.0;
+        return - phi*frameSize.height/M_PI + frameSize.height/2.0;
     }
     float u2theta(float u) const {
         return (u - frameSize.width/2.0) * 2.0*M_PI/frameSize.width;
     }
     float v2phi(float v) const {
-        return -1.0 * (v - frameSize.height/2.0) * M_PI/frameSize.height;
+        return - (v - frameSize.height/2.0) * M_PI/frameSize.height;
     }
     // 画像座標と極座標の変換 0<=u<width,0<=v<height,-pi<=theta<pi,-pi/2<=phi<pi/2
+    
     void ang2orth(float theta, float phi, float& u, float &v) const {
         u = theta2u(theta); v = phi2v(phi);
     }

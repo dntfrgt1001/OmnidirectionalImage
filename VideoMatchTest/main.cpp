@@ -28,7 +28,7 @@ int main(int argc, const char * argv[])
     const std::string outputVideoName = "mod.mov";
     
     const cv::Size origFrameSize(1000, 500);
-    const cv::Size frameSize(1000, 500);
+    const cv::Size frameSize(800, 400);
     
     Transform transform(frameSize);
     
