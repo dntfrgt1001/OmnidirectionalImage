@@ -19,7 +19,7 @@
 
 int main(int argc, const char * argv[])
 {
-    const std::string path = "/Users/masakazu/Desktop/20160701/";
+    const std::string path = "/Users/masakazu/Desktop/20160725/";
     const std::string inputVideoName = "sample4-1.mov";
     const std::string outputVideoName = "modmod.mov";
     
@@ -36,7 +36,7 @@ int main(int argc, const char * argv[])
     cv::namedWindow("input");
     cv::imshow("input", img);
     
-    float chitheta = M_PI / 4.0;
+    float chitheta = M_PI;
     cv::Vec3f axistheta(0.0, 1.0, 0.0);
     cv::Mat rotMattheta;
     Quarternion::arbRotMat(chitheta, axistheta, rotMattheta);
@@ -49,7 +49,7 @@ int main(int argc, const char * argv[])
     cv::namedWindow("mod y");
     cv::imshow("mod y", rotyImg);
     
-    float chiphi = M_PI / 4.0;
+    float chiphi = M_PI * 0.0;
     cv::Vec3f axisphi(1.0, 0.0, 0.0);
     cv::Mat rotMatphi;
     Quarternion::arbRotMat(chiphi, axisphi, rotMatphi);

@@ -19,7 +19,7 @@
 int main(int argc, const char * argv[])
 {
     const std::string path = "/Users/masakazu/Desktop/";
-    const std::string imgName = "R0010020.JPG";
+    const std::string imgName = "R0010023.JPG";
     
     const cv::Size frameSize(5000, 2500);
     
@@ -41,7 +41,7 @@ int main(int argc, const char * argv[])
     
     cv::Mat persedImg;
     float rangeTheta = M_PI / 1.5;
-    float rangePhi = M_PI / 2.5;
+    float rangePhi = M_PI / 3.0;
     perspective.persProjImg(img, rangeTheta, rangePhi, persedImg);
     
     

@@ -40,9 +40,10 @@ void ExtractFeaturePoint::extractRoiFeaturePoint
     
     float rotAngle = -1 * M_PI /2 +  M_PI*((float)number / divNum);
     
-    cv::Mat rotImg(frameSize, CV_8UC3);
-    transform.rotateVerticalImg(rotAngle, img, rotImg);
+    cv::Mat rotImg;
+    transform.rotateVerticalImgRect(rotAngle, img, roi, rotImg);
     
+    // 低緯度領域で特徴点を抽出
     feature->detect(rotImg(roi), roiKeyPoints);
     feature->compute(rotImg(roi), roiKeyPoints, roiDescriptors);
  
@@ -59,14 +60,10 @@ void ExtractFeaturePoint::rotateKeyPointCoord
 (std::vector<cv::KeyPoint> &keyPoints, float angle) const
 {
     for (int i=0; i<keyPoints.size(); i++) {
-        float u, v, ur, vr;
+        cv::Point2f latequirect;
+        transform.rotateVerticalequirect(angle, keyPoints[i].pt, latequirect);
         
-        u = keyPoints[i].pt.x;
-        v = keyPoints[i].pt.y;
-        
-        transform.rotateVerticalOrthDot(angle, u, v, ur, vr);
-        
-        keyPoints[i].pt = cv::Point2f(ur, vr);
+        keyPoints[i].pt = latequirect;
     }
 }
 
@@ -80,6 +77,7 @@ void ExtractFeaturePoint::extractFeaturePoint
 
         if (i == 0) {
             extractRoiFeaturePoint(img, keyPoints, descriptors, i);
+            std::cout << keyPoints.size() << std::endl;
         } else {
             extractRoiFeaturePoint(img, roiKeyPoints, roiDescriptors, i);
         
@@ -90,30 +88,6 @@ void ExtractFeaturePoint::extractFeaturePoint
         }
     }
 }
-
-/*
-void ExtractFeaturePoint::roiCoord2GlobalCoord
-(std::vector<cv::KeyPoint> &keyPoints) const
-{
-    for (int i=0; i<keyPoints.size(); i++) {
-        keyPoints[i].pt.y += (frameSize.height - validHeight)/2;
-    }
-}
-
-void ExtractFeaturePoint::keyPointCat
-(std::vector<cv::KeyPoint> &dest, const std::vector<cv::KeyPoint> &src) const
-{
-    std::copy(src.begin(), src.end(), std::back_inserter(dest));
-}
-
-void ExtractFeaturePoint::descriptorCat(cv::Mat &dest, const cv::Mat &src)
-{
-    cv::Mat conMat;
-    cv::vconcat(dest, src, conMat);
-    
-    dest = conMat.clone();
-}
-*/
 
 void ExtractFeaturePoint::filterLowLatitue
 (std::vector<cv::KeyPoint> &keyPoints, cv::Mat &descriptors) const
@@ -135,17 +109,14 @@ void ExtractFeaturePoint::filterLowLatitue
     descriptors = destDescriptors.clone();
 }
 
-/*
-bool ExtractFeaturePoint::isInLowLatitude(const cv::Point2f point) const
+
+bool ExtractFeaturePoint::isInLowLatitude(const cv::Point2f& equirect) const
 {
-    return isInLowLatitude(point.x, point.y);
-}
-*/
- 
-bool ExtractFeaturePoint::isInLowLatitude(float u, float v) const
-{
-    float theta = transform.u2theta(u);
-    float phi = transform.v2phi(v);
+    cv::Point2f psphere;
+    transform.equirect2psphere(equirect, psphere);
+    
+    float theta = psphere.x;
+    float phi =psphere.y;
     
     if (cosf(theta) == 0.0) return false;
     float latitude = atanf(-tanf(phi)/cosf(theta));

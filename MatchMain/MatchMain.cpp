@@ -9,11 +9,11 @@
 #include "MatchMain.hpp"
 
 MatchMain::MatchMain
-(const Transform& origTransform, const Transform& transform, const ExtractFeaturePoint& extractFeature,
+(const Transform& origTransform, const Transform& transform,
+ const ExtractFeaturePoint& extractFeature,
  const MatchFeaturePoint& matchFeature, const Rotation& rotation):
-origTransform(origTransform),
-transform(transform), extractFeature(extractFeature),
-matchFeature(matchFeature), rotation(rotation),
+origTransform(origTransform),transform(transform),
+extractFeature(extractFeature),matchFeature(matchFeature), rotation(rotation),
 accMat(cv::Mat::eye(3, 3, CV_32FC1))
 {
     
@@ -47,30 +47,30 @@ void MatchMain::ModifylatterImg
     matchFeature.filterMatchDistance(dMatches);
     
     // 二次元画像の特徴点の座標のペアを取り出す
-    std::vector<cv::Point2f> for2DPoints, lat2DPoints;
+    std::vector<cv::Point2f> forequirects, latequirects;
     matchFeature.sortMatchedPair
-    (forKeyPoints, latKeyPoints, dMatches, for2DPoints, lat2DPoints);
-    
-    
-    
-    // 正規化画像座標へマッピング
-    std::vector<cv::Point2f> forNorm2DPoints, latNorm2DPoints;
-    
-    
-    
-    
+    (forKeyPoints, latKeyPoints, dMatches, forequirects, latequirects);
+
     // 三次元空間へのマッピング
-    std::vector<cv::Point3f> for3DPoints, lat3DPoints;
-    transform.orth2D2orth3D(for2DPoints, for3DPoints);
-    transform.orth2D2orth3D(lat2DPoints, lat3DPoints);
+    std::vector<cv::Point3f> forspheres, latspheres;
+    transform.equirect2sphere(forequirects, forspheres);
+    transform.equirect2sphere(latequirects, latspheres);
     
     // 特徴点の座標のユークリッド距離のフィルター
-    matchFeature.filterCoordDistance(for3DPoints, lat3DPoints);
+    matchFeature.filterCoordDistance(forspheres, latspheres);
+    
+    // 正規化画像座標へのマッピング
+    std::vector<cv::Point2f> fornormals, latnormals;
+    transform.sphere2normal(forspheres, fornormals);
+    transform.sphere2normal(latspheres, latnormals);
+    
     
     // 回転行列の推定
     cv::Mat estRotMat;
-    rotation.estimate3DRotMatSVD(for3DPoints, lat3DPoints, estRotMat);
-    // 回転行列を集積    
+    rotation.estimate3DRotMatSVD(forspheres, latspheres, estRotMat);
+    //rotation.estimate3DRotMatEssential(fornormals, latnormals, estRotMat);
+    
+    // 回転行列を集積
     accMat = accMat * estRotMat;
     // 集積した回転行列を正規化
     rotation.normalRotMat(accMat);
@@ -78,18 +78,19 @@ void MatchMain::ModifylatterImg
     origTransform.rotateImgWithRotMat(latImg, modLatImg, accMat);
     
     std::cout << "---------------------------------------" << std::endl;
-    std::cout << "# match = " << for3DPoints.size() << std::endl;
+    std::cout << "# match = " << forspheres.size() << std::endl;
     std::cout << "estRotMat = " << std::endl << estRotMat << std::endl;
+//    std::cout << "estRotMatEss = " << std::endl << estRotMatEss << std::endl;
     std::cout << "accRotMat = " << std::endl << accMat << std::endl;
     std::cout << "---------------------------------------" << std::endl;
     
-    std::vector<cv::Point2f> lastFor2DPoints, lastLat2DPoints;
-    transform.orth3D2orth2D(for3DPoints, lastFor2DPoints);
-    transform.orth3D2orth2D(lat3DPoints, lastLat2DPoints);
+    std::vector<cv::Point2f> lastForequirect, lastLatequirect;
+    transform.sphere2equirect(forspheres, lastForequirect);
+    transform.sphere2equirect(latspheres, lastLatequirect);
     
     cv::Mat matchImg;
     matchFeature.drawMatchesVertical
-    (resForImg, lastFor2DPoints, resLatImg, lastLat2DPoints, matchImg);
+    (resForImg, lastForequirect, resLatImg, lastLatequirect, matchImg);
     cv::imshow("match", matchImg);
 }
 

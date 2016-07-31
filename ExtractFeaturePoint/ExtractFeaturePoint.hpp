@@ -64,10 +64,7 @@ public:
     void filterLowLatitue
     (std::vector<cv::KeyPoint>& keyPoints, cv::Mat& descriptors) const;
     // 特徴点が有効範囲にあるか
-    bool isInLowLatitude(float u, float v) const;
-    bool isInLowLatitude(const cv::Point2f point) const {
-        return isInLowLatitude(point.x, point.y);
-    };
+    bool isInLowLatitude(const cv::Point2f& equirect) const;
     
 private:
     const cv::Size& frameSize;

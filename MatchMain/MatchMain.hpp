@@ -25,7 +25,8 @@ class MatchMain
 {
 public:
     MatchMain
-    (const Transform& origTransform, const Transform& transform, const ExtractFeaturePoint& extractFeature,
+    (const Transform& origTransform, const Transform& transform,
+     const ExtractFeaturePoint& extractFeature,
      const MatchFeaturePoint& matchFeature, const Rotation& rotation);
     ~MatchMain();
     

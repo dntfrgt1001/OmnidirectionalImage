@@ -8,39 +8,66 @@
 
 #include <iostream>
 
-#include <opencv2/core/core.hpp>
-#include <opencv2/highgui/highgui.hpp>
-#include <opencv2/imgproc/imgproc.hpp>
-#include <opencv2/features2d/features2d.hpp>
-#include <opencv2/nonfree/nonfree.hpp>
-#include <math.h>
-#include "Rotate.hpp"
+#include <opencv2/core.hpp>
+#include <opencv2/highgui.hpp>
+#include <opencv2/imgproc.hpp>
+#include <opencv2/imgcodecs.hpp>
+#include <opencv2/features2d.hpp>
+#include <opencv2/xfeatures2d.hpp>
+#include <opencv2/calib3d.hpp>
+
 #include "Transform.hpp"
-#include "Match.hpp"
+#include "MatchMain.hpp"
+#include "Rotation.hpp"
+#include "ExtractFeaturePoint.hpp"
+#include "MatchFeaturePoint.hpp"
+#include "Quarternion.hpp"
+#include "VideoReader.hpp"
+#include "VideoWriter.hpp"
 
 int main(int argc, const char * argv[])
 {
-    std::string workDir = "/Users/masakazu/Documents/Koike lab/product/OmnidirectionalImage/working/";
-    std::string inputName = "R0010050.JPG";
+    const std::string path = "/Users/masakazu/Desktop/";
+    const std::string inputName = "R0010018.JPG";
+
+    const cv::Size origFrameSize(1000, 500);
+    const cv::Size frameSize(1000, 500);
     
-    const cv::Size frameSize(1920, 960);
+    cv::Mat input1, img1;
+    input1 = cv::imread(path + inputName);
+    cv::resize(input1, img1, frameSize);
     
-    cv::Mat input, img;
-    input = cv::imread(workDir + inputName);
-    cv::resize(input, img, frameSize);
+    const Transform transform(frameSize);
     
-    Transform transform(frameSize);
+    int divNum = 6;
+    ExtractFeaturePoint ef(frameSize, transform, divNum);
+    int distThreshold = 200;
+    float coordThreshold = 0.5;
+    MatchFeaturePoint mf(frameSize, transform, distThreshold, coordThreshold);
+    Rotation rot(transform);
     
-    Rotate rot(frameSize, transform);
+    cv::Vec3f axis(1, 1, 1);
+    float theta = M_PI/5.0;
+    cv::Mat rotMat;
+    Quarternion::arbRotMat(theta, axis, rotMat);
     
-    cv::Mat img2(frameSize, CV_8UC3);
-    rot.rotateXAng(M_PI * 1.0/8.0, img, img2);
+    cv::Mat img2;
+    transform.rotateImgWithRotMat(img1, img2, rotMat);
     
-    Match match(frameSize, img, transform, rot, 7);
+    MatchMain mm(origFrameSize, transform, ef, mf, rot);
     
-    cv::Mat rotImg(frameSize, CV_8UC3);
-    match.rotateXMatch(img2, rotImg);
+    cv::Mat modImg;
+    mm.ModifylatterImg(img1, img2, modImg);
     
+    cv::namedWindow("img1");
+    cv::namedWindow("img2");
+    cv::namedWindow("mod");
+    
+    cv::imshow("img1", img1);
+    cv::imshow("img2", img2);
+    cv::imshow("mod", modImg);
+    
+    cv::waitKey(-1);
     
     /*
     cv::Mat modImg(frameSize, CV_8UC3);

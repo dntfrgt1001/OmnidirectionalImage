@@ -9,15 +9,19 @@
 #include <iostream>
 
 #include <opencv2/opencv.hpp>
+#include <opencv2/features2d.hpp>
+
 #include "Transform.hpp"
-#include "Affine.hpp"
-#include "Quarternion.hpp"
+#include "ExtractFeaturePoint.hpp"
 
 int main(int argc, const char * argv[])
 {
     const std::string path = "/Users/masakazu/Desktop/";
-    const std::string fileName = "img1.jpg";
-    const cv::Size frameSize(800, 400);
+    const std::string fileName = "R0010052.JPG";
+    const cv::Size frameSize(1000, 500);
+
+    const Transform transform(frameSize);
+    const ExtractFeaturePoint ef(frameSize, transform, 6);
     
     cv::Mat input, img;
     
@@ -26,21 +30,22 @@ int main(int argc, const char * argv[])
     cv::resize(input, img, frameSize);
   
     float theta = M_PI / 4.0;
-    cv::Vec3f axis(0.0, 0.0, 1.0);
-    cv::Mat rotMat;
-    Quarternion::arbRotMat(theta, axis, rotMat);
-    
-    Transform transform(frameSize);
-    
     cv::Mat rotImg;
+    cv::Rect rect(0, frameSize.height/3, frameSize.width, frameSize.height/3);
+    transform.rotateVerticalImgRect(theta, img, rect, rotImg);
+
+    std::vector<cv::KeyPoint> keyPoints;
+    cv::Mat descriptors;
+    ef.extractFeaturePoint(img, keyPoints, descriptors);
     
-    transform.rotateVerticalImg(theta, img, rotImg);
-//    transform.rotateImgWithRotMat(img, rotImg, rotMat);
+    cv::Mat keyImg;
+    cv::drawKeypoints(img, keyPoints, keyImg);
+    
     cv::namedWindow("Original Image");
     cv::imshow("Original Image", img);
     
-    cv::namedWindow("Rotated Image");
-    cv::imshow("Rotated Image", rotImg);
+    cv::namedWindow("KeyPoint Image");
+    cv::imshow("KeyPoint Image", keyImg);
         
     cv::waitKey(-1);
     

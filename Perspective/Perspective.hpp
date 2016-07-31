@@ -13,6 +13,7 @@
 #include <iostream>
 
 #include <opencv2/core.hpp>
+#include <opencv2/calib3d.hpp>
 
 #include "Transform.hpp"
 
@@ -22,63 +23,38 @@ public:
     Perspective(const Transform& transform, cv::Mat& cameraMat):
     transform(transform), cameraMat(cameraMat){};
     
-    // 球面正規化画像座標から正規化画像座標に
-    static float pregular2x(float theta, float phi = 0.0) {
-        return tanf(theta);
+    // 球面座標->正規化画像座標
+    static void psphere2regular
+    (const cv::Point2f& psphere, cv::Point2f& regular) {
+        regular.x = tanf(psphere.x);
+        regular.y = - tanf(psphere.y)/cosf(psphere.x);
     }
-    static float pregular2y(float theta, float phi) {
-        return - tanf(phi)/cosf(theta);
-    }
-    static void pregular2regular(float theta, float phi, float& x, float& y) {
-        x = pregular2x(theta, phi); y = pregular2y(theta, phi);
+    static void psphere2regular
+    (const std::vector<cv::Point2f>& forRegular,
+     std::vector<cv::Point2f>& latRegular);
+    
+    // 正規化画像座標->球面座標
+    static void regular2psphere
+    (const cv::Point2f& regular, cv::Point2f& psphere) {
+        psphere.x = atanf(regular.x);
+        psphere.y = - atanf(regular.y / sqrtf(1 + regular.x*regular.x));
     }
     
-    // 正規化画像座標から球面正規化画像座標に変換 立体射影に修正
-    static float regular2theta(float x, float y = 0.0) {
-        return atanf(x);
-        /*
-        float xp = (4*x) / (x*x + y*y + 4);
-        float yp = (4*y) / (x*x + y*y + 4);
-        float zp = (-x*x - y*y + 4) / (x*x + y*y + 4);
-        return atanf(xp / zp);
-         */
+    // 正規化画像座標->透視投影画像座標
+    void regular2pers(const cv::Point2f& regular, cv::Point2f& pers) const {
+        pers.x = cameraMat.at<float>(0, 0)*regular.x+cameraMat.at<float>(0, 2);
+        pers.y = cameraMat.at<float>(1, 1)*regular.y+cameraMat.at<float>(1, 2);
     }
-    static float regular2phi(float x, float y) {
-        return - atanf(y / sqrtf(1 + x*x));
-        /*
-        float xp = (4*x) / (x*x + y*y + 4);
-        float yp = (4*y) / (x*x + y*y + 4);
-        float zp = (-x*x - y*y + 4) / (x*x + y*y + 4);
-        return yp<-1.0? asinf(-1.0): (1.0<yp? asinf(1.0): asinf(-yp));
-         */
-    }
-    static void regular2pregular(float x, float y, float& theta, float& phi) {
-        theta = regular2theta(x, y); phi = regular2phi(x, y);
-    }
-    
-    // 正規化画像座標から透視投影画像座標に変換
-    float x2ud(float x) const {
-        return cameraMat.at<float>(0, 0) * x + cameraMat.at<float>(0, 2);
-    }
-    float y2vd(float y) const {
-        return cameraMat.at<float>(1, 1) * y + cameraMat.at<float>(1, 2);
-    }
-    void regular2pers(float x, float y, float& ud, float& vd) const {
-        ud = x2ud(x); vd = y2vd(y);
-    }
+
     // 透視投影画像座標から正規化画像座標に変換
-    float ud2x(float ud) const {
-        return (ud - cameraMat.at<float>(0, 2)) / cameraMat.at<float>(0, 0);
+    void pers2regular(const cv::Point2f& pers, cv::Point2f& regular) const {
+        regular.x = (pers.x-cameraMat.at<float>(0,2))/cameraMat.at<float>(0,0);
+        regular.y = (pers.y-cameraMat.at<float>(1,2))/cameraMat.at<float>(1,1);
     }
-    float vd2y(float vd) const {
-        return (vd - cameraMat.at<float>(1, 2)) / cameraMat.at<float>(1, 1);
-    }
-    void pers2regular(float ud, float vd, float& x, float& y) const {
-        x = ud2x(ud); y = vd2y(vd);
-    }
+
     // 指定したθとφの範囲の透視投影画像を得る
     void persProjImg
-    (const cv::Mat& img, float rangeTheta, float rangePhi,
+    (const cv::Mat& img, float rtheta, float rphi,
      cv::Mat& persedImg) ;
     
     void setPersCenter(float cud, float cvd) {
@@ -87,40 +63,22 @@ public:
     }
     // 透視投影画像の画像中心を計算する
     void calcPersLength
-    (float rangeTheta, float rangePhi, float& dud, float& dvd) const {
+    (float rtheta, float rphi, float& dud, float& dvd) const {
         float dx, dy;
-        dpregular2dregular(rangeTheta, rangePhi, dx, dy);
+        dpsphere2dregular(rtheta, rphi, dx, dy);
         dregular2dpers(dx, dy, dud, dvd);
     };
     // 球面正規化画像座標の距離を正規化画像座標の距離に変換
-    // 線形変換ではないので，対称的な場合のみ 立体射影に修正
-    float dpregular2dx(float dtheta, float dphi) const {
+    // 線形変換ではないので，対称的な場合のみ
+    float dpsphere2dx(float dtheta, float dphi) const {
         return 2 * tanf(dtheta / 2.0);
-        /*
-        float theta = dtheta / 2.0;
-        float phi = dphi / 2.0;
-        float xp = sinf(theta) * cosf(phi);
-        float yp = -1 * sinf(phi);
-        float zp = cosf(theta) * cosf(phi);
-        
-        return 2 * (2*xp / (1+zp));
-         */
     }
-    float dpregular2dy(float dtheta, float dphi) const {
+    float dpsphere2dy(float dtheta, float dphi) const {
         return 2 * tanf(dphi / 2.0) / cosf(dtheta / 2.0);
-        /*
-        float theta = dtheta / 2.0;
-        float phi = dphi / 2.0;
-        float xp = sinf(theta) * cosf(phi);
-        float yp = -1 * sinf(phi);
-        float zp = cosf(theta) * cosf(phi);
-        
-        return 2 * (2*(-yp) / (1+zp));
-         */
     }
-    void dpregular2dregular
+    void dpsphere2dregular
     (float dtheta, float dphi, float& dx, float& dy) const {
-        dx = dpregular2dx(dtheta, dphi); dy = dpregular2dy(dtheta, dphi);
+        dx = dpsphere2dx(dtheta, dphi); dy = dpsphere2dy(dtheta, dphi);
     }
     // 正規化画像座標の距離を透視投影画像座標の距離に変換
     float dx2dud(float dx) const {
@@ -132,7 +90,6 @@ public:
     void dregular2dpers(float dx, float dy, float& dud, float& dvd) const {
         dud = dx2dud(dx); dvd = dy2dvd(dy);
     }
-
     
 private:
     const Transform& transform;

@@ -30,7 +30,6 @@ public:
     bool hasNext();
     void readImg(cv::Mat& img);
     
-    
 private:
     const cv::Size& frameSize;
     cv::VideoCapture video;

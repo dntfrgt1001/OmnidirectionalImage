@@ -16,48 +16,81 @@
 
 #include "Transform.hpp"
 #include "Quarternion.hpp"
+#include "Rotation.hpp"
+#include "VideoReader.hpp"
+#include "VideoWriter.hpp"
 
 int main(int argc, const char * argv[])
 {
- 
-    const cv::Size frameSize(2000, 1000);
+    const std::string path = "/Users/masakazu/Desktop/video/20160725/";
+    const std::string inputVideoName = path + "sample2.mp4";
+    const std::string outputVideoName = path + "sample2";
+    
+    const cv::Size frameSize(1000, 500);
     
     Transform transform(frameSize);
+    Rotation rotation(transform);
+    VideoReader vr(frameSize, inputVideoName);
     
-    float theta = M_PI / 4.0;
-    cv::Vec3f axis(0, 0, 1);
     
-    cv::Mat rotMat;
-    Quarternion::arbRotMat(theta, axis, rotMat);
+    cv::Mat img;
+    vr.hasNext();
+    vr.readImg(img);
     
-    std::cout << "true R = " << std::endl << rotMat << std::endl;
+    cv::namedWindow("input");
+    cv::imshow("input", img);
     
-    std::vector<cv::Point3f> forPoints, latPoints;
-    cv::Point3f p1(1.0, 0.0, 0.0); forPoints.push_back(p1);
-    cv::Point3f p2(0.0, 1.0, 0.0); forPoints.push_back(p2);
-    cv::Point3f p3(0.0, 0.0, 1.0); forPoints.push_back(p3);
+    float chitheta = M_PI;
+    cv::Vec3f axistheta(0.0, 1.0, 0.0);
+    cv::Mat rotMattheta;
+    Quarternion::arbRotMat(chitheta, axistheta, rotMattheta);
     
-    for (int i=0; i<forPoints.size(); i++) {
-        cv::Point3f tmpPoint;
-        transform.orth3D2orth3DWithRotMat(forPoints[i], tmpPoint, rotMat);
-        latPoints.push_back(tmpPoint);
-    }
+    std::cout << rotMattheta << std::endl;
+    cv::Mat rotyImg;
+    transform.rotateImgWithRotMat(img, rotyImg, rotMattheta);
     
-    cv::Mat accMat = cv::Mat::zeros(3, 3, CV_32FC1);
-    for (int i=0; i<forPoints.size(); i++) {
-        cv::Vec3f forVec = cv::Mat1f(forPoints[i]);
-        cv::Vec3f latVec = cv::Mat1f(latPoints[i]);
+    cv::namedWindow("mod y");
+    cv::imshow("mod y", rotyImg);
+    
+    float chiphi = M_PI * 0.0;
+    cv::Vec3f axisphi(1.0, 0.0, 0.0);
+    cv::Mat rotMatphi;
+    Quarternion::arbRotMat(chiphi, axisphi, rotMatphi);
+    
+    std::cout << rotMatphi << std::endl;
+    
+    cv::Mat rotxImg;
+    transform.rotateImgWithRotMat(rotyImg, rotxImg, rotMatphi);
+    
+    cv::namedWindow("mod x");
+    cv::imshow("mod x", rotxImg);
+    
+    cv::waitKey(-1);
+    
+    VideoWriterPic vw(frameSize, outputVideoName);
+    
+    cv::Mat rotMat = rotMatphi * rotMattheta;
+    
+    cv::namedWindow("rotated img");
+    
+    vw.writeImg(rotxImg);
+    
+    int i=0;
+    while (vr.hasNext()) {
+        cv::Mat tmpMat;
+        vr.readImg(tmpMat);
         
-        accMat = accMat + cv::Mat(latVec * forVec.t());
+        cv::Mat rotImg;
+        transform.rotateImgWithRotMat(tmpMat, rotImg, rotMat);
+        
+        vw.writeImg(rotImg);
+        
+        cv::imshow("rotated img", rotImg);
+        
+        std::cout << i++ << "-th frame finished." << std::endl;
+        
+        cv::waitKey(10);
     }
-    
-    cv::Mat u, w, vt;
-    cv::SVD::compute(accMat, w, u, vt);
-    
-    std::cout << "u = " << std::endl << u << std::endl;
-    std::cout << "w = " << std::endl << w << std::endl;
-    std::cout << "vt = " << std::endl << vt << std::endl;
-    std::cout << "est R = " << std::endl << u * vt <<std::endl;
     
     return 0;
 }

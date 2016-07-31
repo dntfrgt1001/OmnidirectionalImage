@@ -18,8 +18,8 @@ transform(transform)
 Rotation::~Rotation(){}
 
 void Rotation::estimate3DRotMatSVD
-(const std::vector<cv::Point3f> &forPoints,
- const std::vector<cv::Point3f> &latPoints, cv::Mat& estRotMat) const
+(const std::vector<cv::Point3f> &forspheres,
+ const std::vector<cv::Point3f> &latspheres, cv::Mat& estRotMat) const
 {
     int sampleSize = 6;
     cv::Mat betRotMat = cv::Mat(3, 3, CV_32FC1);
@@ -31,18 +31,18 @@ void Rotation::estimate3DRotMatSVD
     // ランダムにサンプリングした点から推定を行う
     for (int i=0; i<sampleSize; i++) {
         std::vector<cv::Point3f> forPointx, latPointx;
-        getRondomPoint(forPoints, latPoints, forPointx, latPointx, sampleSize);
+        getRondomPoint(forspheres, latspheres, forPointx, latPointx, sampleSize);
         
         cv::Mat curEstRotMat;
         estimate3DRotMatSVDPartial(forPointx, latPointx, curEstRotMat);
         
         float error;
-        error = evalEstRotMat(forPoints, latPoints, curEstRotMat);
+        error = evalEstRotMat(forspheres, latspheres, curEstRotMat);
 //        std::cout << "current error = " << curError << std::endl;
 //        std::cout << "current mat = " << std::endl <<  curEstRotMat << std::endl;
         
         std::vector<cv::Point3f> inForPoints, inLatPoints;
-        size_t inLierSize =  removeOutlier(forPoints, latPoints, inForPoints, inLatPoints, error/forPoints.size(), curEstRotMat);
+        size_t inLierSize =  removeOutlier(forspheres, latspheres, inForPoints, inLatPoints, error/forspheres.size(), curEstRotMat);
         
         if (inLierSize > betInlierSize) {
             betInlierSize = inLierSize;
@@ -57,9 +57,9 @@ void Rotation::estimate3DRotMatSVD
              std::back_inserter(betInLatPoints));
         }
         
-        std::cout <<  i << "-th sample (error, inlier) = ("
-        << error << ", " << inLierSize << ")" << std::endl;
-        std::cout << "mat = " << std::endl << curEstRotMat << std::endl;
+        //std::cout <<  i << "-th sample (error, inlier) = ("
+        //<< error << ", " << inLierSize << ")" << std::endl;
+        //std::cout << "mat = " << std::endl << curEstRotMat << std::endl;
         
         /*
         if (curError < betError) {
@@ -76,8 +76,8 @@ void Rotation::estimate3DRotMatSVD
      betError/forPoints.size(), betRotMat);
     */
     
-    std::cout << "(all, inlier) = (" << forPoints.size() << ", "
-              << betInlierSize << ")" << std::endl;
+    //std::cout << "(all, inlier) = (" << forPoints.size() << ", "
+    //          << betInlierSize << ")" << std::endl;
     
     // インライアーから回転行列を推定する
     estRotMat = cv::Mat(3, 3, CV_32FC1);
@@ -106,7 +106,6 @@ void Rotation::estimate3DRotMatSVDPartial
  const std::vector<cv::Point3f> &latPointx, cv::Mat &estRotMatPart)
 {
     cv::Mat corMat = cv::Mat::zeros(3, 3, CV_32FC1);
-    
     for (int i=0; i<forPointx.size(); i++) {
         cv::Vec3f forVec = cv::Mat1f(forPointx[i]);
         cv::Vec3f latVec = cv::Mat1f(latPointx[i]);
@@ -116,11 +115,9 @@ void Rotation::estimate3DRotMatSVDPartial
     
     cv::Mat u, w, vt;
     cv::SVD::compute(corMat, w, u, vt);
-    
     cv::Mat est = u * vt;
     
     estRotMatPart = cv::Mat(3, 3, CV_32FC1);
-    
     est.copyTo(estRotMatPart);
 }
 
@@ -131,7 +128,7 @@ float Rotation::evalEstRotMat
     float accErr = 0.0;
     for (int i=0; i<forPoints.size(); i++) {
         cv::Point3f modLatPoint;
-        transform.orth3D2orth3DWithRotMat(latPoints[i], modLatPoint, estRotMat);
+        transform.sphereWithRotMat(latPoints[i], modLatPoint, estRotMat);
         
         accErr += cv::norm(forPoints[i] - modLatPoint);
     }
@@ -152,7 +149,7 @@ size_t Rotation::removeOutlier
     
     for (int i=0; i<forPoints.size(); i++) {
         cv::Point3f modLatPoint;
-        transform.orth3D2orth3DWithRotMat(latPoints[i], modLatPoint, estRotMat);
+        transform.sphereWithRotMat(latPoints[i], modLatPoint, estRotMat);
         
         // 閾値以下ならインライアーに加える
         if (cv::norm(forPoints[i] - modLatPoint) < normThre) {
@@ -173,9 +170,31 @@ void Rotation::normalRotMat(cv::Mat &rotMat)
 }
 
 void Rotation::estimate3DRotMatEssential
-(const std::vector<cv::Point3f> &forPoints,
- const std::vector<cv::Point3f> &latPoints, cv::Mat &estRotMat) const
+(const std::vector<cv::Point2f> &fornormals,
+ const std::vector<cv::Point2f> &latnormals, cv::Mat &estRotMat) const
 {
+    double focal = 1.0;
+    cv::Point2d pp(0.0, 0.0);
+    //int method = cv::RANSAC;
+    int method = cv::LMEDS;
+    //double prob = 0.999;
+    //double threshold = 0.08;
     
-    //cv::findEssentialMat(forPoints, latPoints);
+    cv::Mat E = cv::findEssentialMat(fornormals, latnormals, focal, pp, method);
+    //cv::Mat E = cv::findEssentialMat(fornormals, latnormals, focal, pp, method,
+    
+    cv::Mat R, t;
+    cv::recoverPose(E, fornormals, latnormals, R, t);
+ 
+//   std::cout << "R = " << std::endl << R << std::endl;
+//    std::cout << "t = " << std::endl << t << std::endl;
+    
+    estRotMat = cv::Mat(3, 3, CV_32FC1);
+    for (int u=0; u<3; u++) {
+        for (int v=0; v<3; v++) {
+            // 型の変換と行列の転置
+            estRotMat.at<float>(v, u) = R.at<double>(u, v);
+        }
+    }
 }
+

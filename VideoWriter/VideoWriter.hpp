@@ -10,23 +10,48 @@
 #define VideoWriter_hpp
 
 #include <stdio.h>
+#include <sys/stat.h>
 #include <iostream>
+#include <iomanip>
+#include <sstream>
 
-#include <opencv2/core/core.hpp>
-#include <opencv2/highgui/highgui.hpp>
-#include <opencv2/imgproc/imgproc.hpp>
+#include <opencv2/core.hpp>
+#include <opencv2/highgui.hpp>
+#include <opencv2/imgproc.hpp>
+#include <opencv2/imgcodecs.hpp>
 
 class VideoWriter
 {
 public:
     VideoWriter(const cv::Size& frameSize, const std::string& videoName);
-    ~VideoWriter();
 
+    virtual void writeImg(const cv::Mat& img);
+    
+protected:
+    const cv::Size& frameSize;
+    const std::string& videoName;
+};
+
+class VideoWriterMov : public VideoWriter
+{
+public:
+    VideoWriterMov(const cv::Size& frameSize, const std::string& videoName);
+    
     void writeImg(const cv::Mat& img);
     
 private:
-    const cv::Size& frameSize;
     cv::VideoWriter video;
+};
+
+class VideoWriterPic : public VideoWriter
+{
+public:
+    VideoWriterPic(const cv::Size& frameSize, const std::string& videoName);
+
+    void writeImg(const cv::Mat& img);
+
+private:
+    int count;
 };
 
 #endif /* VideoWriter_hpp */
