@@ -10,7 +10,7 @@
 
 MatchFeaturePoint::MatchFeaturePoint
 (const cv::Size& frameSize, const Transform& transform,
- int distThreshold, float coordThreshold):
+ float distThreshold, float coordThreshold):
 frameSize(frameSize), transform(transform),
 distThreshold(distThreshold), coordThreshold(coordThreshold),
 matcher(cv::DescriptorMatcher::create("BruteForce"))

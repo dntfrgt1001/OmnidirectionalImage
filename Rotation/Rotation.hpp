@@ -24,7 +24,7 @@
 class Rotation
 {
 public:
-    Rotation(const Transform& transform);
+    Rotation(const Transform& transform, float filedAngle, int matchThre);
     ~Rotation();
     
     // 特異値分解により回転行列を推定する [forP] = [R]*[latP]
@@ -56,13 +56,41 @@ public:
     // 四元数を使って回転行列を正規化
     static void normalRotMat(cv::Mat& rotMat);
     
-    // 基本行列により回転行列を推定する
+    // 回転行列の推定
+    void estimateRotMat
+    (const std::vector<cv::Point3f>& forspheres,
+     const std::vector<cv::Point3f>& latspheres, cv::Mat& estRotMat) const;
+    // 基本行列の分解により回転行列を推定する
     void estimate3DRotMatEssential
     (const std::vector<cv::Point2f>& fornormals,
      const std::vector<cv::Point2f>& latnormals, cv::Mat& estRotMat) const;
+    // カメラの前後の特徴点を取り出す
+    void extractFrontFeature
+    (const std::vector<cv::Point3f>& forspheres,
+     const std::vector<cv::Point3f>& latspheres,
+     std::vector<cv::Point3f>& forspheresFront,
+     std::vector<cv::Point3f>& latspheresFront) const;
+    // 特徴点がカメラの前後にあるか
+    bool isInFront(const cv::Point3f& forsphere, const cv::Point3f& latsphere)
+    const {
+        return (forsphere.z * latsphere.z > 0)
+        //return forsphere.z > 0 && latsphere.z > 0
+               && ((forsphere.x*forsphere.x + forsphere.y*forsphere.y) <
+                   (forsphere.z*forsphere.z * fieldRadius*fieldRadius))
+               && ((latsphere.x*latsphere.x + latsphere.y*latsphere.y) <
+                   (latsphere.z*latsphere.z * fieldRadius*fieldRadius));
+    };
+
+    // 最終的な回転角，回転軸を決定
+    void integrateAngleAxis
+    (std::vector<float>& angles, std::vector<cv::Vec3f>& axiss,
+     std::vector<int>& inNums, float& angle, cv::Vec3f& axis) const;
     
 private:
+    std::vector<cv::Mat> rotMats;
     const Transform& transform;
+    const float fieldRadius;
+    const int matchThre;
 };
 
 #endif /* Rotation_hpp */

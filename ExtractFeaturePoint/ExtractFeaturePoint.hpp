@@ -33,14 +33,14 @@ public:
     (const cv::Mat& img, std::vector<cv::KeyPoint>& keyPoints,
      cv::Mat& descriptors) const;
 
-    // numberで指定された部分の特徴点を抽出（基準画像における座標）
-    void extractRoiFeaturePoint
-    (const cv::Mat& img, std::vector<cv::KeyPoint>& roiKeyPoints,
-     cv::Mat& roiDescriptors, int number) const;
     // 基準画像を回転させながらすべての領域の特徴点を抽出
     void extractFeaturePoint
     (const cv::Mat& img, std::vector<cv::KeyPoint>& keyPoints,
      cv::Mat& descriptors) const;
+    // numberで指定された部分の特徴点を抽出（基準画像における座標）
+    void extractRoiFeaturePoint
+    (const cv::Mat& img, std::vector<cv::KeyPoint>& roiKeyPoints,
+     cv::Mat& roiDescriptors, int number) const;
     
     // 回転前の座標の特徴点から回転後の座標の特徴点に変換
     void rotateKeyPointCoord
@@ -48,7 +48,7 @@ public:
     // ROIの座標から大域の座標に変換
     void roiCoord2GlobalCoord(std::vector<cv::KeyPoint>& keyPoints) const {
         for (int i=0; i<keyPoints.size(); i++)
-            keyPoints[i].pt.y += (frameSize.height - validHeight)/2;
+            keyPoints[i].pt.y += roi.y;
     };
     // 特徴点を連結させる
     static void keyPointConcat
@@ -71,6 +71,7 @@ private:
     const Transform& transform;
     
     const int validHeight;
+    const int mergin;
     
     const cv::Ptr<cv::Feature2D> feature;
     

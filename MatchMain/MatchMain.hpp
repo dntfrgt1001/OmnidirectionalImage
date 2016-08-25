@@ -25,24 +25,32 @@ class MatchMain
 {
 public:
     MatchMain
-    (const Transform& origTransform, const Transform& transform,
-     const ExtractFeaturePoint& extractFeature,
-     const MatchFeaturePoint& matchFeature, const Rotation& rotation);
+    (const Transform& otf, const Transform& tf,
+     const ExtractFeaturePoint& efp,
+     const MatchFeaturePoint& mfp, const Rotation& rot);
     ~MatchMain();
     
     // １つ目の画像に合わせて２つ目の画像を修正する
     void ModifylatterImg
     (const cv::Mat& forImg, const cv::Mat& latImg, cv::Mat& modLatImg);
     // 初期フレームに合わせて動画を修正する
+   
+    void ModifyPOVImg
+    (const cv::Mat& img, cv::Mat& rotImg);
+    
+    void ModifyPOVVideo(VideoReader& vr, VideoWriter& vw);
+    
     void ModifyVideo(VideoReader& vr, VideoWriter& vw);
     
 private:
-    const Transform& origTransform;
-    const Transform& transform;
-    const ExtractFeaturePoint& extractFeature;
-    const MatchFeaturePoint& matchFeature;
-    const Rotation& rotation;
+    const Transform& otf;
+    const Transform& tf;
+    const ExtractFeaturePoint& efp;
+    const MatchFeaturePoint& mfp;
+    const Rotation& rot;
     cv::Mat accMat;
+    std::vector<cv::KeyPoint> tmpKeyPoints;
+    cv::Mat tmpDescriptors;
 };
 
 #endif /* MatchMain_hpp */

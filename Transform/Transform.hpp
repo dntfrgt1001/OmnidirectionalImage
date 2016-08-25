@@ -15,6 +15,8 @@
 #include <opencv2/highgui.hpp>
 #include <opencv2/imgproc.hpp>
 
+//#include <libiomp/omp.h>
+
 class Transform{
 public:
     Transform(const cv::Size& frameSize);
@@ -106,6 +108,12 @@ public:
     (const cv::Point3f& sphere, cv::Point2f& normal) const {
         normal.x = sphere.x / sphere.z;
         normal.y = sphere.y / sphere.z;
+        
+        //normal.x = sphere.z / sphere.y;
+        //normal.y = sphere.x / sphere.y;
+        
+        //normal.x = sphere.y / sphere.x;
+        //normal.x = sphere.z / sphere.x;
     }
     void sphere2normal
     (const std::vector<cv::Point3f>& spheres,
@@ -149,7 +157,7 @@ public:
     void rotateImgWithRotMat
     (const cv::Mat& img, cv::Mat& rotImg, const cv::Mat& rotMat) const;
     // バイリニア補間による画素値の決定
-    void getDotBilinear
+    void getPixelBilinear
     (const cv::Mat& img, const cv::Point2f& equirect, cv::Vec3b& dot) const;
     
     // 画像をX軸回り(縦方向)に回転
@@ -165,6 +173,17 @@ public:
     
     // 片方のレンズ正面の画像を正規化画像座標に
     void normalCoord(const cv::Mat& img, float trange, float prange);
+    
+    // 回転行列で球面座標を回転
+    void rotateSphere
+    (const cv::Point3f& forsphere, cv::Point3f& latsphere,
+     const cv::Mat& rotMat) const {
+        latsphere = (cv::Point3f) cv::Mat1f(rotMat * cv::Mat1f(forsphere));
+    }
+    void rotateSphere
+    (const std::vector<cv::Point3f>& forspheres,
+     std::vector<cv::Point3f>& latspheres, const cv::Mat& rotMat) const;
+    
     
 private:
     const cv::Size& frameSize;

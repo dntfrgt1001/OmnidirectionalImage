@@ -66,33 +66,53 @@ void Quarternion::RotMat2Quart(const cv::Mat &rotMat, Quarternion &quart)
     
     quart.t = sqrtf(trace + 1) / 2.0;
     
-    quart.x = (rotMat.at<float>(2, 1) - rotMat.at<float>(1, 2)) / (4 * quart.t);
-    quart.y = (rotMat.at<float>(0, 2) - rotMat.at<float>(2, 0)) / (4 * quart.t);
-    quart.z = (rotMat.at<float>(1, 0) - rotMat.at<float>(0, 1)) / (4 * quart.t);
+    quart.x = (rotMat.at<float>(2, 1) - rotMat.at<float>(1, 2)) / (4*quart.t);
+    quart.y = (rotMat.at<float>(0, 2) - rotMat.at<float>(2, 0)) / (4*quart.t);
+    quart.z = (rotMat.at<float>(1, 0) - rotMat.at<float>(0, 1)) / (4*quart.t);
 }
 
-void Quarternion::arbRotMat(float theta, cv::Vec3f& axis, cv::Mat &rotMat)
+void Quarternion::Rodrigues2RotMat
+(const float angle, const cv::Vec3f& axis, cv::Mat &rotMat)
 {
     float norm = cv::norm(axis);
     float nx = axis[0] / norm;
     float ny = axis[1] / norm;
     float nz = axis[2] / norm;
     
-    float cost = cosf(theta);
-    float sint = sinf(theta);
+    float cost = cosf(angle);
+    float sint = sinf(angle);
     float icost = 1 - cost;
     
     rotMat = cv::Mat(3, 3, CV_32FC1);
 
     rotMat.at<float>(0, 0) = nx*nx*icost + cost;
-    rotMat.at<float>(1, 0) = nx*ny*icost - nz*sint;
-    rotMat.at<float>(2, 0) = nz*nx*icost + ny*sint;
-    rotMat.at<float>(0, 1) = nx*ny*icost + nz*sint;
+    rotMat.at<float>(0, 1) = nx*ny*icost - nz*sint;
+    rotMat.at<float>(0, 2) = nz*nx*icost + ny*sint;
+    rotMat.at<float>(1, 0) = nx*ny*icost + nz*sint;
     rotMat.at<float>(1, 1) = ny*ny*icost + cost;
-    rotMat.at<float>(2, 1) = ny*nz*icost - nx*sint;
-    rotMat.at<float>(0, 2) = nz*nx*icost - ny*sint;
-    rotMat.at<float>(1, 2) = ny*nz*icost + nx*sint;
+    rotMat.at<float>(1, 2) = ny*nz*icost - nx*sint;
+    rotMat.at<float>(2, 0) = nz*nx*icost - ny*sint;
+    rotMat.at<float>(2, 1) = ny*nz*icost + nx*sint;
     rotMat.at<float>(2, 2) = nz*nz*icost + cost;
+}
+
+void Quarternion::RotMat2Rodrigues
+(const cv::Mat &rotMat, float &angle, cv::Vec3f &axis)
+{
+    Quarternion quart;
+    RotMat2Quart(rotMat, quart);
+    
+    float halfAngle = acosf(quart.t);
+    // 回転角がゼロの場合，回転軸は不定
+    if (halfAngle == 0.0) {
+        angle = 0.0;
+        axis[0] = axis[1] = axis[2] = 0.0;
+    } else {
+        angle = halfAngle * 2.0;
+        axis[0] = quart.x / sinf(halfAngle);
+        axis[1] = quart.y / sinf(halfAngle);
+        axis[2] = quart.z / sinf(halfAngle);
+    }
 }
 
 void Quarternion::normalQuart(Quarternion &quart)
@@ -105,16 +125,15 @@ void Quarternion::normalQuart(Quarternion &quart)
 void Quarternion::normalRotMat(cv::Mat &rotMat)
 {
     Quarternion quart;
-    
     RotMat2Quart(rotMat, quart);
-    
     normalQuart(quart);
-    
     Quart2RotMat(quart, rotMat);
 }
 
-
-
-
+std::ostream& operator<<(std::ostream& os, const Quarternion& quart)
+{
+    return (os << "[" << quart.t << "; " << quart.x << ", "
+            << quart.y << ", " << quart.z << "]");
+}
 
 

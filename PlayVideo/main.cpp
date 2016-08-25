@@ -8,40 +8,42 @@
 
 #include <iostream>
 
-#include <opencv2/core/core.hpp>
-#include <opencv2/highgui/highgui.hpp>
-#include <opencv2/imgproc/imgproc.hpp>
+#include <opencv2/core.hpp>
+#include <opencv2/highgui.hpp>
+#include <opencv2/imgproc.hpp>
+#include <opencv2/imgcodecs.hpp>
+#include <opencv2/videoio.hpp>
 
 #include "VideoReader.hpp"
 #include "VideoWriter.hpp"
 
 int main(int argc, const char * argv[])
 {
-    const std::string path = "/Users/masakazu/Desktop/";
-    const cv::Size frameSize(800, 400);
-    const std::string inputName = "R0010010_er.MP4";
-//    const std::string outputName = "out.mov";
-    const std::string outputPath = "/Users/masakazu/Desktop/phi/";
-    const std::string outputPrefix = "phi";
+    std::cout << "test" << std::endl;
     
-    VideoReader videoReader(frameSize, path + inputName);
-//    VideoWriter videoWriter(frameSize, path + outputName);
+    const std::string path = "/Users/masakazu/Desktop/video/20160719/";
+    const cv::Size frameSize(1000, 500);
+    const std::string inputName = path + "sample1.mp4";
+    const std::string outputName = path + "sample1_pic";
+    
+    VideoReader videoReader(frameSize,inputName);
+    VideoWriterPic videoWriterPic(frameSize, outputName);
     
     cv::namedWindow("img");
     
-       int i=0;
+    
+    
+    int i=0;
     while (videoReader.hasNext()) {
         cv::Mat img;
         
         videoReader.readImg(img);
         
-//        videoWriter.writeImg(img);
-        
-        //cv::imwrite(outputPath + outputPrefix + std::to_string(i) + ".jpg", img);
+        videoWriterPic.writeImg(img);
         
         cv::imshow("img", img);
         
-        cv::waitKey(-1);
+        cv::waitKey(10);
         
         i++;
         

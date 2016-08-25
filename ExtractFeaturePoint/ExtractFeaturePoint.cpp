@@ -11,9 +11,9 @@
 ExtractFeaturePoint::ExtractFeaturePoint
 (const cv::Size& frameSize, const Transform& transform, int divNum):
 frameSize(frameSize), transform(transform), divNum(divNum),
-validHeight(transform.dphi2v(M_PI)/divNum),
-roi(cv::Rect(0, (frameSize.height - validHeight)/2,
-             frameSize.width, validHeight)),
+validHeight(transform.dphi2v(M_PI)/divNum), mergin(10),
+roi(cv::Rect(0, (frameSize.height - validHeight)/2 - mergin,
+             frameSize.width, validHeight + mergin*2)),
 feature(cv::xfeatures2d::SIFT::create())
 {
 }
@@ -50,7 +50,7 @@ void ExtractFeaturePoint::extractRoiFeaturePoint
     // ROIの座標から(回転後の)大域の座標に変換
     roiCoord2GlobalCoord(roiKeyPoints);
     
-    // 重なりがでないようにtanの条件を適用
+    // 重なりがでないようにtanの制約条件を適用
     filterLowLatitue(roiKeyPoints, roiDescriptors);
     
     rotateKeyPointCoord(roiKeyPoints, -1 * rotAngle);

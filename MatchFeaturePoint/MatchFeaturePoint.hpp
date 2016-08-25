@@ -23,7 +23,7 @@ class MatchFeaturePoint
 public:
     MatchFeaturePoint
     (const cv::Size& frameSize, const Transform& transform,
-     int distThreshold, float coordThreshold);
+     float distThreshold, float coordThreshold);
     ~MatchFeaturePoint();
     
     void match
@@ -66,7 +66,7 @@ private:
     const Transform& transform;
     
     const cv::Ptr<cv::DescriptorMatcher> matcher;
-    const int distThreshold;
+    const float distThreshold;
     const float coordThreshold;
 };
 

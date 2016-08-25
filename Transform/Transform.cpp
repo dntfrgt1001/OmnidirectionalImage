@@ -90,6 +90,16 @@ void Transform::points2points
     }
 }
 
+void Transform::rotateSphere
+(const std::vector<cv::Point3f> &forspheres,
+ std::vector<cv::Point3f> &latspheres, const cv::Mat &rotMat) const
+{
+    for (int i=0; i<forspheres.size(); i++) {
+        cv::Point3f latsphere;
+        rotateSphere(forspheres[i], latsphere, rotMat);
+        latspheres.push_back(latsphere);
+    }
+}
 
 void Transform::sphereWithRotMat
 (const cv::Point3f &forsphere, cv::Point3f &latsphere, const cv::Mat &rotMat)
@@ -104,9 +114,7 @@ void Transform::equirectWithRotMat
 {
     cv::Point3f forsphere, latsphere;
     equirect2sphere(forequirect, forsphere);
-    
     sphereWithRotMat(forsphere, latsphere, rotMat);
-    
     sphere2equirect(latsphere, latequirect);
 }
 
@@ -117,21 +125,22 @@ void Transform::rotateImgWithRotMat
 
     cv::Mat invRotMat = rotMat.inv();
     
+
     for (int ur=0; ur<frameSize.width; ur++) {
         for (int vr=0; vr<frameSize.height; vr++) {
             cv::Point2f forequirect;
             cv::Point2f latequirect(ur, vr);
-            // 逆の回転行列によって回転後の画素が回転前のどの画素に対応するか求める
+            // 回転後の画素が回転前のどの画素に対応するか求める
             equirectWithRotMat(latequirect, forequirect, invRotMat);
             
             cv::Vec3b dot;
-            getDotBilinear(img, forequirect, dot);
+            getPixelBilinear(img, forequirect, dot);
             rotImg.at<cv::Vec3b>(vr, ur) = dot;
         }
     }
 }
 
-void Transform::getDotBilinear
+void Transform::getPixelBilinear
 (const cv::Mat &img, const cv::Point2f& equirect, cv::Vec3b &dot) const
 {
     float u = equirect.x;
@@ -161,14 +170,13 @@ void Transform::rotateVerticalImgRect
 (float chi, const cv::Mat &img, const cv::Rect& rect, cv::Mat &rotImg) const
 {
     rotImg = cv::Mat(frameSize, CV_8UC3);
-    
     for (int ur=rect.x; ur<rect.x + rect.width; ur++) {
         for (int vr=rect.y; vr<rect.y + rect.height; vr++) {
             cv::Point2f forequirect;
             rotateVerticalequirect(-chi, cv::Point2f(ur,vr), forequirect);
-            
+
             cv::Vec3b dot;
-            getDotBilinear(img, forequirect, dot);
+            getPixelBilinear(img, forequirect, dot);
             rotImg.at<cv::Vec3b>(vr, ur) = dot;
         }
     }

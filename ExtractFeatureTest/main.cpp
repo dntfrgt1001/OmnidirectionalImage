@@ -8,173 +8,48 @@
 
 #include <iostream>
 
-#include <opencv2/core/core.hpp>
-#include <opencv2/highgui/highgui.hpp>
-#include <opencv2/imgproc/imgproc.hpp>
-#include <opencv2/calib3d/calib3d.hpp>
+#include <opencv2/core.hpp>
+#include <opencv2/highgui.hpp>
+#include <opencv2/imgproc.hpp>
+#include <opencv2/imgcodecs.hpp>
+#include <opencv2/features2d.hpp>
 
 #include "Transform.hpp"
 #include "ExtractFeaturePoint.hpp"
 #include "MatchFeaturePoint.hpp"
-#include "Affine.hpp"
 #include "Quarternion.hpp"
 
 #include <random>
 
 int main(int argc, const char * argv[])
 {
-    float theta = M_PI / 3.0;
-    cv::Vec3f axis(1.0, 1.0, 1.0);
+    const std::string path = "/Users/masakazu/Desktop/";
+    const std::string inputName = path + "test.jpg";
+    const std::string outputName = path + "key1.jpg";
+    const cv::Size frameSize(1000, 500);
     
-    cv::Mat rot;
-    Quarternion::arbRotMat(theta, axis, rot);
+    cv::Mat input, img;
+    input = cv::imread(inputName);
+    cv::resize(input, img, frameSize);
     
-    std::cout << "true = " << std::endl << rot << std::endl;
+    Transform tf(frameSize);
     
-    std::random_device seed_gen;
-    std::mt19937 engine(seed_gen());
-    std::normal_distribution<> dist(0.0, 0.25);
-    
-    for (int u=0; u<rot.cols; u++) {
-        for (int v=0; v<rot.rows; v++) {
-            rot.at<float>(v, u) += dist(engine);
-        }
-    }
-    
-    std::cout << "trace = " << cv::trace(rot) << std::endl;
-    
-    std::cout << "before = " << std::endl << rot << std::endl;
-    
-    Quarternion::normalRotMat(rot);
-    
-    std::cout << "after = " << std::endl << rot << std::endl;
-    
-    std::cout << cv::norm(rot.col(0)) << std::endl;
-    std::cout << cv::norm(rot.col(1)) << std::endl;
-    std::cout << cv::norm(rot.col(2)) << std::endl;
-    
-    cv::waitKey(-1);
-    
-    /*
-    const std::string workDir = "/Users/masakazu/Desktop/phi/";
-    const std::string imgName1 = "phi0.jpg";
-    const std::string imgName2 = "phi1.jpg";
-    const cv::Size frameSize(1920, 960);
-    
-    cv::Mat input1, input2;
-    cv::Mat img1, img2;
-    input1 = cv::imread(workDir + imgName1);
-    cv::resize(input1, img1, frameSize);
-    input2 = cv::imread(workDir + imgName2);
-    cv::resize(input2, img2, frameSize);
-    
-    Transform transform(frameSize);
-
-    Affine affine(transform);
-
-//    float theta = M_PI / 8.0;
-//    cv::Vec3f axis(1, 2, 1);
-    
-//    Quarternion quart(theta, axis);
-    
-//    cv::Mat trueRotMat;
-//    Quarternion::Quart2RotMat(quart, trueRotMat);
-    
-//    std::cout << "true rotMat = " << std::endl << trueRotMat << std::endl;
-    
-//    transform.rotateImgWithRotMat(img1, img2, trueRotMat);
-    
-    // 特徴点と記述子の抽出
     int divNum = 6;
-    ExtractFeaturePoint extractFeat(frameSize, transform, divNum);
+    ExtractFeaturePoint efp(frameSize, tf, divNum);
     
-    std::vector<cv::KeyPoint> keyPoints1, keyPoints2;
-    cv::Mat descriptors1, descriptors2;
-//    extractFeat.extractRoiFeaturePoint(img1, keyPoints1, descriptors1, 3);
-//    extractFeat.extractRoiFeaturePoint(img2, keyPoints2, descriptors2, 3);
-    extractFeat.extractFeaturePoint(img1, keyPoints1, descriptors1);
-    extractFeat.extractFeaturePoint(img2, keyPoints2, descriptors2);
-
-    // マッチング
-    int descThresh = 75;
-    float distThresh = 1.0;
-    MatchFeaturePoint matchFeat(frameSize, transform, descThresh, distThresh);
+    std::vector<cv::KeyPoint> keyPoints;
+    cv::Mat descriptors;
+    efp.extractFeaturePoint(img, keyPoints, descriptors);
     
-    std::vector<cv::DMatch> dMatches;
-    matchFeat.match(descriptors1, descriptors2, dMatches);
+    cv::Mat imgKeyPoints;
+    cv::drawKeypoints(img, keyPoints, imgKeyPoints);
     
-    matchFeat.filterMatchDistance(dMatches);
-    matchFeat.filterMatchCoordinateDebug(keyPoints1, keyPoints2, dMatches);
-
-    std::cout << keyPoints1.size() << descriptors1.rows << " " << descriptors1.cols << std::endl;
-    std::cout << keyPoints2.size() << descriptors2.rows << " " << descriptors2.cols << std::endl;
+    cv::namedWindow("key point image");
+    cv::imshow("key point image", imgKeyPoints);
     
-    cv::Mat drawKey1, drawKey2;
-    cv::drawKeypoints(img1, keyPoints1, drawKey1);
-    cv::drawKeypoints(img2, keyPoints2, drawKey2);
-//    cv::namedWindow("keypoints 1");
-//    cv::namedWindow("keypoints 2");
-//    cv::imshow("keypoints 1", drawKey1);
-//    cv::imshow("keypoints 2", drawKey2);
-//    cv::waitKey(-1);
-    
-    
-    cv::Mat drawMatchImg;
-//    cv::drawMatches
-//    (img1, keyPoints1, img2, keyPoints2, dMatches, drawMatchImg,
-//     cv::Scalar::all(-1), cv::Scalar::all(0));
-
-    matchFeat.drawMatchesVertical
-    (img1, keyPoints1, img2, keyPoints2, dMatches, drawMatchImg);
-    
-    cv::namedWindow("match image");
-    cv::imshow("match image", drawMatchImg);
+    cv::imwrite(outputName, imgKeyPoints);
     
     cv::waitKey(-1);
-    
-    return 0;
 
-//    Affine affine(transform);
-    
-    std::vector<cv::Point3f> for3DPoints, lat3DPoints;
-    
-    affine.get3DPointPair
-    (keyPoints1, keyPoints2, dMatches, for3DPoints, lat3DPoints);
-    
-    cv::Mat affMat;
-    affine.estimate3DAffineMat(for3DPoints, lat3DPoints, affMat);
-    
-    cv::Mat rotMat;
-    affine.extractRotMatFromAffineMat(affMat, rotMat);
-    
-    Quarternion::normalizeRotMat(rotMat);
-
-    cv::Mat rotImg;
-    transform.rotateImgWithRotMat(img2, rotImg, rotMat);
-    
-    std::cout << "estimated rotMat = " << std::endl << rotMat.inv() << std::endl;
-    
-    Quarternion::normalizeRotMat(rotMat);
-    std::cout << "normalized estimated rotMat = " << std::endl << rotMat.inv() << std::endl;
-
-    
-    cv::namedWindow("img1");
-    cv::imshow("img1", img1);
-    cv::namedWindow("img2");
-    cv::imshow("img2", img2);
-    cv::namedWindow("mod img2");
-    cv::imshow("mod img2", rotImg);
-    
-    
-    cv::Size drawSize(1500, 800);
-    cv::Mat drawImg;
-    cv::resize(drawMatchImg, drawImg, drawSize);
-    cv::namedWindow("match");
-    cv::imshow("match", drawImg);
-    
-    cv::waitKey(-1);
-    
-    */
-    
     return 0;
 }

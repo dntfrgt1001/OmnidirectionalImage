@@ -9,14 +9,12 @@
 #include "MatchMain.hpp"
 
 MatchMain::MatchMain
-(const Transform& origTransform, const Transform& transform,
- const ExtractFeaturePoint& extractFeature,
- const MatchFeaturePoint& matchFeature, const Rotation& rotation):
-origTransform(origTransform),transform(transform),
-extractFeature(extractFeature),matchFeature(matchFeature), rotation(rotation),
+(const Transform& otf, const Transform& tf, const ExtractFeaturePoint& efp,
+ const MatchFeaturePoint& mfp, const Rotation& rot):
+otf(otf), tf(tf), efp(efp), mfp(mfp), rot(rot),
 accMat(cv::Mat::eye(3, 3, CV_32FC1))
 {
-    
+
 }
 
 MatchMain::~MatchMain()
@@ -29,69 +27,104 @@ void MatchMain::ModifylatterImg
 {
     // 画像サイズを縮小
     cv::Mat resForImg, resLatImg;
-    transform.resizeImg(forImg, resForImg);
-    transform.resizeImg(latImg, resLatImg);
+    tf.resizeImg(forImg, resForImg);
+    tf.resizeImg(latImg, resLatImg);
     
     // 特徴点と記述子の抽出
     std::vector<cv::KeyPoint> forKeyPoints, latKeyPoints;
     cv::Mat forDescriptors, latDescriptors;
 
-    extractFeature.extractFeaturePoint(resForImg, forKeyPoints, forDescriptors);
-    extractFeature.extractFeaturePoint(resLatImg, latKeyPoints, latDescriptors);
+    
+    if (tmpKeyPoints.size() == 0) {
+        // 初期フレームの場合
+        efp.extractFeaturePoint(resForImg, forKeyPoints, forDescriptors);
+    } else {
+        // 初期フレーム以外
+        forKeyPoints = tmpKeyPoints;
+        forDescriptors = tmpDescriptors;
+    }
+    
+//    efp.extractFeaturePoint(resForImg, forKeyPoints, forDescriptors);
+    efp.extractFeaturePoint(resLatImg, latKeyPoints, latDescriptors);
     
     // マッチング
     std::vector<cv::DMatch> dMatches;
-    matchFeature.match(forDescriptors, latDescriptors, dMatches);
+    mfp.match(forDescriptors, latDescriptors, dMatches);
     
     // 記述子のマッチング距離のフィルター
-    matchFeature.filterMatchDistance(dMatches);
+    mfp.filterMatchDistance(dMatches);
     
     // 二次元画像の特徴点の座標のペアを取り出す
     std::vector<cv::Point2f> forequirects, latequirects;
-    matchFeature.sortMatchedPair
+    mfp.sortMatchedPair
     (forKeyPoints, latKeyPoints, dMatches, forequirects, latequirects);
-
-    // 三次元空間へのマッピング
+    
+    // 球面座標へのマッピング
     std::vector<cv::Point3f> forspheres, latspheres;
-    transform.equirect2sphere(forequirects, forspheres);
-    transform.equirect2sphere(latequirects, latspheres);
+    tf.equirect2sphere(forequirects, forspheres);
+    tf.equirect2sphere(latequirects, latspheres);
     
     // 特徴点の座標のユークリッド距離のフィルター
-    matchFeature.filterCoordDistance(forspheres, latspheres);
-    
-    // 正規化画像座標へのマッピング
-    std::vector<cv::Point2f> fornormals, latnormals;
-    transform.sphere2normal(forspheres, fornormals);
-    transform.sphere2normal(latspheres, latnormals);
-    
-    
+    mfp.filterCoordDistance(forspheres, latspheres);
+
+    /*
     // 回転行列の推定
     cv::Mat estRotMat;
-    rotation.estimate3DRotMatSVD(forspheres, latspheres, estRotMat);
-    //rotation.estimate3DRotMatEssential(fornormals, latnormals, estRotMat);
+    //rotation.estimate3DRotMatSVD(forspheres, latspheres, estRotMat);
+    rotation.estimate3DRotMatEssential(fornormals, latnormals, estRotMat);
+    */
+    
+    cv::Mat estRotMat;
+    rot.estimateRotMat(forspheres, latspheres, estRotMat);
+    
+    /*
+    // 境界をまたぐマッチングを削除
+    for (int i=0; i<forspheres.size(); ) {
+        if (forspheres[i].z * latspheres[i].z < 0) {
+            forspheres.erase(forspheres.begin()+i);
+            latspheres.erase(latspheres.begin()+i);
+        } else {
+            i++;
+        }
+    }
+     // 正規化画像座標へのマッピング
+    std::vector<cv::Point2f> fornormals, latnormals;
+    tf.sphere2normal(forspheres, fornormals);
+    tf.sphere2normal(latspheres, latnormals);
+    cv::Mat estRotMat;
+    rot.estimate3DRotMatEssential(fornormals, latnormals, estRotMat);
+    */
+    
     
     // 回転行列を集積
     accMat = accMat * estRotMat;
     // 集積した回転行列を正規化
-    rotation.normalRotMat(accMat);
+    rot.normalRotMat(accMat);
     // 回転行列を使って画像を修正
-    origTransform.rotateImgWithRotMat(latImg, modLatImg, accMat);
+    otf.rotateImgWithRotMat(latImg, modLatImg, accMat);
     
     std::cout << "---------------------------------------" << std::endl;
     std::cout << "# match = " << forspheres.size() << std::endl;
-    std::cout << "estRotMat = " << std::endl << estRotMat << std::endl;
-//    std::cout << "estRotMatEss = " << std::endl << estRotMatEss << std::endl;
+    std::cout << "curRotMat = " << std::endl << estRotMat << std::endl;
     std::cout << "accRotMat = " << std::endl << accMat << std::endl;
     std::cout << "---------------------------------------" << std::endl;
     
     std::vector<cv::Point2f> lastForequirect, lastLatequirect;
-    transform.sphere2equirect(forspheres, lastForequirect);
-    transform.sphere2equirect(latspheres, lastLatequirect);
+    tf.sphere2equirect(forspheres, lastForequirect);
+    tf.sphere2equirect(latspheres, lastLatequirect);
     
     cv::Mat matchImg;
-    matchFeature.drawMatchesVertical
+    mfp.drawMatchesVertical
     (resForImg, lastForequirect, resLatImg, lastLatequirect, matchImg);
     cv::imshow("match", matchImg);
+    
+    // 次フレームのための特徴点と特徴量の保存
+    tmpKeyPoints.clear();
+    std::copy
+    (latKeyPoints.begin(), latKeyPoints.end(), std::back_inserter(tmpKeyPoints));
+    latDescriptors.copyTo(tmpDescriptors);
+    std::cout << "vector size = " << tmpKeyPoints.size() << std::endl;
+    std::cout << "mat size = " << tmpDescriptors.rows << ", " << tmpDescriptors.cols << std::endl;
 }
 
 void MatchMain::ModifyVideo(VideoReader &vr, VideoWriter &vw)
@@ -104,8 +137,10 @@ void MatchMain::ModifyVideo(VideoReader &vr, VideoWriter &vw)
     cv::Mat preImg, curImg;
   
     vr.readImg(curImg);
-
-    int i=0;
+    vw.writeImg(curImg);
+    std::cout << "0-th frame finished" <<std::endl;
+    
+    int i=1;
     while (vr.hasNext()) {
         preImg = curImg.clone();
         
