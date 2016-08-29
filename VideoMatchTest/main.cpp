@@ -29,7 +29,6 @@ int main(int argc, const char * argv[])
     const std::string inputVideoName = path + "sample1.mp4";
     const std::string outputVideoName = path + "sample1";
     
-    
     const cv::Size frameSizeOriginal(1000, 500);
     const cv::Size frameSize(800, 400);
     
@@ -39,12 +38,12 @@ int main(int argc, const char * argv[])
     int divNum = 6;
     ExtractFeaturePoint efp(frameSize, tf, divNum);
     
-    int matchThres = 200;
-    float coordThres = 0.3;
+    int matchThres = 300;
+    float coordThres = 0.30;
     MatchFeaturePoint mfp(frameSize, tf, matchThres, coordThres);
     
     float fieldAngle = M_PI / 2.75;
-    int matchThre = 20;
+    int matchThre = 15;
     Rotation rot(tf, fieldAngle, matchThre);
 
     MatchMain mm(tfo, tf, efp, mfp, rot);

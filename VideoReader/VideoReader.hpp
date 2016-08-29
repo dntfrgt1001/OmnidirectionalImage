@@ -38,4 +38,5 @@ private:
     bool isAvailable;
 };
 
+
 #endif /* VideoReader_hpp */

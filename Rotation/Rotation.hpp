@@ -57,13 +57,14 @@ public:
     static void normalRotMat(cv::Mat& rotMat);
     
     // 回転行列の推定
-    void estimateRotMat
+    bool estimateRotMat
     (const std::vector<cv::Point3f>& forspheres,
      const std::vector<cv::Point3f>& latspheres, cv::Mat& estRotMat) const;
     // 基本行列の分解により回転行列を推定する
     void estimate3DRotMatEssential
     (const std::vector<cv::Point2f>& fornormals,
-     const std::vector<cv::Point2f>& latnormals, cv::Mat& estRotMat) const;
+     const std::vector<cv::Point2f>& latnormals, cv::Mat& estRotMat,
+     cv::Mat& mask) const;
     // カメラの前後の特徴点を取り出す
     void extractFrontFeature
     (const std::vector<cv::Point3f>& forspheres,
@@ -82,9 +83,12 @@ public:
     };
 
     // 最終的な回転角，回転軸を決定
-    void integrateAngleAxis
+    void integrateRodrigues
     (std::vector<float>& angles, std::vector<cv::Vec3f>& axiss,
-     std::vector<int>& inNums, float& angle, cv::Vec3f& axis) const;
+     std::vector<float>& weight, float& angle, cv::Vec3f& axis) const;
+    
+    // それぞれの方向で推定された回転の重みを返す
+    float getWeight(cv::Mat& mask) const;
     
 private:
     std::vector<cv::Mat> rotMats;

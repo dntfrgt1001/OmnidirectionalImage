@@ -49,6 +49,7 @@ private:
     const MatchFeaturePoint& mfp;
     const Rotation& rot;
     cv::Mat accMat;
+    cv::Mat preMat;
     std::vector<cv::KeyPoint> tmpKeyPoints;
     cv::Mat tmpDescriptors;
 };

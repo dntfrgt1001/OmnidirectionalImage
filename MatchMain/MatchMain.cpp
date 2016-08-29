@@ -67,15 +67,21 @@ void MatchMain::ModifylatterImg
     // 特徴点の座標のユークリッド距離のフィルター
     mfp.filterCoordDistance(forspheres, latspheres);
 
-    /*
+/*
     // 回転行列の推定
     cv::Mat estRotMat;
     //rotation.estimate3DRotMatSVD(forspheres, latspheres, estRotMat);
     rotation.estimate3DRotMatEssential(fornormals, latnormals, estRotMat);
-    */
-    
+*/
+    // 回転行列の推定
     cv::Mat estRotMat;
-    rot.estimateRotMat(forspheres, latspheres, estRotMat);
+    bool isEstimated = rot.estimateRotMat(forspheres, latspheres, estRotMat);
+    // 推定に失敗したら直前の行列を使う
+    if (!isEstimated) {
+        std::cout << "*** There are few features." <<
+                     " Estimation failed. ***" << std::endl;
+        preMat.copyTo(estRotMat);
+    }
     
     /*
     // 境界をまたぐマッチングを削除
@@ -87,13 +93,15 @@ void MatchMain::ModifylatterImg
             i++;
         }
     }
-     // 正規化画像座標へのマッピング
+    
+    // 正規化画像座標へのマッピング
     std::vector<cv::Point2f> fornormals, latnormals;
     tf.sphere2normal(forspheres, fornormals);
     tf.sphere2normal(latspheres, latnormals);
     cv::Mat estRotMat;
     rot.estimate3DRotMatEssential(fornormals, latnormals, estRotMat);
     */
+    
     
     
     // 回転行列を集積
@@ -103,12 +111,7 @@ void MatchMain::ModifylatterImg
     // 回転行列を使って画像を修正
     otf.rotateImgWithRotMat(latImg, modLatImg, accMat);
     
-    std::cout << "---------------------------------------" << std::endl;
-    std::cout << "# match = " << forspheres.size() << std::endl;
-    std::cout << "curRotMat = " << std::endl << estRotMat << std::endl;
-    std::cout << "accRotMat = " << std::endl << accMat << std::endl;
-    std::cout << "---------------------------------------" << std::endl;
-    
+    // マッチング表示用
     std::vector<cv::Point2f> lastForequirect, lastLatequirect;
     tf.sphere2equirect(forspheres, lastForequirect);
     tf.sphere2equirect(latspheres, lastLatequirect);
@@ -118,13 +121,12 @@ void MatchMain::ModifylatterImg
     (resForImg, lastForequirect, resLatImg, lastLatequirect, matchImg);
     cv::imshow("match", matchImg);
     
-    // 次フレームのための特徴点と特徴量の保存
+    // 次フレームのための特徴点と特徴量と回転行列の保存
     tmpKeyPoints.clear();
-    std::copy
-    (latKeyPoints.begin(), latKeyPoints.end(), std::back_inserter(tmpKeyPoints));
+    std::copy(latKeyPoints.begin(), latKeyPoints.end(),
+              std::back_inserter(tmpKeyPoints));
     latDescriptors.copyTo(tmpDescriptors);
-    std::cout << "vector size = " << tmpKeyPoints.size() << std::endl;
-    std::cout << "mat size = " << tmpDescriptors.rows << ", " << tmpDescriptors.cols << std::endl;
+    estRotMat.copyTo(preMat);
 }
 
 void MatchMain::ModifyVideo(VideoReader &vr, VideoWriter &vw)

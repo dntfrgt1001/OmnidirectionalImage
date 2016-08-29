@@ -23,16 +23,16 @@ transform(transform), fieldRadius(tanf(fieldAngle)), matchThre(matchThre)
     rotMats.push_back((cv::Mat_<float>(3,3) << 1,0,0,0,0,-1,0,1,0));
 //rotMats.push_back((cv::Mat_<float>(3,3) << 1,0,0,0,0,1,0,-1,0));
     
-    /*
     // 斜め方向に変換
-    float sqrt6 = sqrtf(6.0); float sqrt3 = sqrtf(3.0);
+    float sqrt6 = sqrtf(6.0);
+    float sqrt3 = sqrtf(3.0);
+    float sqrt2 = sqrtf(2.0);
     rotMats.push_back((cv::Mat_<float>(3,3) << 2.0/sqrt6, -1.0/sqrt6, -1.0/sqrt6,
-                                               0.0, 1.0/sqrt6, -1.0/sqrt6,
+                                               0.0, 1.0/sqrt2, -1.0/sqrt2,
                                                1.0/sqrt3, 1.0/sqrt3, 1.0/sqrt3));
     rotMats.push_back((cv::Mat_<float>(3,3) << -2.0/sqrt6, 1.0/sqrt6, -1.0/sqrt6,
-                                               0.0, 1.0/sqrt6, 1.0/sqrt6,
+                                               0.0, 1.0/sqrt2, 1.0/sqrt2,
                                                1.0/sqrt3, 1.0/sqrt3, -1.0/sqrt3));
-*/
 }
 
 Rotation::~Rotation(){}
@@ -189,13 +189,14 @@ void Rotation::normalRotMat(cv::Mat &rotMat)
     Quarternion::Quart2RotMat(quart, rotMat);
 }
 
-void Rotation::estimateRotMat
+bool Rotation::estimateRotMat
 (const std::vector<cv::Point3f> &forspheres,
  const std::vector<cv::Point3f> &latspheres, cv::Mat &estRotMat) const
 {
-    std::vector<float> angles(rotMats.size());
-    std::vector<cv::Vec3f> axiss(rotMats.size());
-    std::vector<int> inNums(rotMats.size());
+    std::vector<float> angles;
+    std::vector<cv::Vec3f> axiss;
+    std::vector<float> weights;
+    
     for (int i=0; i<rotMats.size(); i++) {
         // カメラの正面を変更
         std::vector<cv::Point3f> forspheresRot, latspheresRot;
@@ -212,73 +213,70 @@ void Rotation::estimateRotMat
         transform.sphere2normal(forspheresFront, fornormalsFront);
         transform.sphere2normal(latspheresFront, latnormalsFront);
         
-        /*
-        for (int j=0; j<forspheresRot.size(); j++) {
-            if (isInFront(forspheresRot[j], latspheresRot[j])) {
-                cv::Point2f fornormal;
-                transform.sphere2normal(forspheresRot[j], fornormal);
-                fornormals.push_back(fornormal);
-                cv::Point2f latnormal;
-                transform.sphere2normal(latspheresRot[j], latnormal);
-                latnormals.push_back(latnormal);
-                std::cout << j << " ";
-            }
-        }*/
+        // 特徴点の数が閾値以上なら有効
+        if (fornormalsFront.size() > matchThre) {
+            // カメラ正面の特徴点で回転行列推定
+            cv::Mat estRotMatFront;
+            cv::Mat maskFront;
+            estimate3DRotMatEssential
+            (fornormalsFront, latnormalsFront, estRotMatFront, maskFront);
 
-        
-        inNums[i] = (fornormalsFront.size() > matchThre)?
-                    (int)fornormalsFront.size(): 0;
-        
-        // カメラ正面の特徴点で回転行列推定
-        cv::Mat estRotMatFront;
-        estimate3DRotMatEssential(fornormalsFront, latnormalsFront, estRotMatFront);
-        
-        // 回転角と回転軸に分解し，回転軸を元のカメラ座標に
-        cv::Vec3f axisRot;
-        Quarternion::RotMat2Rodrigues(estRotMatFront, angles[i], axisRot);
-        axiss[i] = cv::Vec3f(cv::Mat1f(rotMats[i].inv() *
-                                       cv::Mat1f(axisRot)));
-        
-        std::cout << "match num = " << fornormalsFront.size() << std::endl;
-        std::cout << "camera R = " << std::endl << rotMats[i] << std::endl;
-        std::cout << "R = "  << std::endl << estRotMatFront << std::endl;
-        std::cout << "angle = " << angles[i] << std::endl;
-        std::cout << "(rotated axis = " << axisRot << ")" << std::endl;
-        std::cout << "axis = " << axiss[i] << std::endl;
-        std::cout << "--------------------------------------" << std::endl;
-        
+            // 重み計算に加える
+            float weightFront = getWeight(maskFront);
+            weights.push_back(weightFront);
+            
+            // 回転角と回転軸に分解し，回転軸を元のカメラ座標のものに変換
+            float angleFront;
+            cv::Vec3f axisFront, axisFrontRot;
+            Quarternion::RotMat2Rodrigues(estRotMatFront, angleFront, axisFront);
+            angles.push_back(angleFront);
+            axisFrontRot = cv::Vec3f(cv::Mat1f(rotMats[i].inv() *
+                                           cv::Mat1f(axisFront)));
+            axiss.push_back(axisFrontRot);
+            
+            //std::cout << "match num = " << fornormalsFront.size() << std::endl;
+            std::cout << "weight " << weightFront << std::endl;
+            std::cout << "front-change matrix = " << std::endl << rotMats[i] << std::endl;
+            std::cout << "estimated matrix = "  << std::endl << estRotMatFront << std::endl;
+            std::cout << "angle = " << angleFront << std::endl;
+            std::cout << "(rotated axis = " << axisFront << ")" << std::endl;
+            std::cout << "axis = " << axisFrontRot << std::endl;
+            std::cout << "--------------------------------------" << std::endl;
+        }
     }
+
+    if (angles.size() == 0) return false;
     
     float estAngle;
     cv::Vec3f estAxis;
-    integrateAngleAxis(angles, axiss, inNums, estAngle, estAxis);
+    integrateRodrigues(angles, axiss, weights, estAngle, estAxis);
+    Quarternion::Rodrigues2RotMat(estAngle, estAxis, estRotMat);
+
+    std::cout << "--------------------------------------" << std::endl;
     std::cout << "estAngle = " << estAngle << std::endl;
     std::cout << "estAxis = " << estAxis << std::endl;
-    Quarternion::Rodrigues2RotMat(estAngle, estAxis, estRotMat);
     std::cout << "estRotMat = " << std::endl << estRotMat << std::endl;
+    std::cout << "--------------------------------------" << std::endl;
+    std::cout << "--------------------------------------" << std::endl;
+    
+    return true;
 }
 
 void Rotation::estimate3DRotMatEssential
 (const std::vector<cv::Point2f> &fornormals,
- const std::vector<cv::Point2f> &latnormals, cv::Mat &estRotMat) const
+ const std::vector<cv::Point2f> &latnormals, cv::Mat &estRotMat,
+ cv::Mat& mask) const
 {
-    // 特徴点の数が不十分
-    if (fornormals.size() < matchThre) {
-        estRotMat = (cv::Mat_<float>(3, 3) << 1,0,0,0,1,0,0,0,1);
-        return;
-    }
-    
     double focal = 1.0;
     cv::Point2d pp(0.0, 0.0);
     //int method = cv::RANSAC;
     int method = cv::LMEDS;
-    //double prob = 0.999;
-    //double threshold = 0.01;
-    //cv::Mat mask;
+    double prob = 0.999;
+    double threshold = 0.01;
     
     // 後フレーム->前フレームの基本行列
-    cv::Mat E = cv::findEssentialMat(latnormals, fornormals, focal, pp, method);
-    //cv::Mat E = cv::findEssentialMat(fornormals, latnormals, focal, pp, method, prob, threshold, mask);
+    //cv::Mat E = cv::findEssentialMat(latnormals, fornormals, focal, pp, method);
+    cv::Mat E = cv::findEssentialMat(latnormals, fornormals, focal, pp, method, prob, threshold, mask);
     //std::cout << "mask = " << std::endl << mask << std::endl;
     //std::cout << (mask.type() == CV_8UC1) << std::endl;
     
@@ -301,21 +299,26 @@ void Rotation::extractFrontFeature
  std::vector<cv::Point3f> &forspheresFront,
  std::vector<cv::Point3f> &latspheresFront) const
 {
-    std::cout << "front = ";
     for (int i=0; i<forspheres.size(); i++) {
         if (isInFront(forspheres[i], latspheres[i])) {
             forspheresFront.push_back(forspheres[i]);
             latspheresFront.push_back(latspheres[i]);
-            std::cout << i << " ";
-        }
+         }
     }
-    std::cout << std::endl;
 }
 
-void Rotation::integrateAngleAxis
+void Rotation::integrateRodrigues
 (std::vector<float> &angles, std::vector<cv::Vec3f> &axiss,
- std::vector<int> &inNums, float &angle, cv::Vec3f &axis) const
+ std::vector<float> &weight, float &angle, cv::Vec3f &axis) const
 {
+    // 特徴点の数が最大の結果をつかう
+    std::vector<float>::iterator iter = std::max_element(weight.begin(),
+                                                       weight.end());
+    size_t index = std::distance(weight.begin(), iter);
+    angle = angles[index];
+    axis = axiss[index];
+    
+    /*
     // 推定に使用された特徴点の数で重みをつける
     int inSum = 0;
     for (auto inNum: inNums) {
@@ -323,12 +326,27 @@ void Rotation::integrateAngleAxis
     }
     
     // 回転角を決定
+    angle = 0.0;
     for (int i=0; i<angles.size(); i++) {
         angle+= ((float) inNums[i] / inSum) * angles[i];
     }
     
     // 回転軸を決定
+    axis = cv::Vec3f(0.0, 0.0, 0.0);
     for (int i=0; i<axiss.size(); i++) {
         axis += ((float) inNums[i] / inSum) * axiss[i];
+    } */
+}
+
+float Rotation::getWeight(cv::Mat &mask) const
+{
+    int count = 0;
+    for (int v=0; v<mask.rows; v++) {
+        if (mask.at<uchar>(v, 0) == 1) {
+            count++;
+        }
     }
+    
+    //return (float) count / mask.rows;
+    return (float) count;
 }
