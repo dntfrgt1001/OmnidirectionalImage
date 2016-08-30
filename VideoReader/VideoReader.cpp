@@ -9,14 +9,11 @@
 #include "VideoReader.hpp"
 
 VideoReader::VideoReader
-(const cv::Size& frameSize, const std::string& videoName):
-frameSize(frameSize), hasChecked(false)
+(const cv::Size& frameSize, const std::string& videoName, const int stride):
+frameSize(frameSize), videoName(videoName),
+hasChecked(false), frameRateStandard(30), stride(stride)
 {
-    video.open(videoName);
-    if (!video.isOpened()) {
-        std::cout << "video open error" << std::endl;
-        exit(1);
-    }
+    assert(stride > 0);
 }
 
 VideoReader::~VideoReader()
@@ -25,37 +22,7 @@ VideoReader::~VideoReader()
 
 bool VideoReader::hasNext()
 {
-    /*
-    if (curInput.empty()) {
-        video >> curInput;
-    } else {
-        return true;
-    }
-    
-    if (curInput.empty()) {
-        return false;
-    } else {
-        return true;
-    }
-     */
-    
-    if (hasChecked) {
-        return isAvailable;
-    } else {
-        hasChecked = true;
-        
-        cv::Mat input;
-        video >> input;
-        
-        if (input.empty()) {
-            isAvailable = false;
-        } else {
-            isAvailable = true;
-            cv::resize(input, nextFrame, frameSize);
-        }
-
-        return isAvailable;
-    }
+    return false;
 }
 
 void VideoReader::readImg(cv::Mat &img)
@@ -75,6 +42,76 @@ void VideoReader::readImg(cv::Mat &img)
     hasChecked = false;
     
     img = nextFrame.clone();
+}
+
+VideoReaderMov::VideoReaderMov
+(const cv::Size& frameSize, const std::string& videoName, const int stride):
+VideoReader(frameSize, videoName, stride)
+{
+    // VideoCaptureをオープン
+    video.open(videoName);
+    if (!video.isOpened()) {
+        std::cout << "video open error" << std::endl;
+        exit(1);
+    }
+}
+
+bool VideoReaderMov::hasNext()
+{
+    if (hasChecked) {
+        return isAvailable;
+    } else {
+        hasChecked = true;
+        
+        // strideごとにフレームを取り出す
+        cv::Mat input;
+        for (int i=0; i<stride; i++) {
+            video >> input;
+
+            if (input.empty()) {
+                isAvailable = false;
+                return false;
+            }
+        }
+        
+        isAvailable = true;
+        cv::resize(input, nextFrame, frameSize);
+        
+        return isAvailable;
+    }
+}
+
+VideoReaderPic::VideoReaderPic
+(const cv::Size& frameSize, const std::string& videoName, const int stride):
+VideoReader(frameSize, videoName, stride), count(0)
+{
+    
+}
+
+bool VideoReaderPic::hasNext()
+{
+    if (hasChecked) {
+        return isAvailable;
+    } else {
+        hasChecked = true;
+        
+        // strideごとにフレームを取り出す
+        std::stringstream fileName;
+        fileName << videoName << "/" << "image"
+                 << std::setw(4) << std::setfill('0') << count << ".jpg";
+        cv::Mat input;
+        input = cv::imread(fileName.str());
+        count += stride;
+        
+        if (input.empty()) {
+            isAvailable = false;
+        } else {
+            isAvailable = true;
+            cv::resize(input, nextFrame, frameSize);
+        }
+        
+        return isAvailable;
+    }
 }
 
 

@@ -25,11 +25,12 @@ int main(int argc, const char * argv[])
 {
     // ffmpeg -f image2 -r 30 -i mod%4d.jpg -pix_fmt yuv420p video.mp4
     
-    const std::string path = "/Users/masakazu/Desktop/video/20160810/";
-    const std::string inputVideoName = path + "sample1.mp4";
-    const std::string outputVideoName = path + "sample1";
+//    const std::string path = "/Users/masakazu/Desktop/video/20160810/";
+    const std::string path = "/Users/masakazu/Desktop/PIXPRO/video5/";
+    const std::string inputVideoName = path + "sample2.mp4";
+    const std::string outputVideoName = path + "sample2";
     
-    const cv::Size frameSizeOriginal(1000, 500);
+    const cv::Size frameSizeOriginal(1280, 640);
     const cv::Size frameSize(800, 400);
     
     const Transform tfo(frameSizeOriginal);
@@ -38,7 +39,7 @@ int main(int argc, const char * argv[])
     int divNum = 6;
     ExtractFeaturePoint efp(frameSize, tf, divNum);
     
-    int matchThres = 300;
+    int matchThres = 280;
     float coordThres = 0.30;
     MatchFeaturePoint mfp(frameSize, tf, matchThres, coordThres);
     
@@ -47,8 +48,9 @@ int main(int argc, const char * argv[])
     Rotation rot(tf, fieldAngle, matchThre);
 
     MatchMain mm(tfo, tf, efp, mfp, rot);
-    
-    VideoReader vr(frameSizeOriginal, inputVideoName);
+
+    int stride = 120 / 30;
+    VideoReaderMov vr(frameSizeOriginal, inputVideoName, stride);
     
     VideoWriterPic vw(frameSizeOriginal, outputVideoName);
     

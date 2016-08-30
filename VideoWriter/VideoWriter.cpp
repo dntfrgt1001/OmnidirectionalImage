@@ -56,7 +56,7 @@ void VideoWriterPic::writeImg(const cv::Mat &img)
 {
     std::stringstream fileName;
 
-    fileName << videoName << "/" << "mod"
+    fileName << videoName << "/" << "image"
              << std::setw(4) << std::setfill('0') << count++ << ".jpg";
     
     cv::Mat resizedImg;

@@ -12,6 +12,7 @@
 #include <stdio.h>
 #include <string>
 #include <iostream>
+#include <iomanip>
 
 #include <opencv2/core.hpp>
 #include <opencv2/highgui.hpp>
@@ -24,18 +25,47 @@ public:
 //    enum V_METHOD {VR_VIDEO, VR_ARRAY,};
     
     VideoReader
-    (const cv::Size& frameSize, const std::string& videoName);
+    (const cv::Size& frameSize, const std::string& videoName,
+     const int stride);
     ~VideoReader();
     
-    bool hasNext();
-    void readImg(cv::Mat& img);
+    virtual bool hasNext();
+    virtual void readImg(cv::Mat& img);
     
-private:
+protected:
     const cv::Size& frameSize;
-    cv::VideoCapture video;
+    const std::string& videoName;
     cv::Mat nextFrame;
     bool hasChecked;
     bool isAvailable;
+    const int frameRateStandard;
+    const int stride;
+};
+
+class VideoReaderMov: public VideoReader
+{
+public:
+    VideoReaderMov
+    (const cv::Size& frameSize, const std::string& videoName,
+     const int stride);
+
+    bool hasNext();
+  
+private:
+    cv::VideoCapture video;
+};
+
+class VideoReaderPic: public VideoReader
+{
+public:
+    VideoReaderPic
+    (const cv::Size& frameSize, const std::string& videoName,
+     const int stride);
+    
+    bool hasNext();
+
+private:
+    int count;
 };
 
 
