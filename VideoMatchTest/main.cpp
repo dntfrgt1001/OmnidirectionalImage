@@ -27,8 +27,8 @@ int main(int argc, const char * argv[])
     
 //    const std::string path = "/Users/masakazu/Desktop/video/20160810/";
     const std::string path = "/Users/masakazu/Desktop/PIXPRO/video5/";
-    const std::string inputVideoName = path + "sample2.mp4";
-    const std::string outputVideoName = path + "sample2";
+    const std::string inputVideoName = path + "sample4.mp4";
+    const std::string outputVideoName = path + "sample4";
     
     const cv::Size frameSizeOriginal(1280, 640);
     const cv::Size frameSize(800, 400);
@@ -39,8 +39,8 @@ int main(int argc, const char * argv[])
     int divNum = 6;
     ExtractFeaturePoint efp(frameSize, tf, divNum);
     
-    int matchThres = 280;
-    float coordThres = 0.30;
+    int matchThres = 300;
+    float coordThres = 0.3;
     MatchFeaturePoint mfp(frameSize, tf, matchThres, coordThres);
     
     float fieldAngle = M_PI / 2.75;

@@ -71,7 +71,8 @@ public:
      const std::vector<cv::Point3f>& latspheres,
      std::vector<cv::Point3f>& forspheresFront,
      std::vector<cv::Point3f>& latspheresFront) const;
-    // 特徴点がカメラの前後にあるか
+    
+    // 特徴点(の組)がカメラの前後にあるか
     bool isInFront(const cv::Point3f& forsphere, const cv::Point3f& latsphere)
     const {
         return (forsphere.z * latsphere.z > 0)
@@ -81,7 +82,12 @@ public:
                && ((latsphere.x*latsphere.x + latsphere.y*latsphere.y) <
                    (latsphere.z*latsphere.z * fieldRadius*fieldRadius));
     };
-
+    // 特徴点(単体)がカメラの前後にあるか
+    bool isInFront(const cv::Point3f& sphere) const {
+        return (sphere.x*sphere.x + sphere.y*sphere.y) <
+                sphere.z*sphere.z * fieldRadius*fieldRadius;
+    }
+    
     // 最終的な回転角，回転軸を決定
     void integrateRodrigues
     (std::vector<float>& angles, std::vector<cv::Vec3f>& axiss,

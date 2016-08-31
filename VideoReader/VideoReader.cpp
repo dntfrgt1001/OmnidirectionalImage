@@ -11,7 +11,7 @@
 VideoReader::VideoReader
 (const cv::Size& frameSize, const std::string& videoName, const int stride):
 frameSize(frameSize), videoName(videoName),
-hasChecked(false), frameRateStandard(30), stride(stride)
+isChecked(false), frameRateStandard(30), stride(stride)
 {
     assert(stride > 0);
 }
@@ -28,7 +28,7 @@ bool VideoReader::hasNext()
 void VideoReader::readImg(cv::Mat &img)
 {
     // 未チェック
-    if (!hasChecked) {
+    if (!isChecked) {
         hasNext();
     }
     
@@ -39,7 +39,7 @@ void VideoReader::readImg(cv::Mat &img)
     }
     
     // 未チェックに
-    hasChecked = false;
+    isChecked = false;
     
     img = nextFrame.clone();
 }
@@ -58,10 +58,10 @@ VideoReader(frameSize, videoName, stride)
 
 bool VideoReaderMov::hasNext()
 {
-    if (hasChecked) {
+    if (isChecked) {
         return isAvailable;
     } else {
-        hasChecked = true;
+        isChecked = true;
         
         // strideごとにフレームを取り出す
         cv::Mat input;
@@ -90,10 +90,10 @@ VideoReader(frameSize, videoName, stride), count(0)
 
 bool VideoReaderPic::hasNext()
 {
-    if (hasChecked) {
+    if (isChecked) {
         return isAvailable;
     } else {
-        hasChecked = true;
+        isChecked = true;
         
         // strideごとにフレームを取り出す
         std::stringstream fileName;

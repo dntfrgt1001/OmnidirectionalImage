@@ -36,7 +36,7 @@ protected:
     const cv::Size& frameSize;
     const std::string& videoName;
     cv::Mat nextFrame;
-    bool hasChecked;
+    bool isChecked;
     bool isAvailable;
     const int frameRateStandard;
     const int stride;
