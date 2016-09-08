@@ -7,22 +7,22 @@
 		<key>AffineTest.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>7</integer>
+			<integer>5</integer>
 		</dict>
 		<key>ConvertGyro.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>5</integer>
+			<integer>3</integer>
 		</dict>
 		<key>ExtractFeatureTest.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>6</integer>
+			<integer>4</integer>
 		</dict>
 		<key>ExtractFrame.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>8</integer>
+			<integer>6</integer>
 		</dict>
 		<key>FrameMatchTest.xcscheme</key>
 		<dict>
@@ -37,7 +37,7 @@
 		<key>MatchTest.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>2</integer>
+			<integer>0</integer>
 		</dict>
 		<key>PerspectiveProjection.xcscheme</key>
 		<dict>
@@ -49,32 +49,32 @@
 		<key>PlayVideo.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>4</integer>
+			<integer>2</integer>
 		</dict>
 		<key>RangeTest.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
 			<integer>13</integer>
 		</dict>
-		<key>RangeValid.xcscheme</key>
+		<key>RangeValid.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>9</integer>
+			<integer>7</integer>
 		</dict>
 		<key>RotateFrame.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>11</integer>
+			<integer>9</integer>
 		</dict>
 		<key>RotateVideo.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>12</integer>
+			<integer>8</integer>
 		</dict>
 		<key>VideoMatchTest.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>3</integer>
+			<integer>1</integer>
 		</dict>
 	</dict>
 	<key>SuppressBuildableAutocreation</key>
@@ -165,6 +165,11 @@
 			<true/>
 		</dict>
 		<key>0282E5C51D2B85A30014F4DB</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>0287FC201D787B7200E4FE99</key>
 		<dict>
 			<key>primary</key>
 			<true/>

@@ -13,58 +13,68 @@
 #include <opencv2/imgproc/imgproc.hpp>
 
 #include "Transform.hpp"
-#include "Rotation.hpp"
 #include "Quarternion.hpp"
 #include "VideoReader.hpp"
+#include "VideoWriter.hpp"
 
 int main(int argc, const char * argv[])
 {
-    const std::string path = "/Users/masakazu/Desktop/20160725/";
-    const std::string inputVideoName = "sample4-1.mov";
-    const std::string outputVideoName = "modmod.mov";
+    const std::string path = "/Users/masakazu/Desktop/PIXPRO/video8/";
+    const std::string inputVideoName = path + "sample2.mp4";
+    const std::string outputVideoName = path + "sample2-ori-rot";
     
-    const cv::Size frameSize(800, 400);
+    const cv::Size frameSize(1280, 640);
     
-    Transform transform(frameSize);
-    Rotation rotation(transform);
-    VideoReader vr(frameSize, path+inputVideoName);
-
+    Transform tf(frameSize);
+    const int stride = 1;
+    VideoReaderMov vr(frameSize, inputVideoName, stride);
+    VideoWriterPic vw(frameSize, outputVideoName);
+    
+    cv::Mat rotImg;
+    
+    float anglez = -M_PI/2.0;
+    cv::Vec3f axisz(0.0, 0.0, 1.0);
+    cv::Mat rotMatz;
+    Quarternion::Rodrigues2RotMat(anglez, axisz, rotMatz);
+    
+    float anglex = M_PI / 9.0;
+    cv::Vec3f axisx(1.0, 0.0, 0.0);
+    cv::Mat rotMatx;
+    Quarternion::Rodrigues2RotMat(anglex, axisx, rotMatx);
+    
+    float angley = M_PI / 4.0;
+    cv::Vec3f axisy(0.0, 1.0, 0.0);
+    cv::Mat rotMaty;
+    Quarternion::Rodrigues2RotMat(angley, axisy, rotMaty);
+    
     cv::Mat img;
-    vr.hasNext();
     vr.readImg(img);
-
-    cv::namedWindow("input");
-    cv::imshow("input", img);
     
-    float chitheta = M_PI;
-    cv::Vec3f axistheta(0.0, 1.0, 0.0);
-    cv::Mat rotMattheta;
-    Quarternion::arbRotMat(chitheta, axistheta, rotMattheta);
+    cv::Mat rotMat = rotMaty * rotMatx * rotMatz;
+    tf.rotateImgWithRotMat(img, rotImg, rotMaty * rotMatx * rotMatz);
     
-    std::cout << rotMattheta << std::endl;
+    cv::namedWindow("original");
+    cv::namedWindow("rotated");
     
-    cv::Mat rotyImg;
-    transform.rotateImgWithRotMat(img, rotyImg, rotMattheta);
-    
-    cv::namedWindow("mod y");
-    cv::imshow("mod y", rotyImg);
-    
-    float chiphi = M_PI * 0.0;
-    cv::Vec3f axisphi(1.0, 0.0, 0.0);
-    cv::Mat rotMatphi;
-    Quarternion::arbRotMat(chiphi, axisphi, rotMatphi);
-    
-    std::cout << rotMatphi << std::endl;
-    
-    cv::Mat rotxImg;
-    transform.rotateImgWithRotMat(rotyImg, rotxImg, rotMatphi);
-    
-    cv::namedWindow("mod x");
-    cv::imshow("mod x", rotxImg);
+    cv::imshow("original", img);
+    cv::imshow("rotated", rotImg);
     
     cv::waitKey(-1);
     
-    
+    while (vr.hasNext()) {
+        cv::Mat curImg;
+        vr.readImg(curImg);
+        
+        cv::Mat curRotImg;
+        tf.rotateImgWithRotMat(curImg, curRotImg, rotMat);
+        
+        vw.writeImg(curRotImg);
+        
+        cv::imshow("original", curImg);
+        cv::imshow("rotated", curRotImg);
+        
+        cv::waitKey(10);
+    }
     
     return 0;
 }

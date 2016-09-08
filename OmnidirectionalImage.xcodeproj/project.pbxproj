@@ -42,7 +42,6 @@
 		022AE8341D6EA4CC00900F28 /* libopencv_imgproc.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 02513F821D34B03000089959 /* libopencv_imgproc.dylib */; };
 		022AE8351D6EA4D600900F28 /* libopencv_features2d.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 02513F841D34B05C00089959 /* libopencv_features2d.dylib */; };
 		022AE8361D6EA4DA00900F28 /* libopencv_xfeatures2d.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 02513F861D34B09800089959 /* libopencv_xfeatures2d.dylib */; };
-		024307081D7557F70031EFAD /* libiomp5.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 022AE82F1D6C7AC000900F28 /* libiomp5.dylib */; };
 		024307101D7560300031EFAD /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0243070F1D7560300031EFAD /* main.cpp */; };
 		0245CD801C41382500FF5E33 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0245CD7F1C41382500FF5E33 /* main.cpp */; };
 		0245CD901C4235AA00FF5E33 /* Transform.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0245CD8D1C4233E000FF5E33 /* Transform.cpp */; };
@@ -60,6 +59,7 @@
 		02513FAF1D366C4000089959 /* libopencv_imgcodecs.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 02513FAD1D366C4000089959 /* libopencv_imgcodecs.dylib */; };
 		02513FB01D374E6700089959 /* libopencv_highgui.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 02513F801D34B02800089959 /* libopencv_highgui.dylib */; };
 		02513FB11D375C0300089959 /* libopencv_imgproc.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 02513F821D34B03000089959 /* libopencv_imgproc.dylib */; };
+		0262BA061D782418009FE5F9 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0245CD9D1C43DF3700FF5E33 /* main.cpp */; };
 		02648EAE1CF8058A00E4E948 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 02648EAD1CF8058A00E4E948 /* main.cpp */; };
 		02648EB21CF807E800E4E948 /* Transform.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0245CD8D1C4233E000FF5E33 /* Transform.cpp */; };
 		026516AB1D2F7FF4004C7838 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 026516AA1D2F7FF4004C7838 /* main.cpp */; };
@@ -83,6 +83,13 @@
 		027F388C1D5B0F8B0012DA39 /* VideoWriter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 02C57BEE1D0FDED300F428F2 /* VideoWriter.cpp */; };
 		027F388D1D5B0F8E0012DA39 /* VideoReader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 02C57BE91D0FB0D100F428F2 /* VideoReader.cpp */; };
 		027F388E1D5B0FAF0012DA39 /* libopencv_videoio.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 02513F8A1D34B28300089959 /* libopencv_videoio.dylib */; };
+		0287FC241D787B7200E4FE99 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0287FC231D787B7200E4FE99 /* main.cpp */; };
+		0287FC281D787E0F00E4FE99 /* Transform.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0245CD8D1C4233E000FF5E33 /* Transform.cpp */; };
+		0287FC291D787E2C00E4FE99 /* Quarternion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0298B47A1D0A89C000B68032 /* Quarternion.cpp */; };
+		0287FC2A1D787E3200E4FE99 /* libopencv_core.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 02513F7E1D34B01C00089959 /* libopencv_core.dylib */; };
+		0287FC2B1D787E3500E4FE99 /* libopencv_highgui.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 02513F801D34B02800089959 /* libopencv_highgui.dylib */; };
+		0287FC2C1D787E3800E4FE99 /* libopencv_imgcodecs.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 02513FAD1D366C4000089959 /* libopencv_imgcodecs.dylib */; };
+		0287FC2D1D787E3C00E4FE99 /* libopencv_imgproc.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 02513F821D34B03000089959 /* libopencv_imgproc.dylib */; };
 		0298B47E1D0AB2D000B68032 /* Quarternion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0298B47A1D0A89C000B68032 /* Quarternion.cpp */; };
 		029994151C72A9CB00792144 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 029994141C72A9CB00792144 /* main.cpp */; };
 		02A318F11D7568BF001B748D /* Rotation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 020D73071D2A62E800BC61BD /* Rotation.cpp */; };
@@ -105,6 +112,8 @@
 		02CD2D531D587C7B005AE060 /* libopencv_imgcodecs.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 02513FAD1D366C4000089959 /* libopencv_imgcodecs.dylib */; };
 		02CD2D541D587C7E005AE060 /* libopencv_imgproc.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 02513F821D34B03000089959 /* libopencv_imgproc.dylib */; };
 		02CD2D551D587CA4005AE060 /* libopencv_videoio.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 02513F8A1D34B28300089959 /* libopencv_videoio.dylib */; };
+		02D6D99D1D81404400862E8F /* Estimate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 02D6D99B1D81404400862E8F /* Estimate.cpp */; };
+		02D6D99E1D81404400862E8F /* Estimate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 02D6D99B1D81404400862E8F /* Estimate.cpp */; };
 		02E437161CF84303007C3605 /* MatchFeaturePoint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 02E437131CF84303007C3605 /* MatchFeaturePoint.cpp */; };
 		02E4371D1CF845D7007C3605 /* ExtractFeaturePoint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 02E4371C1CF845D7007C3605 /* ExtractFeaturePoint.cpp */; };
 		02EB3B7A1D4731BB00523452 /* libopencv_imgcodecs.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 02513FAD1D366C4000089959 /* libopencv_imgcodecs.dylib */; };
@@ -201,6 +210,15 @@
 			);
 			runOnlyForDeploymentPostprocessing = 1;
 		};
+		0287FC1F1D787B7200E4FE99 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
 		029994101C72A9CB00792144 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -255,6 +273,8 @@
 		026B3EB41CA1ABF4008B59CD /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		027F387F1D5B0EDB0012DA39 /* RotateVideo */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = RotateVideo; sourceTree = BUILT_PRODUCTS_DIR; };
 		027F38811D5B0EDB0012DA39 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
+		0287FC211D787B7200E4FE99 /* RotateFrame */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = RotateFrame; sourceTree = BUILT_PRODUCTS_DIR; };
+		0287FC231D787B7200E4FE99 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		028D7A121C302CE200790A10 /* Rotate.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Rotate.cpp; sourceTree = "<group>"; };
 		028D7A131C302CE200790A10 /* Rotate.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Rotate.hpp; sourceTree = "<group>"; };
 		0290BBB11D12A08100C83FF2 /* MatchMain.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = MatchMain.hpp; path = MatchMain/MatchMain.hpp; sourceTree = "<group>"; };
@@ -267,6 +287,8 @@
 		02C57BEA1D0FB0D100F428F2 /* VideoReader.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = VideoReader.hpp; path = VideoReader/VideoReader.hpp; sourceTree = "<group>"; };
 		02C57BEE1D0FDED300F428F2 /* VideoWriter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = VideoWriter.cpp; path = VideoWriter/VideoWriter.cpp; sourceTree = "<group>"; };
 		02C57BEF1D0FDED300F428F2 /* VideoWriter.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = VideoWriter.hpp; path = VideoWriter/VideoWriter.hpp; sourceTree = "<group>"; };
+		02D6D99B1D81404400862E8F /* Estimate.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Estimate.cpp; path = Estimate/Estimate.cpp; sourceTree = "<group>"; };
+		02D6D99C1D81404400862E8F /* Estimate.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = Estimate.hpp; path = Estimate/Estimate.hpp; sourceTree = "<group>"; };
 		02E437131CF84303007C3605 /* MatchFeaturePoint.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MatchFeaturePoint.cpp; path = MatchFeaturePoint/MatchFeaturePoint.cpp; sourceTree = "<group>"; };
 		02E437141CF84303007C3605 /* MatchFeaturePoint.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = MatchFeaturePoint.hpp; path = MatchFeaturePoint/MatchFeaturePoint.hpp; sourceTree = "<group>"; };
 		02E4371B1CF845CF007C3605 /* ExtractFeaturePoint.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = ExtractFeaturePoint.hpp; path = ExtractFeaturePoint/ExtractFeaturePoint.hpp; sourceTree = "<group>"; };
@@ -330,7 +352,6 @@
 				02513F831D34B03000089959 /* libopencv_imgproc.dylib in Frameworks */,
 				02513F851D34B05C00089959 /* libopencv_features2d.dylib in Frameworks */,
 				02513F871D34B09800089959 /* libopencv_xfeatures2d.dylib in Frameworks */,
-				024307081D7557F70031EFAD /* libiomp5.dylib in Frameworks */,
 				02513F8B1D34B28300089959 /* libopencv_videoio.dylib in Frameworks */,
 				0220D4B71D3F55C500AB134C /* libopencv_calib3d.dylib in Frameworks */,
 			);
@@ -391,6 +412,17 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		0287FC1E1D787B7200E4FE99 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0287FC2A1D787E3200E4FE99 /* libopencv_core.dylib in Frameworks */,
+				0287FC2C1D787E3800E4FE99 /* libopencv_imgcodecs.dylib in Frameworks */,
+				0287FC2B1D787E3500E4FE99 /* libopencv_highgui.dylib in Frameworks */,
+				0287FC2D1D787E3C00E4FE99 /* libopencv_imgproc.dylib in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		0299940F1C72A9CB00792144 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -417,6 +449,7 @@
 		020D730A1D2A62F800BC61BD /* Rotation */ = {
 			isa = PBXGroup;
 			children = (
+				0298B47D1D0A8E8300B68032 /* Quarternion */,
 				020D73071D2A62E800BC61BD /* Rotation.cpp */,
 				020D73081D2A62E800BC61BD /* Rotation.hpp */,
 			);
@@ -533,7 +566,7 @@
 				02C57BED1D0FDEB700F428F2 /* VideoWriter */,
 				02513F9E1D363CA900089959 /* Perspective */,
 				02C57C011D1055AC00F428F2 /* MatchMain */,
-				0298B47D1D0A8E8300B68032 /* Quarternion */,
+				02D6D99F1D81405300862E8F /* Estimate */,
 				02E437171CF8430D007C3605 /* MatchFeaturePoint */,
 				022D08B31CF5915F0032A92F /* ExtractFeaturePoint */,
 				020D730A1D2A62F800BC61BD /* Rotation */,
@@ -575,6 +608,14 @@
 			path = RotateVideo;
 			sourceTree = "<group>";
 		};
+		0287FC221D787B7200E4FE99 /* RotateFrame */ = {
+			isa = PBXGroup;
+			children = (
+				0287FC231D787B7200E4FE99 /* main.cpp */,
+			);
+			path = RotateFrame;
+			sourceTree = "<group>";
+		};
 		028D79EE1C30130B00790A10 = {
 			isa = PBXGroup;
 			children = (
@@ -598,8 +639,9 @@
 				020D72FD1D2A4ADA00BC61BD /* ExtractFrame */,
 				026516A91D2F7FF4004C7838 /* Mask */,
 				02513FA41D36648900089959 /* PerspectiveProjection */,
-				027F38801D5B0EDB0012DA39 /* RotateVideo */,
 				0243070E1D7560300031EFAD /* RangeValid */,
+				027F38801D5B0EDB0012DA39 /* RotateVideo */,
+				0287FC221D787B7200E4FE99 /* RotateFrame */,
 				028D79F81C30130B00790A10 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -618,6 +660,7 @@
 				02513FA31D36648900089959 /* PerspectiveProjection */,
 				027F387F1D5B0EDB0012DA39 /* RotateVideo */,
 				0243070D1D7560300031EFAD /* RangeValid */,
+				0287FC211D787B7200E4FE99 /* RotateFrame */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -675,6 +718,15 @@
 				0290BBB11D12A08100C83FF2 /* MatchMain.hpp */,
 			);
 			name = MatchMain;
+			sourceTree = "<group>";
+		};
+		02D6D99F1D81405300862E8F /* Estimate */ = {
+			isa = PBXGroup;
+			children = (
+				02D6D99B1D81404400862E8F /* Estimate.cpp */,
+				02D6D99C1D81404400862E8F /* Estimate.hpp */,
+			);
+			name = Estimate;
 			sourceTree = "<group>";
 		};
 		02E437171CF8430D007C3605 /* MatchFeaturePoint */ = {
@@ -859,6 +911,23 @@
 			productReference = 027F387F1D5B0EDB0012DA39 /* RotateVideo */;
 			productType = "com.apple.product-type.tool";
 		};
+		0287FC201D787B7200E4FE99 /* RotateFrame */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 0287FC271D787B7200E4FE99 /* Build configuration list for PBXNativeTarget "RotateFrame" */;
+			buildPhases = (
+				0287FC1D1D787B7200E4FE99 /* Sources */,
+				0287FC1E1D787B7200E4FE99 /* Frameworks */,
+				0287FC1F1D787B7200E4FE99 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = RotateFrame;
+			productName = RotateFrame;
+			productReference = 0287FC211D787B7200E4FE99 /* RotateFrame */;
+			productType = "com.apple.product-type.tool";
+		};
 		029994111C72A9CB00792144 /* PlayVideo */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 029994161C72A9CB00792144 /* Build configuration list for PBXNativeTarget "PlayVideo" */;
@@ -915,6 +984,9 @@
 					027F387E1D5B0EDB0012DA39 = {
 						CreatedOnToolsVersion = 7.2.1;
 					};
+					0287FC201D787B7200E4FE99 = {
+						CreatedOnToolsVersion = 7.2.1;
+					};
 					029994111C72A9CB00792144 = {
 						CreatedOnToolsVersion = 7.2.1;
 					};
@@ -943,6 +1015,7 @@
 				02513FA21D36648900089959 /* PerspectiveProjection */,
 				027F387E1D5B0EDB0012DA39 /* RotateVideo */,
 				0243070C1D7560300031EFAD /* RangeValid */,
+				0287FC201D787B7200E4FE99 /* RotateFrame */,
 			);
 		};
 /* End PBXProject section */
@@ -984,6 +1057,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				0245CD901C4235AA00FF5E33 /* Transform.cpp in Sources */,
+				02D6D99D1D81404400862E8F /* Estimate.cpp in Sources */,
 				0220D4C01D3F674200AB134C /* ExtractFeaturePoint.cpp in Sources */,
 				0220D4C51D3F68D100AB134C /* VideoWriter.cpp in Sources */,
 				0220D4C41D3F68CE00AB134C /* VideoReader.cpp in Sources */,
@@ -1000,7 +1074,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				02C768911D17E8680069E8C3 /* MatchMain.cpp in Sources */,
+				02D6D99E1D81404400862E8F /* Estimate.cpp in Sources */,
 				02C768861D17E7DB0069E8C3 /* VideoWriter.cpp in Sources */,
+				0262BA061D782418009FE5F9 /* main.cpp in Sources */,
 				020D730B1D2A642D00BC61BD /* Rotation.cpp in Sources */,
 				02C768881D17E7F00069E8C3 /* MatchFeaturePoint.cpp in Sources */,
 				02C768891D17E7F40069E8C3 /* ExtractFeaturePoint.cpp in Sources */,
@@ -1061,6 +1137,16 @@
 				027F388A1D5B0F830012DA39 /* Transform.cpp in Sources */,
 				027F388B1D5B0F870012DA39 /* Quarternion.cpp in Sources */,
 				027F38821D5B0EDB0012DA39 /* main.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		0287FC1D1D787B7200E4FE99 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0287FC281D787E0F00E4FE99 /* Transform.cpp in Sources */,
+				0287FC291D787E2C00E4FE99 /* Quarternion.cpp in Sources */,
+				0287FC241D787B7200E4FE99 /* main.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1303,6 +1389,28 @@
 			};
 			name = Release;
 		};
+		0287FC251D787B7200E4FE99 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					/usr/local/Cellar/opencv3/3.1.0_3/lib,
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		0287FC261D787B7200E4FE99 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					/usr/local/Cellar/opencv3/3.1.0_3/lib,
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
 		028D79FC1C30130B00790A10 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -1499,6 +1607,15 @@
 			buildConfigurations = (
 				027F38841D5B0EDB0012DA39 /* Debug */,
 				027F38851D5B0EDB0012DA39 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		0287FC271D787B7200E4FE99 /* Build configuration list for PBXNativeTarget "RotateFrame" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				0287FC251D787B7200E4FE99 /* Debug */,
+				0287FC261D787B7200E4FE99 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

@@ -24,83 +24,21 @@
 class Rotation
 {
 public:
-    Rotation(const Transform& transform, float filedAngle, int matchThre);
+    Rotation();
     ~Rotation();
     
-    // 特異値分解により回転行列を推定する [forP] = [R]*[latP]
-    void estimate3DRotMatSVD
-    (const std::vector<cv::Point3f>& forspheres,
-     const std::vector<cv::Point3f>& latspheres, cv::Mat& estRotMat) const;
-    // ランダムに点を取り出す
-    static void getRondomPoint
-    (const std::vector<cv::Point3f>& forPoints,
-     const std::vector<cv::Point3f>& latPoints,
-     std::vector<cv::Point3f>& forPointx, std::vector<cv::Point3f>& latPointx,
-     size_t getSize);
-    // ランダムに取り出した少数の点から回転行列を推定
-    static void estimate3DRotMatSVDPartial
-    (const std::vector<cv::Point3f>& forPointx,
-     const std::vector<cv::Point3f>& latPointx, cv::Mat& estRotMatPart);
-    // 推定した回転行列を評価
-    float evalEstRotMat
-    (const std::vector<cv::Point3f>& forPoints,
-     const std::vector<cv::Point3f>& latPoints,
-     const cv::Mat& estRotMat) const;
-    // 閾値以下のサンプルを取り出す
-    size_t removeOutlier
-    (const std::vector<cv::Point3f>& forPoints,
-     const std::vector<cv::Point3f>& latPoints,
-     std::vector<cv::Point3f>& inForPoints,
-     std::vector<cv::Point3f>& inLatPoints,
-     float normThre, const cv::Mat& estRotMat) const;
-    // 四元数を使って回転行列を正規化
-    static void normalRotMat(cv::Mat& rotMat);
-    
-    // 回転行列の推定
-    bool estimateRotMat
-    (const std::vector<cv::Point3f>& forspheres,
-     const std::vector<cv::Point3f>& latspheres, cv::Mat& estRotMat) const;
-    // 基本行列の分解により回転行列を推定する
-    void estimate3DRotMatEssential
-    (const std::vector<cv::Point2f>& fornormals,
-     const std::vector<cv::Point2f>& latnormals, cv::Mat& estRotMat,
-     cv::Mat& mask) const;
-    // カメラの前後の特徴点を取り出す
-    void extractFrontFeature
-    (const std::vector<cv::Point3f>& forspheres,
-     const std::vector<cv::Point3f>& latspheres,
-     std::vector<cv::Point3f>& forspheresFront,
-     std::vector<cv::Point3f>& latspheresFront) const;
-    
-    // 特徴点(の組)がカメラの前後にあるか
-    bool isInFront(const cv::Point3f& forsphere, const cv::Point3f& latsphere)
-    const {
-        return (forsphere.z * latsphere.z > 0)
-        //return forsphere.z > 0 && latsphere.z > 0
-               && ((forsphere.x*forsphere.x + forsphere.y*forsphere.y) <
-                   (forsphere.z*forsphere.z * fieldRadius*fieldRadius))
-               && ((latsphere.x*latsphere.x + latsphere.y*latsphere.y) <
-                   (latsphere.z*latsphere.z * fieldRadius*fieldRadius));
-    };
-    // 特徴点(単体)がカメラの前後にあるか
-    bool isInFront(const cv::Point3f& sphere) const {
-        return (sphere.x*sphere.x + sphere.y*sphere.y) <
-                sphere.z*sphere.z * fieldRadius*fieldRadius;
-    }
-    
-    // 最終的な回転角，回転軸を決定
-    void integrateRodrigues
-    (std::vector<float>& angles, std::vector<cv::Vec3f>& axiss,
-     std::vector<float>& weight, float& angle, cv::Vec3f& axis) const;
-    
-    // それぞれの方向で推定された回転の重みを返す
-    float getWeight(cv::Mat& mask) const;
-    
-private:
-    std::vector<cv::Mat> rotMats;
-    const Transform& transform;
-    const float fieldRadius;
-    const int matchThre;
-};
+    // 単位四元数->回転行列
+    static void Quart2RotMat(const Quarternion& quart, cv::Mat& rotMat);
+    // 回転行列->四元数
+    static void RotMat2Quart(const cv::Mat& rotMat, Quarternion& quart);
+    // 回転ベクトル->回転行列
+    static void RotVec2RotMat
+    (const cv::Vec3f& rotVec, cv::Mat& rotMat);
+    // 回転行列->回転ベクトル
+    static void RotMat2RotVec
+    (const cv::Mat& rotMat, cv::Vec3f& rotVec);
 
+    // 回転行列を正規化
+    static void normalRotMat(cv::Mat& rotMat);
+};
 #endif /* Rotation_hpp */

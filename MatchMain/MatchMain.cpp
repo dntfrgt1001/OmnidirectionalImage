@@ -10,8 +10,8 @@
 
 MatchMain::MatchMain
 (const Transform& otf, const Transform& tf, const ExtractFeaturePoint& efp,
- const MatchFeaturePoint& mfp, const Rotation& rot):
-otf(otf), tf(tf), efp(efp), mfp(mfp), rot(rot),
+ const MatchFeaturePoint& mfp, const Estimate& est):
+otf(otf), tf(tf), efp(efp), mfp(mfp), est(est),
 accMat(cv::Mat::eye(3, 3, CV_32FC1))
 {
 
@@ -75,7 +75,8 @@ void MatchMain::ModifylatterImg
 */
     // 回転行列の推定
     cv::Mat estRotMat;
-    bool isEstimated = rot.estimateRotMat(forspheres, latspheres, estRotMat);
+//    bool isEstimated = rot.estimateRotMat(forspheres, latspheres, estRotMat);
+    bool isEstimated = est.estimateRotMat(forspheres, latspheres, estRotMat);
     // 推定に失敗したら直前の行列を使う
     if (!isEstimated) {
         std::cout << "*** There are few features." <<
@@ -107,7 +108,7 @@ void MatchMain::ModifylatterImg
     // 回転行列を集積
     accMat = accMat * estRotMat;
     // 集積した回転行列を正規化
-    rot.normalRotMat(accMat);
+    Rotation::normalRotMat(accMat);
     // 回転行列を使って画像を修正
     otf.rotateImgWithRotMat(latImg, modLatImg, accMat);
     

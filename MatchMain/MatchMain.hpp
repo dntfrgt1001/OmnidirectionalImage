@@ -20,6 +20,7 @@
 #include "Rotation.hpp"
 #include "VideoReader.hpp"
 #include "VideoWriter.hpp"
+#include "Estimate.hpp"
 
 class MatchMain
 {
@@ -27,7 +28,7 @@ public:
     MatchMain
     (const Transform& otf, const Transform& tf,
      const ExtractFeaturePoint& efp,
-     const MatchFeaturePoint& mfp, const Rotation& rot);
+     const MatchFeaturePoint& mfp, const Estimate& est);
     ~MatchMain();
     
     // １つ目の画像に合わせて２つ目の画像を修正する
@@ -47,7 +48,7 @@ private:
     const Transform& tf;
     const ExtractFeaturePoint& efp;
     const MatchFeaturePoint& mfp;
-    const Rotation& rot;
+    const Estimate& est;
     cv::Mat accMat;
     cv::Mat preMat;
     std::vector<cv::KeyPoint> tmpKeyPoints;
