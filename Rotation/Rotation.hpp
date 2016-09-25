@@ -19,7 +19,7 @@
 #include <opencv2/calib3d.hpp>
 
 #include "Transform.hpp"
-#include "Quarternion.hpp"
+#include "Quaternion.hpp"
 
 class Rotation
 {
@@ -27,10 +27,17 @@ public:
     Rotation();
     ~Rotation();
     
+    static void getRotMat
+    (const float angle, const cv::Vec3f& axis, cv::Mat rotMat);
+    static void getRotVec
+    (const float angle, const cv::Vec3f& axis, cv::Vec3f& rotVec);
+    static void getQuaternion
+    (const float angle, const cv::Vec3f& axis, Quaternion& quat);
+    
     // 単位四元数->回転行列
-    static void Quart2RotMat(const Quarternion& quart, cv::Mat& rotMat);
+    static void Quat2RotMat(const Quaternion& quat, cv::Mat& rotMat);
     // 回転行列->四元数
-    static void RotMat2Quart(const cv::Mat& rotMat, Quarternion& quart);
+    static void RotMat2Quat(const cv::Mat& rotMat, Quaternion& quat);
     // 回転ベクトル->回転行列
     static void RotVec2RotMat
     (const cv::Vec3f& rotVec, cv::Mat& rotMat);

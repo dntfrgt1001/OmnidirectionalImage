@@ -33,7 +33,6 @@ void MatchMain::ModifylatterImg
     // 特徴点と記述子の抽出
     std::vector<cv::KeyPoint> forKeyPoints, latKeyPoints;
     cv::Mat forDescriptors, latDescriptors;
-
     
     if (tmpKeyPoints.size() == 0) {
         // 初期フレームの場合
@@ -73,6 +72,7 @@ void MatchMain::ModifylatterImg
     //rotation.estimate3DRotMatSVD(forspheres, latspheres, estRotMat);
     rotation.estimate3DRotMatEssential(fornormals, latnormals, estRotMat);
 */
+    
     // 回転行列の推定
     cv::Mat estRotMat;
 //    bool isEstimated = rot.estimateRotMat(forspheres, latspheres, estRotMat);
@@ -104,13 +104,15 @@ void MatchMain::ModifylatterImg
     */
     
     
-    
     // 回転行列を集積
     accMat = accMat * estRotMat;
     // 集積した回転行列を正規化
     Rotation::normalRotMat(accMat);
     // 回転行列を使って画像を修正
     otf.rotateImgWithRotMat(latImg, modLatImg, accMat);
+    std::cout << "======================================" << std::endl;
+    std::cout << "accMat = " << std::endl << accMat << std::endl;
+    std::cout << "======================================" << std::endl;
     
     // マッチング表示用
     std::vector<cv::Point2f> lastForequirect, lastLatequirect;
@@ -158,8 +160,29 @@ void MatchMain::ModifyVideo(VideoReader &vr, VideoWriter &vw)
         
         vw.writeImg(curModImg);
         
-        std::cout << i++ << "-th frame finished" <<std::endl;
+        std::cout << i++ << "-th frame finished" << std::endl;
         
         cv::waitKey(-1);
     }
+}
+
+void MatchMain::ModifyVideoMid
+(VideoReader &vrOriginal, VideoReader &vrPreFixed, VideoWriterPic &vw,
+ const int frameNum, const cv::Mat &curRotMat)
+{
+    // 初期化処理
+    for (int i=0; i<frameNum; i++) {
+        // 姿勢修正済みのフレームを書き出す
+        cv::Mat tmpMat;
+        vrPreFixed.readImg(tmpMat);
+        vw.writeImg(tmpMat);
+        
+        // 元動画から先頭フレームを取り出す
+        vrOriginal.readImg(tmpMat);
+    }
+    
+    // 直前の集積行列をセット
+    curRotMat.copyTo(accMat);
+    
+    ModifyVideo(vrOriginal, vw);
 }

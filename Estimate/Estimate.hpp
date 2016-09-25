@@ -18,14 +18,12 @@
 #include <opencv2/calib3d.hpp>
 
 #include "Transform.hpp"
-#include "Quarternion.hpp"
 #include "Rotation.hpp"
 
 class Estimate {
 public:
     Estimate(const Transform& tf, float fieldAngle, int numThre);
 
-    
     // 回転行列の推定
     bool estimateRotMat
     (const std::vector<cv::Point3f>& forspheres,
@@ -59,7 +57,7 @@ public:
     }
     
     // 最終的な回転角，回転軸を決定
-    void integrateRodrigues
+    void integrateRotVec
     (const std::vector<cv::Vec3f>& rotVecs, std::vector<float>& weights,
      cv::Vec3f& rotVec) const;
 

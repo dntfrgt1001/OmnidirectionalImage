@@ -15,14 +15,11 @@ tf(tf), fieldRadius(tanf(fieldAngle)), numThre(numThre)
 //    srand((unsigned int) time(NULL));
     
     // カメラの前後の特徴点を同時に使う
-    // 座標軸の向きに変換
+    // 座標軸の向きに変換    
     rotMats.push_back((cv::Mat_<float>(3,3) << 1,0,0,0,1,0,0,0,1));
-    //rotMats.push_back((cv::Mat_<float>(3,3) << -1,0,0,0,1,0,0,0,-1));
     rotMats.push_back((cv::Mat_<float>(3,3) << 0,0,-1,0,1,0,1,0,0));
-    //rotMats.push_back((cv::Mat_<float>(3,3) << 0,0,1,0,1,0,-1,0,0));
     rotMats.push_back((cv::Mat_<float>(3,3) << 1,0,0,0,0,-1,0,1,0));
-    //rotMats.push_back((cv::Mat_<float>(3,3) << 1,0,0,0,0,1,0,-1,0));
-    
+
     // 斜め方向に変換
     float sqrt6 = sqrtf(6.0);
     float sqrt3 = sqrtf(3.0);
@@ -40,8 +37,6 @@ bool Estimate::estimateRotMat
 (const std::vector<cv::Point3f> &forspheres,
  const std::vector<cv::Point3f> &latspheres, cv::Mat &estRotMat) const
 {
-//    std::vector<float> angles;
-//    std::vector<cv::Vec3f> axiss;
     std::vector<cv::Vec3f> rotVecs;
     std::vector<float> weights;
     
@@ -81,20 +76,21 @@ bool Estimate::estimateRotMat
                                                  cv::Mat1f(rotVecFront)));
             rotVecs.push_back(rotVecOriginal);
             
+            std::cout << "--------------------------------------" << std::endl;
             std::cout << "weight " << weightFront << std::endl;
             std::cout << "front-change matrix = " << std::endl << rotMats[i] << std::endl;
             std::cout << "estimated matrix = "  << std::endl << estRotMatFront << std::endl;
             std::cout << "angle = " << cv::norm(rotVecOriginal) << std::endl;
             std::cout << "(rotated axis = " << rotVecFront/cv::norm(rotVecFront) << ")" << std::endl;
             std::cout << "axis = " << rotVecOriginal/cv::norm(rotVecOriginal) << std::endl;
-            std::cout << "--------------------------------------" << std::endl;
         }
     }
     
+    // どの方向でも特徴点が閾値以下で推定できない
     if (rotVecs.size() == 0) return false;
 
     cv::Vec3f estRotVec;
-    integrateRodrigues(rotVecs, weights, estRotVec);
+    integrateRotVec(rotVecs, weights, estRotVec);
     Rotation::RotVec2RotMat(estRotVec, estRotMat);
     
     std::cout << "**************************************" << std::endl;
@@ -103,8 +99,7 @@ bool Estimate::estimateRotMat
     std::cout << "estAngle = "  << cv::norm(estRotVec) << std::endl;
     std::cout << "estAxis = " << estRotVec/cv::norm(estRotVec) << std::endl;
     std::cout << "**************************************" << std::endl;
-    std::cout << "**************************************" << std::endl;
-    
+
     return true;
 }
 
@@ -115,8 +110,8 @@ void Estimate::estimate3DRotMatEssential
 {
     double focal = 1.0;
     cv::Point2d pp(0.0, 0.0);
-    //int method = cv::RANSAC;
-    int method = cv::LMEDS;
+    int method = cv::RANSAC;
+    //int method = cv::LMEDS;
     double prob = 0.999;
     double threshold = 0.01;
     
@@ -153,11 +148,9 @@ void Estimate::extractFrontFeature
     }
 }
 
-void Estimate::integrateRodrigues
+void Estimate::integrateRotVec
 (const std::vector<cv::Vec3f>& rotVecs, std::vector<float>& weights,
  cv::Vec3f& rotVec) const
-//(std::vector<float> &angles, std::vector<cv::Vec3f> &axiss,
-// std::vector<float> &weight, float &angle, cv::Vec3f &axis) const
 {
     // 特徴点の数が最大の結果をつかう
     std::vector<float>::iterator itr = std::max_element(weights.begin(),
@@ -198,6 +191,8 @@ float Estimate::getWeight(cv::Mat &mask) const
             count++;
         }
     }
+    
+    std::cout << "(all, inlier) = (" << mask.rows << ", " << count << ")" << std::endl;
     
     //return (float) count / mask.rows;
     return (float) count;

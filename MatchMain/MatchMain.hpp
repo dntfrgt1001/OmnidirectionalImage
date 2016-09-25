@@ -34,8 +34,12 @@ public:
     // １つ目の画像に合わせて２つ目の画像を修正する
     void ModifylatterImg
     (const cv::Mat& forImg, const cv::Mat& latImg, cv::Mat& modLatImg);
-    // 初期フレームに合わせて動画を修正する
    
+    // 動画を途中から修正
+    void ModifyVideoMid
+    (VideoReader& vrOriginal, VideoReader& vrPreFixed, VideoWriterPic& vw,
+     const int frameNum, const cv::Mat& curRotMat);
+    
     void ModifyPOVImg
     (const cv::Mat& img, cv::Mat& rotImg);
     

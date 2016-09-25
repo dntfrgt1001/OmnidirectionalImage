@@ -8,30 +8,50 @@
 
 #include "Rotation.hpp"
 
-void Rotation::Quart2RotMat
-(const Quarternion &quart, cv::Mat &rotMat)
+void Rotation::getRotMat
+(const float angle, const cv::Vec3f &axis, cv::Mat rotMat)
+{
+    cv::Vec3f rotVec;
+    getRotVec(angle, axis, rotVec);
+    RotVec2RotMat(rotVec, rotMat);
+}
+
+void Rotation::getRotVec
+(const float angle, const cv::Vec3f &axis, cv::Vec3f &rotVec)
+{
+    rotVec = angle * axis;
+}
+
+void Rotation::getQuaternion
+(const float angle, const cv::Vec3f &axis, Quaternion &quat)
+{
+    quat = Quaternion(angle, axis);
+}
+
+void Rotation::Quat2RotMat
+(const Quaternion &quat, cv::Mat &rotMat)
 {
     rotMat = cv::Mat(3, 3, CV_32FC1);
     
-    rotMat.at<float>(0, 0) = 1 - 2*(quart.y*quart.y + quart.z*quart.z);
-    rotMat.at<float>(1, 0) = 2*(quart.x*quart.y + quart.t*quart.z);
-    rotMat.at<float>(2, 0) = 2*(quart.x*quart.z - quart.t*quart.y);
-    rotMat.at<float>(0, 1) = 2*(quart.x*quart.y - quart.t*quart.z);
-    rotMat.at<float>(1, 1) = 1 - 2*(quart.x*quart.x + quart.z*quart.z);
-    rotMat.at<float>(2, 1) = 2*(quart.y*quart.z + quart.t*quart.x);
-    rotMat.at<float>(0, 2) = 2*(quart.x*quart.z + quart.t*quart.y);
-    rotMat.at<float>(1, 2) = 2*(quart.y*quart.z - quart.t*quart.x);
-    rotMat.at<float>(2, 2) = 1 - 2*(quart.x*quart.x + quart.y*quart.y);
+    rotMat.at<float>(0, 0) = 1 - 2*(quat.y*quat.y + quat.z*quat.z);
+    rotMat.at<float>(1, 0) = 2*(quat.x*quat.y + quat.t*quat.z);
+    rotMat.at<float>(2, 0) = 2*(quat.x*quat.z - quat.t*quat.y);
+    rotMat.at<float>(0, 1) = 2*(quat.x*quat.y - quat.t*quat.z);
+    rotMat.at<float>(1, 1) = 1 - 2*(quat.x*quat.x + quat.z*quat.z);
+    rotMat.at<float>(2, 1) = 2*(quat.y*quat.z + quat.t*quat.x);
+    rotMat.at<float>(0, 2) = 2*(quat.x*quat.z + quat.t*quat.y);
+    rotMat.at<float>(1, 2) = 2*(quat.y*quat.z - quat.t*quat.x);
+    rotMat.at<float>(2, 2) = 1 - 2*(quat.x*quat.x + quat.y*quat.y);
 }
 
-void Rotation::RotMat2Quart(const cv::Mat &rotMat, Quarternion &quart)
+void Rotation::RotMat2Quat(const cv::Mat &rotMat, Quaternion &quat)
 {
     float trace = (cv::trace(rotMat))(0);
     
-    quart.t = sqrtf(trace + 1) / 2.0;
-    quart.x = (rotMat.at<float>(2, 1) - rotMat.at<float>(1, 2)) / (4*quart.t);
-    quart.y = (rotMat.at<float>(0, 2) - rotMat.at<float>(2, 0)) / (4*quart.t);
-    quart.z = (rotMat.at<float>(1, 0) - rotMat.at<float>(0, 1)) / (4*quart.t);
+    quat.t = sqrtf(trace + 1) / 2.0;
+    quat.x = (rotMat.at<float>(2, 1) - rotMat.at<float>(1, 2)) / (4*quat.t);
+    quat.y = (rotMat.at<float>(0, 2) - rotMat.at<float>(2, 0)) / (4*quat.t);
+    quat.z = (rotMat.at<float>(1, 0) - rotMat.at<float>(0, 1)) / (4*quat.t);
 }
 
 void Rotation::RotVec2RotMat
@@ -88,8 +108,8 @@ void Rotation::RotMat2RotVec
 
 void Rotation::normalRotMat(cv::Mat &rotMat)
 {
-    Quarternion quart;
-    RotMat2Quart(rotMat, quart);
-    Quarternion::normalQuart(quart);
-    Quart2RotMat(quart, rotMat);
+    Quaternion quat;
+    RotMat2Quat(rotMat, quat);
+    Quaternion::normalQuart(quat);
+    Quat2RotMat(quat, rotMat);
 }
