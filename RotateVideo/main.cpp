@@ -13,45 +13,42 @@
 #include <opencv2/imgproc/imgproc.hpp>
 
 #include "Transform.hpp"
-#include "Quarternion.hpp"
+#include "Rotation.hpp"
+#include "Quaternion.hpp"
 #include "VideoReader.hpp"
 #include "VideoWriter.hpp"
 
 int main(int argc, const char * argv[])
 {
-    const std::string path = "/Users/masakazu/Desktop/PIXPRO/video8/";
-    const std::string inputVideoName = path + "sample2.mp4";
-    const std::string outputVideoName = path + "sample2-ori-rot";
+    const std::string path = "/Users/masakazu/Desktop/EX-FR200/";
+    const std::string inputVideoName = path + "sample3";
+    const std::string outputVideoName = path + "sample3-rot";
     
-    const cv::Size frameSize(1280, 640);
+    const cv::Size frameSize(1000, 500);
     
     Transform tf(frameSize);
     const int stride = 1;
-    VideoReaderMov vr(frameSize, inputVideoName, stride);
-    VideoWriterPic vw(frameSize, outputVideoName);
+    VideoReaderPic vr(frameSize, inputVideoName, stride);
     
     cv::Mat rotImg;
     
-    float anglez = -M_PI/2.0;
-    cv::Vec3f axisz(0.0, 0.0, 1.0);
-    cv::Mat rotMatz;
-    Quarternion::Rodrigues2RotMat(anglez, axisz, rotMatz);
+    cv::Vec3f rotVec1 = M_PI/4.7 * cv::Vec3f(0.0, 1.0, 0.0);
+    cv::Mat rotMat1;
+    Rotation::RotVec2RotMat(rotVec1, rotMat1);
+
+    cv::Vec3f rotVec2 = -M_PI/2.2 * cv::Vec3f(1.0, 0.0, 0.0);
+    cv::Mat rotMat2;
+    Rotation::RotVec2RotMat(rotVec2, rotMat2);
     
-    float anglex = M_PI / 9.0;
-    cv::Vec3f axisx(1.0, 0.0, 0.0);
-    cv::Mat rotMatx;
-    Quarternion::Rodrigues2RotMat(anglex, axisx, rotMatx);
-    
-    float angley = M_PI / 4.0;
-    cv::Vec3f axisy(0.0, 1.0, 0.0);
-    cv::Mat rotMaty;
-    Quarternion::Rodrigues2RotMat(angley, axisy, rotMaty);
+    cv::Vec3f rotVec3 = M_PI/2.3 * cv::Vec3f(0.0, 1.0, 0.0);
+    cv::Mat rotMat3;
+    Rotation::RotVec2RotMat(rotVec3, rotMat3);
     
     cv::Mat img;
     vr.readImg(img);
     
-    cv::Mat rotMat = rotMaty * rotMatx * rotMatz;
-    tf.rotateImgWithRotMat(img, rotImg, rotMaty * rotMatx * rotMatz);
+    cv::Mat rotMat = rotMat3 * rotMat2 * rotMat1;
+    tf.rotateImgWithRotMat(img, rotImg, rotMat3 * rotMat2 * rotMat1);
     
     cv::namedWindow("original");
     cv::namedWindow("rotated");
@@ -61,7 +58,11 @@ int main(int argc, const char * argv[])
     
     cv::waitKey(-1);
     
-    while (vr.hasNext()) {
+    VideoWriterPic vw(frameSize, outputVideoName);
+    
+    vw.writeImg(rotImg);
+    
+    for (int i=1; vr.hasNext(); i++) {
         cv::Mat curImg;
         vr.readImg(curImg);
         
@@ -73,8 +74,10 @@ int main(int argc, const char * argv[])
         cv::imshow("original", curImg);
         cv::imshow("rotated", curRotImg);
         
+        std::cout << i << "-th frame finished" << std::endl;
+        
         cv::waitKey(10);
     }
-    
+
     return 0;
 }

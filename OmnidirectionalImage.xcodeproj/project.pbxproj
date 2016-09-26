@@ -99,6 +99,9 @@
 		02C768881D17E7F00069E8C3 /* MatchFeaturePoint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 02E437131CF84303007C3605 /* MatchFeaturePoint.cpp */; };
 		02C768891D17E7F40069E8C3 /* ExtractFeaturePoint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 02E4371C1CF845D7007C3605 /* ExtractFeaturePoint.cpp */; };
 		02C768911D17E8680069E8C3 /* MatchMain.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0290BBB21D12A08900C83FF2 /* MatchMain.cpp */; };
+		02CB50D01D98122A0000BCFD /* Rotation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 020D73071D2A62E800BC61BD /* Rotation.cpp */; };
+		02CB50D11D98123F0000BCFD /* Quaternion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 02D6D9A11D8189B900862E8F /* Quaternion.cpp */; };
+		02CB50D21D98125A0000BCFD /* libopencv_calib3d.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 0220D4B51D3F55C500AB134C /* libopencv_calib3d.dylib */; };
 		02CD2D511D587C74005AE060 /* libopencv_core.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 02513F7E1D34B01C00089959 /* libopencv_core.dylib */; };
 		02CD2D521D587C77005AE060 /* libopencv_highgui.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 02513F801D34B02800089959 /* libopencv_highgui.dylib */; };
 		02CD2D531D587C7B005AE060 /* libopencv_imgcodecs.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 02513FAD1D366C4000089959 /* libopencv_imgcodecs.dylib */; };
@@ -402,6 +405,7 @@
 				027F38861D5B0F6E0012DA39 /* libopencv_core.dylib in Frameworks */,
 				027F38881D5B0F740012DA39 /* libopencv_imgcodecs.dylib in Frameworks */,
 				027F38871D5B0F710012DA39 /* libopencv_highgui.dylib in Frameworks */,
+				02CB50D21D98125A0000BCFD /* libopencv_calib3d.dylib in Frameworks */,
 				027F38891D5B0F760012DA39 /* libopencv_imgproc.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1134,6 +1138,8 @@
 				027F388D1D5B0F8E0012DA39 /* VideoReader.cpp in Sources */,
 				027F388A1D5B0F830012DA39 /* Transform.cpp in Sources */,
 				027F38821D5B0EDB0012DA39 /* main.cpp in Sources */,
+				02CB50D01D98122A0000BCFD /* Rotation.cpp in Sources */,
+				02CB50D11D98123F0000BCFD /* Quaternion.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
