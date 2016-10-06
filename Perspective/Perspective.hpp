@@ -41,9 +41,12 @@ public:
     }
     
     // 正規化画像座標->透視投影画像座標
-    void regular2pers(const cv::Point2f& regular, cv::Point2f& pers) const {
-        pers.x = cameraMat.at<float>(0, 0)*regular.x+cameraMat.at<float>(0, 2);
-        pers.y = cameraMat.at<float>(1, 1)*regular.y+cameraMat.at<float>(1, 2);
+    void regular2pers
+    (const cv::Point2f& regular, cv::Point2f& pers) const {
+        pers.x = cameraMat.at<float>(0, 0) *
+                 regular.x+cameraMat.at<float>(0, 2);
+        pers.y = cameraMat.at<float>(1, 1) *
+                 regular.y+cameraMat.at<float>(1, 2);
     }
 
     // 透視投影画像座標から正規化画像座標に変換

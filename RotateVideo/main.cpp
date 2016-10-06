@@ -21,34 +21,38 @@
 int main(int argc, const char * argv[])
 {
     const std::string path = "/Users/masakazu/Desktop/EX-FR200/";
-    const std::string inputVideoName = path + "sample3";
-    const std::string outputVideoName = path + "sample3-rot";
+    const std::string inputVideoName = path + "sample5.mp4";
+    const std::string outputVideoName = path + "sample5-rot";
     
     const cv::Size frameSize(1000, 500);
     
     Transform tf(frameSize);
     const int stride = 1;
-    VideoReaderPic vr(frameSize, inputVideoName, stride);
+    VideoReaderMov vr(frameSize, inputVideoName, stride);
     
     cv::Mat rotImg;
     
-    cv::Vec3f rotVec1 = M_PI/4.7 * cv::Vec3f(0.0, 1.0, 0.0);
+    cv::Vec3f rotVec1 =  -M_PI/2.0 * cv::Vec3f(1.0, 0.0, 0.0);
     cv::Mat rotMat1;
     Rotation::RotVec2RotMat(rotVec1, rotMat1);
-
-    cv::Vec3f rotVec2 = -M_PI/2.2 * cv::Vec3f(1.0, 0.0, 0.0);
+    
+    cv::Vec3f rotVec2 = -M_PI/2.0 * cv::Vec3f(0.0, 1.0, 0.0);
     cv::Mat rotMat2;
     Rotation::RotVec2RotMat(rotVec2, rotMat2);
     
-    cv::Vec3f rotVec3 = M_PI/2.3 * cv::Vec3f(0.0, 1.0, 0.0);
+    cv::Vec3f rotVec3 = 0.0 *M_PI * cv::Vec3f(0.0, 1.0, 0.0);
     cv::Mat rotMat3;
     Rotation::RotVec2RotMat(rotVec3, rotMat3);
+    
+    cv::Vec3f rotVec4 = 0.0*M_PI/30.0 * cv::Vec3f(0.0, 0.0, 1.0);
+    cv::Mat rotMat4;
+    Rotation::RotVec2RotMat(rotVec4, rotMat4);
     
     cv::Mat img;
     vr.readImg(img);
     
-    cv::Mat rotMat = rotMat3 * rotMat2 * rotMat1;
-    tf.rotateImgWithRotMat(img, rotImg, rotMat3 * rotMat2 * rotMat1);
+    cv::Mat rotMat = rotMat4 * rotMat3 * rotMat2 * rotMat1;
+    tf.rotateImgWithRotMat(img, rotImg, rotMat);
     
     cv::namedWindow("original");
     cv::namedWindow("rotated");

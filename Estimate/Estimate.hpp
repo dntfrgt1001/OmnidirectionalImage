@@ -41,8 +41,8 @@ public:
      std::vector<cv::Point3f>& latspheresFront) const;
     
     // 特徴点(の組)がカメラの前後にあるか
-    bool isInFront(const cv::Point3f& forsphere, const cv::Point3f& latsphere)
-    const {
+    bool isInFront
+    (const cv::Point3f& forsphere, const cv::Point3f& latsphere)const {
         return (forsphere.z * latsphere.z > 0)
         //return forsphere.z > 0 && latsphere.z > 0
         && ((forsphere.x*forsphere.x + forsphere.y*forsphere.y) <
@@ -63,6 +63,9 @@ public:
 
     // それぞれの方向で推定された回転の重みを返す
     float getWeight(cv::Mat& mask) const;
+    
+    // 重み最大の方向を返す
+    int getMaxWeightIndex(std::vector<float>& weights) const;
     
 private:
     std::vector<cv::Mat> rotMats;

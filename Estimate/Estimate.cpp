@@ -198,6 +198,12 @@ float Estimate::getWeight(cv::Mat &mask) const
     return (float) count;
 }
 
+int Estimate::getMaxWeightIndex(std::vector<float> &weights) const
+{
+    std::vector<float>::iterator maxItr = std::max_element(weights.begin(), weights.end());
+    
+    return (int) std::distance(weights.begin(), maxItr);
+}
 
 /*
  void Rotation::estimate3DRotMatSVD
