@@ -72,17 +72,30 @@ void MatchMain::ModifylatterImg
     //rotation.estimate3DRotMatSVD(forspheres, latspheres, estRotMat);
     rotation.estimate3DRotMatEssential(fornormals, latnormals, estRotMat);
 */
-    
+    /*
     // 回転行列の推定
     cv::Mat estRotMat;
 //    bool isEstimated = rot.estimateRotMat(forspheres, latspheres, estRotMat);
     bool isEstimated = est.estimateRotMat(forspheres, latspheres, estRotMat);
+     */
+    
+    // 重み最大の方向のカメラ前後の特徴点を取得
+    int maxWeightIdx = est.getMaxWeightIndex(forspheres, latspheres);
+    std::vector<cv::Point3f> forspheresFrontMax, latspheresFrontMax;
+    est.extractRotatedFrontFeature
+    (forspheres, latspheres,
+     forspheresFrontMax, latspheresFrontMax, maxWeightIdx);
+    
+    
+    
+    /*
     // 推定に失敗したら直前の行列を使う
     if (!isEstimated) {
         std::cout << "*** There are few features." <<
                      " Estimation failed. ***" << std::endl;
         preMat.copyTo(estRotMat);
     }
+    */
     
     /*
     // 境界をまたぐマッチングを削除
