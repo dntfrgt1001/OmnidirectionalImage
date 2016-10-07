@@ -41,8 +41,8 @@ public:
      std::vector<cv::Point3f>& latspheresFront) const;
     
     // 特徴点(の組)がカメラの前後にあるか
-    bool isInFront(const cv::Point3f& forsphere, const cv::Point3f& latsphere)
-    const {
+    bool isInFront
+    (const cv::Point3f& forsphere, const cv::Point3f& latsphere)const {
         return (forsphere.z * latsphere.z > 0)
         //return forsphere.z > 0 && latsphere.z > 0
         && ((forsphere.x*forsphere.x + forsphere.y*forsphere.y) <
@@ -56,6 +56,14 @@ public:
         sphere.z*sphere.z * fieldRadius*fieldRadius;
     }
     
+    // 指定した方向にカメラ正面を変更し，カメラの前後の特徴点を取得
+    // 座標は戻す必要あり
+    void extractRotatedFrontFeature
+    (const std::vector<cv::Point3f>& forspheres,
+     const std::vector<cv::Point3f>& latspheres,
+     std::vector<cv::Point3f>& forspheresFront,
+     std::vector<cv::Point3f>& latspheresFront, const int dirIdx) const;
+    
     // 最終的な回転角，回転軸を決定
     void integrateRotVec
     (const std::vector<cv::Vec3f>& rotVecs, std::vector<float>& weights,
@@ -63,6 +71,14 @@ public:
 
     // それぞれの方向で推定された回転の重みを返す
     float getWeight(cv::Mat& mask) const;
+    
+    // 重み最大の方向を返す
+    int getMaxWeightIndex(std::vector<float>& weights) const;
+    
+    // 重み最大の方向を返す
+    int getMaxWeightIndex
+    (const std::vector<cv::Point3f>& forspheres,
+     const std::vector<cv::Point3f>& latspheres) const;
     
 private:
     std::vector<cv::Mat> rotMats;

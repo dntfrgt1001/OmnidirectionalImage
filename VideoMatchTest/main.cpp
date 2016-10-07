@@ -26,14 +26,15 @@ int main(int argc, const char * argv[])
 {
     // ffmpeg -f image2 -r 30 -i image%4d.jpg -pix_fmt yuv420p video.mp4
     
-    const std::string path = "/Users/masakazu/Desktop/video/20160901/THETA/";
-    const std::string inputVideoName = path + "sample2.mp4";
-    const std::string inputVideoNamePreFixed = path + "sample2-pre";
-    const std::string outputVideoName = path + "sample2";
+//    const std::string path = "/Users/masakazu/Desktop/video/20160901/THETA/";
+    const std::string path = "/Users/masakazu/Desktop/EX-FR200/";
+    const std::string inputVideoName = path + "sample5-rot";
+//    const std::string inputVideoNamePreFixed = path + "sample2-pre";
+    const std::string outputVideoName = path + "sample5";
     
 //    const cv::Size frameSizeOriginal(1280, 640);
-    const cv::Size frameSizeOriginal(800, 400);
-    const cv::Size frameSize(800, 400);
+    const cv::Size frameSizeOriginal(1000, 500);
+    const cv::Size frameSize(1000, 500);
     
     const Transform tfo(frameSizeOriginal);
     const Transform tf(frameSize);
@@ -41,18 +42,17 @@ int main(int argc, const char * argv[])
     int divNum = 6;
     ExtractFeaturePoint efp(frameSize, tf, divNum);
     
-    int matchThres = 250;
-    float coordThres = 0.3;
+    int matchThres = 230;
+    float coordThres = 0.40;
     MatchFeaturePoint mfp(frameSize, tf, matchThres, coordThres);
     
-    //Rotation rot(tf, fieldAngle, matchThre);
-    float fieldAngle = M_PI / 2.75;
+    float fieldAngle = M_PI / 3.0;
     int numThre = 15;
     const Estimate est(tf, fieldAngle, numThre);
     MatchMain mm(tfo, tf, efp, mfp, est);
 
     int stride = 1;
-    VideoReaderMov vr(frameSizeOriginal, inputVideoName, stride);
+    VideoReaderPic vr(frameSizeOriginal, inputVideoName, stride);
     
     VideoWriterPic vw(frameSizeOriginal, outputVideoName);
     
@@ -61,9 +61,9 @@ int main(int argc, const char * argv[])
                             -0.64893043, 0.76081359, 0.0072172284,
                             -0.65029073, -0.54968637, -0.52437317);
     
-    //mm.ModifyVideo(vr, vw);
-    VideoReaderPic vrPreFixed(frameSizeOriginal, inputVideoNamePreFixed, stride);
-    mm.ModifyVideoMid(vr, vrPreFixed, vw, 30, curRotMat);
+    mm.ModifyVideo(vr, vw);
+    //VideoReaderPic vrPreFixed(frameSizeOriginal, inputVideoNamePreFixed, stride);
+    //mm.ModifyVideoMid(vr, vrPreFixed, vw, 30, curRotMat);
     
     return 0;
 }

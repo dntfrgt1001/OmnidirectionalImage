@@ -108,12 +108,6 @@ public:
     (const cv::Point3f& sphere, cv::Point2f& normal) const {
         normal.x = sphere.x / sphere.z;
         normal.y = sphere.y / sphere.z;
-        
-        //normal.x = sphere.z / sphere.y;
-        //normal.y = sphere.x / sphere.y;
-        
-        //normal.x = sphere.y / sphere.x;
-        //normal.x = sphere.z / sphere.x;
     }
     void sphere2normal
     (const std::vector<cv::Point3f>& spheres,
@@ -126,7 +120,7 @@ public:
     void points2points
     (const std::vector<forTp>& forPoints, std::vector<latTp>& latPoints) const;
     
-    // 計算誤差を補正
+    // 計算誤差による定義域外の値を補正
     static void correctDomain(float& rawValue, float dlimit, float ulimit) {
         if (rawValue < dlimit) rawValue = dlimit;
         else if (ulimit < rawValue) rawValue = ulimit;
