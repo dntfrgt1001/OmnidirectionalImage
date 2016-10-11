@@ -157,30 +157,7 @@ void Estimate::integrateRotVec
                                                         weights.end());
     size_t index = std::distance(weights.begin(), itr);
     rotVec = rotVecs[index];
-//    std::vector<float>::iterator iter = std::max_element(weight.begin(),
-//                                                         weight.end());
-//    size_t index = std::distance(weight.begin(), iter);
-//    angle = angles[index];
-//    axis = axiss[index];
-    
-    /*
-     // 推定に使用された特徴点の数で重みをつける
-     int inSum = 0;
-     for (auto inNum: inNums) {
-     inSum += inNum;
-     }
-     
-     // 回転角を決定
-     angle = 0.0;
-     for (int i=0; i<angles.size(); i++) {
-     angle+= ((float) inNums[i] / inSum) * angles[i];
-     }
-     
-     // 回転軸を決定
-     axis = cv::Vec3f(0.0, 0.0, 0.0);
-     for (int i=0; i<axiss.size(); i++) {
-     axis += ((float) inNums[i] / inSum) * axiss[i];
-     } */
+
 }
 
 float Estimate::getWeight(cv::Mat &mask) const
@@ -279,6 +256,29 @@ int Estimate::getMaxWeightIndex
     if (!estSucFlag) return -1;
     
     return getMaxWeightIndex(weights);
+}
+
+void Estimate::estimateRotMatSpecDir
+(const std::vector<cv::Point3f> &forspheres,
+ const std::vector<cv::Point3f> &latspheres,
+ const int rotIdx, cv::Mat estRotMat) const
+{
+    // カメラの正面を変更
+    std::vector<cv::Point3f> forspheresRot, latspheresRot;
+    tf.rotateSphere(forspheres, forspheresRot, rotMats[rotIdx]);
+    tf.rotateSphere(latspheres, latspheresRot, rotMats[rotIdx]);
+    
+    // カメラの前後の特徴点を取り出す
+    std::vector<cv::Point3f> forspheresFront, latspheresFront;
+    extractFrontFeature
+    (forspheresRot, latspheresRot, forspheresFront, latspheresFront);
+    
+    // 正規化画像座標に変換
+    std::vector<cv::Point2f> fornormalsFront, latnormalsFront;
+    tf.sphere2normal(forspheresFront, fornormalsFront);
+    tf.sphere2normal(latspheresFront, latnormalsFront);
+    
+    
 }
 
 /*
