@@ -43,26 +43,46 @@ public:
     // 特徴点(の組)がカメラの前後にあるか
     bool isInFront
     (const cv::Point3f& forsphere, const cv::Point3f& latsphere)const {
-        return (forsphere.z * latsphere.z > 0)
-        //return forsphere.z > 0 && latsphere.z > 0
-        && ((forsphere.x*forsphere.x + forsphere.y*forsphere.y) <
-            (forsphere.z*forsphere.z * fieldRadius*fieldRadius))
-        && ((latsphere.x*latsphere.x + latsphere.y*latsphere.y) <
-            (latsphere.z*latsphere.z * fieldRadius*fieldRadius));
+        return (forsphere.z * latsphere.z > 0) &&
+                isInFront(forsphere) && isInFront(latsphere);
     };
     // 特徴点(単体)がカメラの前後にあるか
     bool isInFront(const cv::Point3f& sphere) const {
         return (sphere.x*sphere.x + sphere.y*sphere.y) <
-        sphere.z*sphere.z * fieldRadius*fieldRadius;
+               sphere.z*sphere.z * fieldRadius*fieldRadius;
     }
     
-    // 指定した方向にカメラ正面を変更し，カメラの前後の特徴点を取得
-    // 座標は戻す必要あり
-    void extractRotatedFrontFeature
-    (const std::vector<cv::Point3f>& forspheres,
-     const std::vector<cv::Point3f>& latspheres,
-     std::vector<cv::Point3f>& forspheresFront,
-     std::vector<cv::Point3f>& latspheresFront, const int dirIdx) const;
+    // 最大スコアの方向に特徴点が含まれるか
+    bool isInFrontRotFeature
+    (const cv::KeyPoint& keyPoint, const int rotIdx) const {
+        cv::Point3f sphere, sphereRot;
+        tf.equirect2sphere(keyPoint.pt, sphere);
+        tf.rotateSphere(sphere, sphereRot, rotMats[rotIdx]);
+
+        return isInFront(sphereRot);
+    }
+    
+    // 最大スコアの方向の特徴点と記述子を抽出する
+    void extRotFrontFeature
+    (const std::vector<cv::KeyPoint>& keyPoints,
+     const cv::Mat& descriptors,
+     std::vector<cv::KeyPoint>& keyPointsRotFront,
+     cv::Mat& descriptorsRotFront,
+     const int rotIdx) const {
+        descriptorsRotFront = cv::Mat(0, 128, CV_32F);
+        
+        for (int i=0; i<keyPoints.size(); i++) {
+            if (isInFrontRotFeature(keyPoints[i], rotIdx)) {
+                // 特徴点を抽出
+                keyPointsRotFront.push_back(keyPoints[i]);
+                // 記述子を抽出
+                cv::vconcat
+                (descriptorsRotFront, descriptors.row(i),
+                 descriptorsRotFront);
+            }
+        }
+    }
+    
     
     // 最終的な回転角，回転軸を決定
     void integrateRotVec
@@ -80,13 +100,16 @@ public:
     (const std::vector<cv::Point3f>& forspheres,
      const std::vector<cv::Point3f>& latspheres) const;
     
+    void estimateRotMatSpecDir
+    (const std::vector<cv::Point3f>& forspheres,
+     const std::vector<cv::Point3f>& latspheres,
+     const int rotIdx, cv::Mat estRotMat) const;
+    
 private:
     std::vector<cv::Mat> rotMats;
     const Transform& tf;
     const float fieldRadius;
     const int numThre;
-    
-    
     
     /*
      // 特異値分解により回転行列を推定する [forP] = [R]*[latP]

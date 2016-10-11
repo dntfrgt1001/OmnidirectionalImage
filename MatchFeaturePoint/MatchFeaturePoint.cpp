@@ -123,7 +123,8 @@ void MatchFeaturePoint::sortMatchedPair
 (const std::vector<cv::KeyPoint> &forKeyPoints,
  const std::vector<cv::KeyPoint> &latKeyPoints,
  const std::vector<cv::DMatch> &dMatches,
- std::vector<cv::Point2f> &for2DPoints, std::vector<cv::Point2f> &lat2DPoints)
+ std::vector<cv::Point2f> &for2DPoints,
+ std::vector<cv::Point2f> &lat2DPoints)
 {
     for (auto dMatch: dMatches) {
         for2DPoints.push_back(forKeyPoints[dMatch.queryIdx].pt);

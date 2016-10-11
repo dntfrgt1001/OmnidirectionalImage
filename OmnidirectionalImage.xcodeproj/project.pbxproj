@@ -738,8 +738,8 @@
 		02E437171CF8430D007C3605 /* MatchFeaturePoint */ = {
 			isa = PBXGroup;
 			children = (
-				02E437131CF84303007C3605 /* MatchFeaturePoint.cpp */,
 				02E437141CF84303007C3605 /* MatchFeaturePoint.hpp */,
+				02E437131CF84303007C3605 /* MatchFeaturePoint.cpp */,
 			);
 			name = MatchFeaturePoint;
 			sourceTree = "<group>";

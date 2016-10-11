@@ -8,46 +8,25 @@
 
 #include <iostream>
 
-#include <opencv2/opencv.hpp>
-#include <opencv2/features2d.hpp>
+#include <opencv2/core.hpp>
 
 #include "Transform.hpp"
 #include "ExtractFeaturePoint.hpp"
 
 int main(int argc, const char * argv[])
 {
-    const std::string path = "/Users/masakazu/Desktop/";
-    const std::string fileName = "R0010052.JPG";
-    const cv::Size frameSize(1000, 500);
-
-    const Transform transform(frameSize);
-    const ExtractFeaturePoint ef(frameSize, transform, 6);
+//    cv::Mat mat1 = (cv::Mat_<int>(0, 2) << 1,2,3,4);
+    cv::Mat mat1 = cv::Mat_<int>(0, 2);
+    cv::Mat mat2 = (cv::Mat_<int>(2, 2) << 5,6,7,8);
     
-    cv::Mat input, img;
+    cv::Mat mat3;
     
-    input = cv::imread(path + fileName);
-
-    cv::resize(input, img, frameSize);
-  
-    float theta = M_PI / 4.0;
-    cv::Mat rotImg;
-    cv::Rect rect(0, frameSize.height/3, frameSize.width, frameSize.height/3);
-    transform.rotateVerticalImgRect(theta, img, rect, rotImg);
-
-    std::vector<cv::KeyPoint> keyPoints;
-    cv::Mat descriptors;
-    ef.extractFeaturePoint(img, keyPoints, descriptors);
+    std::cout << mat2.row(1) << std::endl;
+    cv::vconcat(mat1, mat2.row(1), mat3);
     
-    cv::Mat keyImg;
-    cv::drawKeypoints(img, keyPoints, keyImg);
-    
-    cv::namedWindow("Original Image");
-    cv::imshow("Original Image", img);
-    
-    cv::namedWindow("KeyPoint Image");
-    cv::imshow("KeyPoint Image", keyImg);
-        
-    cv::waitKey(-1);
+    std::cout << "mat1 = " << std::endl << mat1 << std::endl;
+    std::cout << "mat2 = " << std::endl << mat2 << std::endl;
+    std::cout << "mat3 = " << std::endl << mat3 << std::endl;
     
     return 0;
 }
