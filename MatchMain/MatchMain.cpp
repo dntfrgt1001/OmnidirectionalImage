@@ -81,13 +81,50 @@ void MatchMain::ModifylatterImg
     
     // 重み最大の方向のカメラ前後の特徴点を取得
     int maxWeightIdx = est.getMaxWeightIndex(forspheres, latspheres);
-    std::vector<cv::Point3f> forspheresFrontMax, latspheresFrontMax;
-    est.extractRotatedFrontFeature
-    (forspheres, latspheres,
-     forspheresFrontMax, latspheresFrontMax, maxWeightIdx);
+    
+    std::cout << "max weight = " << maxWeightIdx << std::endl;
+    
+    cv::Mat estRotMat;
+    if (maxWeightIdx == -1) {
+        std::cout << "*** There are few features." <<
+        " Estimation failed. ***" << std::endl;
+        preMat.copyTo(estRotMat);
+    } else {
+
+    std::vector<cv::KeyPoint> forKeyPointsMax, latKeyPointsMax;
+    cv::Mat forDescriptorsMax, latDescriptorsMax;
+    est.extRotFrontFeature
+    (forKeyPoints, forDescriptors,
+     forKeyPointsMax, forDescriptorsMax, maxWeightIdx);
+    est.extRotFrontFeature
+    (latKeyPoints, latDescriptors,
+     latKeyPointsMax, latDescriptorsMax, maxWeightIdx);
+    
+    std::vector<cv::DMatch> dMatchesMax;
+    mfp.match(forDescriptorsMax, latDescriptorsMax, dMatchesMax);
+    mfp.filterMatchDistance(dMatchesMax);
+    
+    std::vector<cv::Point2f> forequirectsMax, latequirectsMax;
+    mfp.sortMatchedPair
+    (forKeyPointsMax, latKeyPointsMax, dMatchesMax,
+     forequirectsMax, latequirectsMax);
+    
+    std::vector<cv::Point3f> forspheresMax, latspheresMax;
+    tf.equirect2sphere(forequirectsMax, forspheresMax);
+    tf.equirect2sphere(latequirectsMax, latspheresMax);
+    mfp.filterCoordDistance(forspheresMax, latspheresMax);
     
     
+        
+    std::vector<cv::Point2f> fornormalsMax, latnormalsMax;
+    tf.sphere2normal(forspheresMax, fornormalsMax);
+    tf.sphere2normal(latspheresMax, latnormalsMax);
     
+    cv::Mat maskMat;
+    est.estimate3DRotMatEssential(fornormalsMax, latnormalsMax, estRotMat,maskMat);
+    
+        std::cout << "weight = " << est.getWeight(maskMat) << std::endl;
+        
     /*
     // 推定に失敗したら直前の行列を使う
     if (!isEstimated) {
@@ -96,7 +133,12 @@ void MatchMain::ModifylatterImg
         preMat.copyTo(estRotMat);
     }
     */
+    cv::Mat matchImgMax;
+    mfp.drawMatchesVertical
+    (resForImg, forequirectsMax, resLatImg, latequirectsMax, matchImgMax);
+    cv::imshow("match max", matchImgMax);
     
+    }
     /*
     // 境界をまたぐマッチングを削除
     for (int i=0; i<forspheres.size(); ) {
@@ -115,7 +157,6 @@ void MatchMain::ModifylatterImg
     cv::Mat estRotMat;
     rot.estimate3DRotMatEssential(fornormals, latnormals, estRotMat);
     */
-    
     
     // 回転行列を集積
     accMat = accMat * estRotMat;
@@ -151,7 +192,8 @@ void MatchMain::ModifyVideo(VideoReader &vr, VideoWriter &vw)
     cv::namedWindow("current image");
     cv::namedWindow("modified current image");
     cv::namedWindow("match");
-
+    cv::namedWindow("match max");
+    
     cv::Mat preImg, curImg;
   
     vr.readImg(curImg);

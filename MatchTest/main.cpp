@@ -21,40 +21,38 @@
 #include "Rotation.hpp"
 #include "ExtractFeaturePoint.hpp"
 #include "MatchFeaturePoint.hpp"
-#include "Quarternion.hpp"
+#include "Quaternion.hpp"
 #include "VideoReader.hpp"
 #include "VideoWriter.hpp"
 
 int main(int argc, const char * argv[])
 {
     const std::string path = "/Users/masakazu/Desktop/";
-    const std::string inputName = "R0010018.JPG";
+    const std::string inputName1 = path + "image1.jpg";
+    const std::string inputName2 = path + "image2.jpg";
 
-    const cv::Size origFrameSize(1000, 500);
+    const cv::Size frameSizeOriginal(1000, 500);
     const cv::Size frameSize(1000, 500);
     
-    cv::Mat input1, img1;
-    input1 = cv::imread(path + inputName);
+    cv::Mat input1, img1, input2, img2;
+    input1 = cv::imread(inputName1);
     cv::resize(input1, img1, frameSize);
+    input2 = cv::imread(inputName2);
+    cv::resize(input2, img2, frameSize);
     
-    const Transform transform(frameSize);
+    const Transform tfo(frameSizeOriginal);
+    const Transform tf(frameSize);
     
     int divNum = 6;
-    ExtractFeaturePoint ef(frameSize, transform, divNum);
-    int distThreshold = 200;
-    float coordThreshold = 0.5;
-    MatchFeaturePoint mf(frameSize, transform, distThreshold, coordThreshold);
-    Rotation rot(transform);
-    
-    cv::Vec3f axis(1, 1, 1);
-    float theta = M_PI/5.0;
-    cv::Mat rotMat;
-    Quarternion::arbRotMat(theta, axis, rotMat);
-    
-    cv::Mat img2;
-    transform.rotateImgWithRotMat(img1, img2, rotMat);
-    
-    MatchMain mm(origFrameSize, transform, ef, mf, rot);
+    ExtractFeaturePoint efp(frameSize, tf, divNum);
+    int distThre = 250;
+    float coordThre = 0.4;
+    MatchFeaturePoint mfp(frameSize, tf, distThre, coordThre);
+
+    float fieldAngle = M_PI / 3.0;
+    int numThre = 15;
+    const Estimate est(tf, fieldAngle, numThre);
+    MatchMain mm(tfo, tf, efp, mfp, est);
     
     cv::Mat modImg;
     mm.ModifylatterImg(img1, img2, modImg);
