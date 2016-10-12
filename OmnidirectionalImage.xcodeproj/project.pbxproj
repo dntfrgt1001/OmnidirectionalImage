@@ -57,6 +57,9 @@
 		02513FAF1D366C4000089959 /* libopencv_imgcodecs.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 02513FAD1D366C4000089959 /* libopencv_imgcodecs.dylib */; };
 		02513FB01D374E6700089959 /* libopencv_highgui.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 02513F801D34B02800089959 /* libopencv_highgui.dylib */; };
 		02513FB11D375C0300089959 /* libopencv_imgproc.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 02513F821D34B03000089959 /* libopencv_imgproc.dylib */; };
+		025ADB791DAE141F00DCE366 /* Rotation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 020D73071D2A62E800BC61BD /* Rotation.cpp */; };
+		025ADB7A1DAE143500DCE366 /* Quaternion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 02D6D9A11D8189B900862E8F /* Quaternion.cpp */; };
+		025ADB7B1DAE144D00DCE366 /* libopencv_calib3d.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 0220D4B51D3F55C500AB134C /* libopencv_calib3d.dylib */; };
 		0262BA061D782418009FE5F9 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0245CD9D1C43DF3700FF5E33 /* main.cpp */; };
 		02648EAE1CF8058A00E4E948 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 02648EAD1CF8058A00E4E948 /* main.cpp */; };
 		02648EB21CF807E800E4E948 /* Transform.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0245CD8D1C4233E000FF5E33 /* Transform.cpp */; };
@@ -310,6 +313,7 @@
 				0229F9991D3934270026000C /* libopencv_imgproc.dylib in Frameworks */,
 				0229F99C1D39402F0026000C /* libopencv_features2d.dylib in Frameworks */,
 				0229F99B1D3940280026000C /* libopencv_xfeatures2d.dylib in Frameworks */,
+				025ADB7B1DAE144D00DCE366 /* libopencv_calib3d.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -738,8 +742,8 @@
 		02E437171CF8430D007C3605 /* MatchFeaturePoint */ = {
 			isa = PBXGroup;
 			children = (
-				02E437141CF84303007C3605 /* MatchFeaturePoint.hpp */,
 				02E437131CF84303007C3605 /* MatchFeaturePoint.cpp */,
+				02E437141CF84303007C3605 /* MatchFeaturePoint.hpp */,
 			);
 			name = MatchFeaturePoint;
 			sourceTree = "<group>";
@@ -1041,7 +1045,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				0276EF461D016FB30013ADF4 /* Transform.cpp in Sources */,
+				025ADB791DAE141F00DCE366 /* Rotation.cpp in Sources */,
 				0229F99A1D393CE20026000C /* ExtractFeaturePoint.cpp in Sources */,
+				025ADB7A1DAE143500DCE366 /* Quaternion.cpp in Sources */,
 				0225C93D1D00071B00356EA6 /* main.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

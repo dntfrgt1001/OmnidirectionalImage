@@ -12,21 +12,16 @@
 
 #include "Transform.hpp"
 #include "ExtractFeaturePoint.hpp"
+#include "Rotation.hpp"
 
 int main(int argc, const char * argv[])
 {
-//    cv::Mat mat1 = (cv::Mat_<int>(0, 2) << 1,2,3,4);
-    cv::Mat mat1 = cv::Mat_<int>(0, 2);
-    cv::Mat mat2 = (cv::Mat_<int>(2, 2) << 5,6,7,8);
+    cv::Vec3f vec(-1.0, 2.0, -3.0);
+    cv::Mat rotMat;
     
-    cv::Mat mat3;
+    Rotation::vec2zDirMat(vec, rotMat);
     
-    std::cout << mat2.row(1) << std::endl;
-    cv::vconcat(mat1, mat2.row(1), mat3);
-    
-    std::cout << "mat1 = " << std::endl << mat1 << std::endl;
-    std::cout << "mat2 = " << std::endl << mat2 << std::endl;
-    std::cout << "mat3 = " << std::endl << mat3 << std::endl;
+    std::cout << rotMat << std::endl;
     
     return 0;
 }

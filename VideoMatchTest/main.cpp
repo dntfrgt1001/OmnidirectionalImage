@@ -27,14 +27,18 @@ int main(int argc, const char * argv[])
     // ffmpeg -f image2 -r 30 -i image%4d.jpg -pix_fmt yuv420p video.mp4
     
 //    const std::string path = "/Users/masakazu/Desktop/video/20160901/THETA/";
-    const std::string path = "/Users/masakazu/Desktop/EX-FR200/";
-    const std::string inputVideoName = path + "sample5-rot";
+    const std::string path = "/Users/masakazu/Desktop/PIXPRO/";
+    const std::string inputVideoName = path + "sample5.mp4";
 //    const std::string inputVideoNamePreFixed = path + "sample2-pre";
     const std::string outputVideoName = path + "sample5";
     
 //    const cv::Size frameSizeOriginal(1280, 640);
     const cv::Size frameSizeOriginal(1000, 500);
     const cv::Size frameSize(1000, 500);
+    
+    int stride = 1;
+    VideoReaderMov vr(frameSizeOriginal, inputVideoName, stride);
+    VideoWriterPic vw(frameSizeOriginal, outputVideoName);
     
     const Transform tfo(frameSizeOriginal);
     const Transform tf(frameSize);
@@ -51,10 +55,6 @@ int main(int argc, const char * argv[])
     const Estimate est(tf, fieldAngle, numThre);
     MatchMain mm(tfo, tf, efp, mfp, est);
 
-    int stride = 1;
-    VideoReaderPic vr(frameSizeOriginal, inputVideoName, stride);
-    
-    VideoWriterPic vw(frameSizeOriginal, outputVideoName);
     
     cv::Mat curRotMat = (cv::Mat_<float>(3,3)
                          << -0.39498305, -0.34497485, 0.85145819,

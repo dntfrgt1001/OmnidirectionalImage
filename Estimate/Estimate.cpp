@@ -151,12 +151,12 @@ void Estimate::extractFrontFeature
 void Estimate::extRotFrontFeature
 (const std::vector<cv::KeyPoint> &keyPoints,
  const cv::Mat &descriptors, std::vector<cv::KeyPoint> &keyPointsRotFront,
- cv::Mat &descriptorsRotFront, const int rotIdx) const
+ cv::Mat &descriptorsRotFront, const cv::Mat& frontMat) const
 {
     descriptorsRotFront = cv::Mat(0, 128, CV_32F);
     
     for (int i=0; i<keyPoints.size(); i++) {
-        if (isInFrontRotFeature(keyPoints[i], rotIdx)) {
+        if (isInFrontRotFeature(keyPoints[i], frontMat)) {
             // 特徴点を抽出
             keyPointsRotFront.push_back(keyPoints[i]);
             // 記述子を抽出
@@ -197,15 +197,22 @@ float Estimate::getWeight(cv::Mat &mask) const
 
 int Estimate::getMaxWeightIndex(std::vector<float> &weights) const
 {
+    std::cout << "weights = ";
+    for (int i=0; i<weights.size(); i++) {
+        std::cout << weights[i] << " ";
+    }
+    std::cout << std::endl;
+    
     std::vector<float>::iterator maxItr =
         std::max_element(weights.begin(), weights.end());
     
     return (int) std::distance(weights.begin(), maxItr);
 }
 
-int Estimate::getMaxWeightIndex
+void Estimate::estRotMatWeightMax
 (const std::vector<cv::Point3f> &forspheres,
- const std::vector<cv::Point3f> &latspheres) const
+ const std::vector<cv::Point3f> &latspheres,
+ cv::Mat& estRotMatMax, int& rotIdx) const
 {
     std::vector<cv::Mat> estRotMats(rotMats.size());
     std::vector<float> weights(rotMats.size());
@@ -214,34 +221,33 @@ int Estimate::getMaxWeightIndex
 
     // 各方向で回転行列を推定
     for (int i=0; i<rotMats.size(); i++) {
-        std::cout << "--------------------------------------" << std::endl;
-        
         estRotMatSpecDir
-        (forspheres, latspheres, i, estRotMats[i], weights[i]);
+        (forspheres, latspheres, rotMats[i], estRotMats[i], weights[i]);
         
         if (weights[i] >= 0) estSucFlag = true;
         
-        std::cout << "weight = " << weights[i] << std::endl;
-        std::cout << "est matrix = " << std::endl << estRotMats[i] << std::endl;
-        std::cout << "--------------------------------------" << std::endl;
     }
     
-    
     // どの方向でも特徴点が閾値以下で推定できない
-    if (!estSucFlag) return -1;
+    if (!estSucFlag) {
+        rotIdx = -1;
+        estRotMatMax = (cv::Mat_<float>(3,3) << 0,0,0,0,0,0,0,0,0);
+    }
     
-    return getMaxWeightIndex(weights);
+    // 最大の重みの方向のインデックスと推定行列を返す
+    rotIdx = getMaxWeightIndex(weights);
+    estRotMats[rotIdx].copyTo(estRotMatMax);
 }
 
 void Estimate::estRotMatSpecDir
 (const std::vector<cv::Point3f> &forspheres,
  const std::vector<cv::Point3f> &latspheres,
- const int rotIdx, cv::Mat& estRotMat, float& weight) const
+ const cv::Mat& froMat, cv::Mat& estRotMat, float& weight) const
 {
     // カメラ正面を変更
     std::vector<cv::Point3f> forspheresRot, latspheresRot;
-    tf.rotateSphere(forspheres, forspheresRot, rotMats[rotIdx]);
-    tf.rotateSphere(latspheres, latspheresRot, rotMats[rotIdx]);
+    tf.rotateSphere(forspheres, forspheresRot, froMat);
+    tf.rotateSphere(latspheres, latspheresRot, froMat);
     
     // カメラの前後の特徴点を取り出す
     std::vector<cv::Point3f> forspheresFront, latspheresFront;
@@ -254,6 +260,8 @@ void Estimate::estRotMatSpecDir
     tf.sphere2normal(latspheresFront, latnormalsFront);
     
     if (fornormalsFront.size() > numThre) {
+        std::cout << "--------------------------------------" << std::endl;
+        
         // カメラ正面変更後の回転行列の推定
         cv::Mat rotMatFront, mask;
         estRotMatEssMatCore
@@ -264,9 +272,13 @@ void Estimate::estRotMatSpecDir
         cv::Vec3f rotVecFront;
         Rotation::RotMat2RotVec(rotMatFront, rotVecFront);
         cv::Vec3f rotVec;
-        rotVec = cv::Vec3f(cv::Mat1f(rotMats[rotIdx].inv() *
+        rotVec = cv::Vec3f(cv::Mat1f(froMat.inv() *
                                      cv::Mat1f(rotVecFront)));
         Rotation::RotVec2RotMat(rotVec, estRotMat);
+        
+        std::cout << "weight = " << weight << std::endl;
+        std::cout << "est matrix = " <<std::endl<< estRotMat << std::endl;
+        std::cout << "--------------------------------------" << std::endl;
     } else {
         estRotMat = (cv::Mat_<float>(3,3) << 0,0,0,0,0,0,0,0,0);
         weight = -1;

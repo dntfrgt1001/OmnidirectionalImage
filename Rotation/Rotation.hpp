@@ -44,6 +44,9 @@ public:
     // 回転行列->回転ベクトル
     static void RotMat2RotVec
     (const cv::Mat& rotMat, cv::Vec3f& rotVec);
+    
+    // ベクトルをz軸正の向きになるよう回転させる行列
+    static void vec2zDirMat(const cv::Vec3f& vec, cv::Mat& rotMat);
 
     // 回転行列を正規化
     static void normalRotMat(cv::Mat& rotMat);

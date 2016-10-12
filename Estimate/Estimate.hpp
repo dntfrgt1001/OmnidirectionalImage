@@ -54,18 +54,18 @@ public:
     
     // 最大スコアの方向に特徴点が含まれるか
     bool isInFrontRotFeature
-    (const cv::KeyPoint& keyPoint, const int rotIdx) const {
+    (const cv::KeyPoint& keyPoint, const cv::Mat& frontMat) const {
         cv::Point3f sphere, sphereRot;
         tf.equirect2sphere(keyPoint.pt, sphere);
-        tf.rotateSphere(sphere, sphereRot, rotMats[rotIdx]);
+        tf.rotateSphere(sphere, sphereRot, frontMat);
         return isInFront(sphereRot);
     }
     
     // 最大スコアの方向の特徴点と記述子を抽出する
     void extRotFrontFeature
     (const std::vector<cv::KeyPoint>& keyPoints, const cv::Mat& descriptors,
-     std::vector<cv::KeyPoint>& keyPointsRotFront, cv::Mat& descriptorsRotFront,
-     const int rotIdx) const;
+     std::vector<cv::KeyPoint>& keyPointsRotFront,
+     cv::Mat& descriptorsRotFront, const cv::Mat& frontMat) const;
     
     // 最終的な回転角，回転軸を決定
     void integrateRotVec
@@ -79,15 +79,16 @@ public:
     int getMaxWeightIndex(std::vector<float>& weights) const;
     
     // 重み最大の方向を返す
-    int getMaxWeightIndex
+    void estRotMatWeightMax
     (const std::vector<cv::Point3f>& forspheres,
-     const std::vector<cv::Point3f>& latspheres) const;
+     const std::vector<cv::Point3f>& latspheres,
+     cv::Mat& estRotMatMax, int& rotIdx) const;
     
     // rotIdxの方向の特徴点で回転行列を推定
     void estRotMatSpecDir
     (const std::vector<cv::Point3f>& forspheres,
      const std::vector<cv::Point3f>& latspheres,
-     const int rotIdx, cv::Mat& estRotMat, float& weight) const;
+     const cv::Mat& frontMat, cv::Mat& estRotMat, float& weight) const;
     
 private:
     std::vector<cv::Mat> rotMats;

@@ -80,25 +80,33 @@ void MatchMain::ModifylatterImg
      */
     
     // 重み最大の方向のカメラ前後の特徴点を取得
-    int maxWeightIdx = est.getMaxWeightIndex(forspheres, latspheres);
+    cv::Mat estRotMatMax;
+    int maxIdx;
+    est.estRotMatWeightMax(forspheres, latspheres, estRotMatMax, maxIdx);
     
-    std::cout << "max weight = " << maxWeightIdx << std::endl;
+    std::cout << "max weight = " << maxIdx << std::endl;
     
     cv::Mat estRotMat;
-    if (maxWeightIdx == -1) {
+    if (maxIdx == -1) {
         std::cout << "*** There are few features." <<
         " Estimation failed. ***" << std::endl;
         preMat.copyTo(estRotMat);
     } else {
-        // 回転させて
+        cv::Vec3f estRotVecMax;
+        Rotation::RotMat2RotVec(estRotMatMax, estRotVecMax);
+        
+        cv::Mat froRotMat;
+        Rotation::vec2zDirMat(estRotVecMax, froRotMat);
+        
+        // 回転させて正面の特徴点を抽出
         std::vector<cv::KeyPoint> forKeyPointsMax, latKeyPointsMax;
         cv::Mat forDescriptorsMax, latDescriptorsMax;
         est.extRotFrontFeature
         (forKeyPoints, forDescriptors,
-         forKeyPointsMax, forDescriptorsMax, maxWeightIdx);
+         forKeyPointsMax, forDescriptorsMax, froRotMat);
         est.extRotFrontFeature
         (latKeyPoints, latDescriptors,
-         latKeyPointsMax, latDescriptorsMax, maxWeightIdx);
+         latKeyPointsMax, latDescriptorsMax, froRotMat);
         
         // 重み最大の方向でマッチング
         std::vector<cv::DMatch> dMatchesMax;
@@ -118,7 +126,7 @@ void MatchMain::ModifylatterImg
         // 重み最大の方向で回転行列推定
         float weightMax;
         est.estRotMatSpecDir
-        (forspheresMax, latspheresMax, maxWeightIdx, estRotMat, weightMax);
+        (forspheresMax, latspheresMax, froRotMat, estRotMat, weightMax);
         
         cv::Mat matchImgMax;
         mfp.drawMatchesVertical
