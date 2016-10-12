@@ -90,55 +90,42 @@ void MatchMain::ModifylatterImg
         " Estimation failed. ***" << std::endl;
         preMat.copyTo(estRotMat);
     } else {
-
-    std::vector<cv::KeyPoint> forKeyPointsMax, latKeyPointsMax;
-    cv::Mat forDescriptorsMax, latDescriptorsMax;
-    est.extRotFrontFeature
-    (forKeyPoints, forDescriptors,
-     forKeyPointsMax, forDescriptorsMax, maxWeightIdx);
-    est.extRotFrontFeature
-    (latKeyPoints, latDescriptors,
-     latKeyPointsMax, latDescriptorsMax, maxWeightIdx);
-    
-    std::vector<cv::DMatch> dMatchesMax;
-    mfp.match(forDescriptorsMax, latDescriptorsMax, dMatchesMax);
-    mfp.filterMatchDistance(dMatchesMax);
-    
-    std::vector<cv::Point2f> forequirectsMax, latequirectsMax;
-    mfp.sortMatchedPair
-    (forKeyPointsMax, latKeyPointsMax, dMatchesMax,
-     forequirectsMax, latequirectsMax);
-    
-    std::vector<cv::Point3f> forspheresMax, latspheresMax;
-    tf.equirect2sphere(forequirectsMax, forspheresMax);
-    tf.equirect2sphere(latequirectsMax, latspheresMax);
-    mfp.filterCoordDistance(forspheresMax, latspheresMax);
-    
-    
+        // 回転させて
+        std::vector<cv::KeyPoint> forKeyPointsMax, latKeyPointsMax;
+        cv::Mat forDescriptorsMax, latDescriptorsMax;
+        est.extRotFrontFeature
+        (forKeyPoints, forDescriptors,
+         forKeyPointsMax, forDescriptorsMax, maxWeightIdx);
+        est.extRotFrontFeature
+        (latKeyPoints, latDescriptors,
+         latKeyPointsMax, latDescriptorsMax, maxWeightIdx);
         
-    std::vector<cv::Point2f> fornormalsMax, latnormalsMax;
-    tf.sphere2normal(forspheresMax, fornormalsMax);
-    tf.sphere2normal(latspheresMax, latnormalsMax);
+        // 重み最大の方向でマッチング
+        std::vector<cv::DMatch> dMatchesMax;
+        mfp.match(forDescriptorsMax, latDescriptorsMax, dMatchesMax);
+        mfp.filterMatchDistance(dMatchesMax);
     
-    cv::Mat maskMat;
-    est.estimate3DRotMatEssential(fornormalsMax, latnormalsMax, estRotMat,maskMat);
+        std::vector<cv::Point2f> forequirectsMax, latequirectsMax;
+        mfp.sortMatchedPair
+        (forKeyPointsMax, latKeyPointsMax, dMatchesMax,
+         forequirectsMax, latequirectsMax);
     
-        std::cout << "weight = " << est.getWeight(maskMat) << std::endl;
+        std::vector<cv::Point3f> forspheresMax, latspheresMax;
+        tf.equirect2sphere(forequirectsMax, forspheresMax);
+        tf.equirect2sphere(latequirectsMax, latspheresMax);
+        mfp.filterCoordDistance(forspheresMax, latspheresMax);
+    
+        // 重み最大の方向で回転行列推定
+        float weightMax;
+        est.estRotMatSpecDir
+        (forspheresMax, latspheresMax, maxWeightIdx, estRotMat, weightMax);
         
-    /*
-    // 推定に失敗したら直前の行列を使う
-    if (!isEstimated) {
-        std::cout << "*** There are few features." <<
-                     " Estimation failed. ***" << std::endl;
-        preMat.copyTo(estRotMat);
+        cv::Mat matchImgMax;
+        mfp.drawMatchesVertical
+        (resForImg, forequirectsMax, resLatImg, latequirectsMax, matchImgMax);
+        cv::imshow("match max", matchImgMax);
     }
-    */
-    cv::Mat matchImgMax;
-    mfp.drawMatchesVertical
-    (resForImg, forequirectsMax, resLatImg, latequirectsMax, matchImgMax);
-    cv::imshow("match max", matchImgMax);
     
-    }
     /*
     // 境界をまたぐマッチングを削除
     for (int i=0; i<forspheres.size(); ) {

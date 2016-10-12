@@ -45,8 +45,8 @@ int main(int argc, const char * argv[])
     
     int divNum = 6;
     ExtractFeaturePoint efp(frameSize, tf, divNum);
-    int distThre = 250;
-    float coordThre = 0.4;
+    int distThre = 200;
+    float coordThre = 0.30;
     MatchFeaturePoint mfp(frameSize, tf, distThre, coordThre);
 
     float fieldAngle = M_PI / 3.0;

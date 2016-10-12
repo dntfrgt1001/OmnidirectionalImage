@@ -61,7 +61,7 @@ bool Estimate::estimateRotMat
             // カメラ正面の特徴点で回転行列推定
             cv::Mat estRotMatFront;
             cv::Mat maskFront;
-            estimate3DRotMatEssential
+            estRotMatEssMatCore
             (fornormalsFront, latnormalsFront, estRotMatFront, maskFront);
             
             // 重み計算に加える
@@ -103,7 +103,7 @@ bool Estimate::estimateRotMat
     return true;
 }
 
-void Estimate::estimate3DRotMatEssential
+void Estimate::estRotMatEssMatCore
 (const std::vector<cv::Point2f> &fornormals,
  const std::vector<cv::Point2f> &latnormals,
  cv::Mat &estRotMat, cv::Mat &mask) const
@@ -148,6 +148,25 @@ void Estimate::extractFrontFeature
     }
 }
 
+void Estimate::extRotFrontFeature
+(const std::vector<cv::KeyPoint> &keyPoints,
+ const cv::Mat &descriptors, std::vector<cv::KeyPoint> &keyPointsRotFront,
+ cv::Mat &descriptorsRotFront, const int rotIdx) const
+{
+    descriptorsRotFront = cv::Mat(0, 128, CV_32F);
+    
+    for (int i=0; i<keyPoints.size(); i++) {
+        if (isInFrontRotFeature(keyPoints[i], rotIdx)) {
+            // 特徴点を抽出
+            keyPointsRotFront.push_back(keyPoints[i]);
+            // 記述子を抽出
+            cv::vconcat
+            (descriptorsRotFront, descriptors.row(i),
+             descriptorsRotFront);
+        }
+    }
+}
+
 void Estimate::integrateRotVec
 (const std::vector<cv::Vec3f>& rotVecs, std::vector<float>& weights,
  cv::Vec3f& rotVec) const
@@ -168,8 +187,9 @@ float Estimate::getWeight(cv::Mat &mask) const
             count++;
         }
     }
-    
-    std::cout << "(all, inlier) = (" << mask.rows << ", " << count << ")" << std::endl;
+
+    std::cout << "(all, inlier) = (" << mask.rows << ", " << count << ")";
+    std::cout << std::endl;
     
     //return (float) count / mask.rows;
     return (float) count;
@@ -177,12 +197,8 @@ float Estimate::getWeight(cv::Mat &mask) const
 
 int Estimate::getMaxWeightIndex(std::vector<float> &weights) const
 {
-    std::vector<float>::iterator maxItr = std::max_element(weights.begin(), weights.end());
-
-    std::cout << "weight = " <<std::endl;
-    for (int i=0; i<weights.size(); i++) {
-        std::cout << weights[i] << std::endl;
-    }
+    std::vector<float>::iterator maxItr =
+        std::max_element(weights.begin(), weights.end());
     
     return (int) std::distance(weights.begin(), maxItr);
 }
@@ -191,66 +207,25 @@ int Estimate::getMaxWeightIndex
 (const std::vector<cv::Point3f> &forspheres,
  const std::vector<cv::Point3f> &latspheres) const
 {
-    std::vector<cv::Vec3f> rotVecs;
-    std::vector<float> weights;
+    std::vector<cv::Mat> estRotMats(rotMats.size());
+    std::vector<float> weights(rotMats.size());
     
     bool estSucFlag = false;
-    
+
+    // 各方向で回転行列を推定
     for (int i=0; i<rotMats.size(); i++) {
-        // カメラの正面を変更
-        std::vector<cv::Point3f> forspheresRot, latspheresRot;
-        tf.rotateSphere(forspheres, forspheresRot, rotMats[i]);
-        tf.rotateSphere(latspheres, latspheresRot, rotMats[i]);
+        std::cout << "--------------------------------------" << std::endl;
         
-        // カメラの正面の特徴点を取り出す
-        std::vector<cv::Point3f> forspheresFront, latspheresFront;
-        extractFrontFeature
-        (forspheresRot, latspheresRot, forspheresFront, latspheresFront);
+        estRotMatSpecDir
+        (forspheres, latspheres, i, estRotMats[i], weights[i]);
         
-        // 正規化画像座標に変換
-        std::vector<cv::Point2f> fornormalsFront, latnormalsFront;
-        tf.sphere2normal(forspheresFront, fornormalsFront);
-        tf.sphere2normal(latspheresFront, latnormalsFront);
+        if (weights[i] >= 0) estSucFlag = true;
         
-        // 特徴点の数が閾値以上なら有効
-        if (fornormalsFront.size() > numThre) {
-            estSucFlag = true;
-            
-            // カメラ正面の特徴点で回転行列推定
-            cv::Mat estRotMatFront;
-            cv::Mat maskFront;
-            estimate3DRotMatEssential
-            (fornormalsFront, latnormalsFront, estRotMatFront, maskFront);
-            
-            // 重み計算に加える
-            float weightFront = getWeight(maskFront);
-            weights.push_back(weightFront);
-            
-            // 回転ベクトルに変換し，元のカメラ座標での値になるよう軸を回転
-            cv::Vec3f rotVecFront;
-            Rotation::RotMat2RotVec(estRotMatFront, rotVecFront);
-            cv::Vec3f rotVecOriginal;
-            rotVecOriginal = cv::Vec3f(cv::Mat1f(rotMats[i].inv() *
-                                                 cv::Mat1f(rotVecFront)));
-            rotVecs.push_back(rotVecOriginal);
-            
-            std::cout << "--------------------------------------" <<
-            std::endl;
-            std::cout << "weight " << weightFront << std::endl;
-            std::cout << "front-change matrix = " << std::endl <<
-            rotMats[i] << std::endl;
-            std::cout << "estimated matrix = "  << std::endl <<
-            estRotMatFront << std::endl;
-            std::cout << "angle = " << cv::norm(rotVecOriginal) <<
-            std::endl;
-            std::cout << "(rotated axis = " << rotVecFront/cv::norm
-            (rotVecFront) << ")" << std::endl;
-            std::cout << "axis = " <<
-            rotVecOriginal/cv::norm(rotVecOriginal) << std::endl;
-        } else {
-            weights.push_back(-1);
-        }
+        std::cout << "weight = " << weights[i] << std::endl;
+        std::cout << "est matrix = " << std::endl << estRotMats[i] << std::endl;
+        std::cout << "--------------------------------------" << std::endl;
     }
+    
     
     // どの方向でも特徴点が閾値以下で推定できない
     if (!estSucFlag) return -1;
@@ -258,12 +233,12 @@ int Estimate::getMaxWeightIndex
     return getMaxWeightIndex(weights);
 }
 
-void Estimate::estimateRotMatSpecDir
+void Estimate::estRotMatSpecDir
 (const std::vector<cv::Point3f> &forspheres,
  const std::vector<cv::Point3f> &latspheres,
- const int rotIdx, cv::Mat estRotMat) const
+ const int rotIdx, cv::Mat& estRotMat, float& weight) const
 {
-    // カメラの正面を変更
+    // カメラ正面を変更
     std::vector<cv::Point3f> forspheresRot, latspheresRot;
     tf.rotateSphere(forspheres, forspheresRot, rotMats[rotIdx]);
     tf.rotateSphere(latspheres, latspheresRot, rotMats[rotIdx]);
@@ -278,8 +253,26 @@ void Estimate::estimateRotMatSpecDir
     tf.sphere2normal(forspheresFront, fornormalsFront);
     tf.sphere2normal(latspheresFront, latnormalsFront);
     
-    
+    if (fornormalsFront.size() > numThre) {
+        // カメラ正面変更後の回転行列の推定
+        cv::Mat rotMatFront, mask;
+        estRotMatEssMatCore
+        (fornormalsFront, latnormalsFront, rotMatFront, mask);
+        weight = getWeight(mask);
+        
+        // 回転ベクトルを介して元カメラ座標系における回転行列に修正
+        cv::Vec3f rotVecFront;
+        Rotation::RotMat2RotVec(rotMatFront, rotVecFront);
+        cv::Vec3f rotVec;
+        rotVec = cv::Vec3f(cv::Mat1f(rotMats[rotIdx].inv() *
+                                     cv::Mat1f(rotVecFront)));
+        Rotation::RotVec2RotMat(rotVec, estRotMat);
+    } else {
+        estRotMat = (cv::Mat_<float>(3,3) << 0,0,0,0,0,0,0,0,0);
+        weight = -1;
+    }
 }
+
 
 /*
  void Rotation::estimate3DRotMatSVD

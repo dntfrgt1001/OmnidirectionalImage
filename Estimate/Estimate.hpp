@@ -29,7 +29,7 @@ public:
     (const std::vector<cv::Point3f>& forspheres,
      const std::vector<cv::Point3f>& latspheres, cv::Mat& estRotMat) const;
     // 基本行列の分解により回転行列を推定する
-    void estimate3DRotMatEssential
+    void estRotMatEssMatCore
     (const std::vector<cv::Point2f>& fornormals,
      const std::vector<cv::Point2f>& latnormals, cv::Mat& estRotMat,
      cv::Mat& mask) const;
@@ -58,31 +58,14 @@ public:
         cv::Point3f sphere, sphereRot;
         tf.equirect2sphere(keyPoint.pt, sphere);
         tf.rotateSphere(sphere, sphereRot, rotMats[rotIdx]);
-
         return isInFront(sphereRot);
     }
     
     // 最大スコアの方向の特徴点と記述子を抽出する
     void extRotFrontFeature
-    (const std::vector<cv::KeyPoint>& keyPoints,
-     const cv::Mat& descriptors,
-     std::vector<cv::KeyPoint>& keyPointsRotFront,
-     cv::Mat& descriptorsRotFront,
-     const int rotIdx) const {
-        descriptorsRotFront = cv::Mat(0, 128, CV_32F);
-        
-        for (int i=0; i<keyPoints.size(); i++) {
-            if (isInFrontRotFeature(keyPoints[i], rotIdx)) {
-                // 特徴点を抽出
-                keyPointsRotFront.push_back(keyPoints[i]);
-                // 記述子を抽出
-                cv::vconcat
-                (descriptorsRotFront, descriptors.row(i),
-                 descriptorsRotFront);
-            }
-        }
-    }
-    
+    (const std::vector<cv::KeyPoint>& keyPoints, const cv::Mat& descriptors,
+     std::vector<cv::KeyPoint>& keyPointsRotFront, cv::Mat& descriptorsRotFront,
+     const int rotIdx) const;
     
     // 最終的な回転角，回転軸を決定
     void integrateRotVec
@@ -100,10 +83,11 @@ public:
     (const std::vector<cv::Point3f>& forspheres,
      const std::vector<cv::Point3f>& latspheres) const;
     
-    void estimateRotMatSpecDir
+    // rotIdxの方向の特徴点で回転行列を推定
+    void estRotMatSpecDir
     (const std::vector<cv::Point3f>& forspheres,
      const std::vector<cv::Point3f>& latspheres,
-     const int rotIdx, cv::Mat estRotMat) const;
+     const int rotIdx, cv::Mat& estRotMat, float& weight) const;
     
 private:
     std::vector<cv::Mat> rotMats;
