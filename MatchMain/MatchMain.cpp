@@ -122,7 +122,7 @@ void MatchMain::ModifylatterImg
         tf.equirect2sphere(forequirectsMax, forspheresMax);
         tf.equirect2sphere(latequirectsMax, latspheresMax);
         mfp.filterCoordDistance(forspheresMax, latspheresMax);
-    
+        
         // 重み最大の方向で回転行列推定
         float weightMax;
         est.estRotMatSpecDir

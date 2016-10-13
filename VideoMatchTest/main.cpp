@@ -27,17 +27,17 @@ int main(int argc, const char * argv[])
     // ffmpeg -f image2 -r 30 -i image%4d.jpg -pix_fmt yuv420p video.mp4
     
 //    const std::string path = "/Users/masakazu/Desktop/video/20160901/THETA/";
-    const std::string path = "/Users/masakazu/Desktop/PIXPRO/";
-    const std::string inputVideoName = path + "sample5.mp4";
+    const std::string path = "/Users/masakazu/Desktop/EXILIM/";
+    const std::string inputVideoName = path + "sample1-original-rot";
 //    const std::string inputVideoNamePreFixed = path + "sample2-pre";
-    const std::string outputVideoName = path + "sample5";
+    const std::string outputVideoName = path + "sample1";
     
 //    const cv::Size frameSizeOriginal(1280, 640);
     const cv::Size frameSizeOriginal(1000, 500);
     const cv::Size frameSize(1000, 500);
     
     int stride = 1;
-    VideoReaderMov vr(frameSizeOriginal, inputVideoName, stride);
+    VideoReaderPic vr(frameSizeOriginal, inputVideoName, stride);
     VideoWriterPic vw(frameSizeOriginal, outputVideoName);
     
     const Transform tfo(frameSizeOriginal);
@@ -46,16 +46,15 @@ int main(int argc, const char * argv[])
     int divNum = 6;
     ExtractFeaturePoint efp(frameSize, tf, divNum);
     
-    int matchThres = 230;
-    float coordThres = 0.40;
+    int matchThres = 250;
+    float coordThres = 0.5;
     MatchFeaturePoint mfp(frameSize, tf, matchThres, coordThres);
     
     float fieldAngle = M_PI / 3.0;
-    int numThre = 15;
+    int numThre = 10;
     const Estimate est(tf, fieldAngle, numThre);
     MatchMain mm(tfo, tf, efp, mfp, est);
 
-    
     cv::Mat curRotMat = (cv::Mat_<float>(3,3)
                          << -0.39498305, -0.34497485, 0.85145819,
                             -0.64893043, 0.76081359, 0.0072172284,

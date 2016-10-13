@@ -52,7 +52,7 @@ public:
                sphere.z*sphere.z * fieldRadius*fieldRadius;
     }
     
-    // 最大スコアの方向に特徴点が含まれるか
+    // 回転後のカメラ前後に特徴点が含まれるか
     bool isInFrontRotFeature
     (const cv::KeyPoint& keyPoint, const cv::Mat& frontMat) const {
         cv::Point3f sphere, sphereRot;

@@ -1461,7 +1461,7 @@
 				LIBRARY_SEARCH_PATHS = /usr/local/Cellar/opencv3/3.1.0_3/lib;
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				MTL_ENABLE_DEBUG_INFO = YES;
-				ONLY_ACTIVE_ARCH = NO;
+				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = macosx;
 			};
 			name = Debug;
