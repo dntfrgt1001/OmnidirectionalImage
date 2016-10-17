@@ -8,8 +8,9 @@
 
 #include "Estimate.hpp"
 
-Estimate::Estimate(const Transform& tf, float fieldAngle, int numThre):
-tf(tf), fieldRadius(tanf(fieldAngle)), numThre(numThre)
+Estimate::Estimate
+(const Transform& tf, const Range& rg, int numThre):
+tf(tf), rg(rg), numThre(numThre)
 {
     // RANSACの乱数用
 //    srand((unsigned int) time(NULL));
@@ -153,7 +154,8 @@ void Estimate::extRotFrontFeature
  const cv::Mat &descriptors, std::vector<cv::KeyPoint> &keyPointsRotFront,
  cv::Mat &descriptorsRotFront, const cv::Mat& frontMat) const
 {
-    descriptorsRotFront = cv::Mat(0, 128, CV_32F);
+//    descriptorsRotFront = cv::Mat(0, 128, CV_32F);
+    descriptorsRotFront = cv::Mat(0, descriptors.cols, descriptors.type());
     
     for (int i=0; i<keyPoints.size(); i++) {
         if (isInFrontRotFeature(keyPoints[i], frontMat)) {
@@ -251,8 +253,12 @@ void Estimate::estRotMatSpecDir
     
     // カメラの前後の特徴点を取り出す
     std::vector<cv::Point3f> forspheresFront, latspheresFront;
+    rg.extFroFeat
+    (forspheresRot, latspheresRot, forspheresFront, latspheresFront);
+    /*
     extractFrontFeature
     (forspheresRot, latspheresRot, forspheresFront, latspheresFront);
+    */
     
     // 正規化画像座標に変換
     std::vector<cv::Point2f> fornormalsFront, latnormalsFront;

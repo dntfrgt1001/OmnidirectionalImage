@@ -14,13 +14,14 @@
 #include <opencv2/imgcodecs.hpp>
 
 #include "Transform.hpp"
-#include "Quarternion.hpp"
+#include "Quaternion.hpp"
+#include "Rotation.hpp"
 
 int main(int argc, const char * argv[])
 {
-    const std::string path = "/Users/masakazu/Desktop/PIXPRO/video8/sample2/";
-    const std::string inputName = path + "image0000.jpg";
-    const std::string outputName = path + "rot.jpg";
+    const std::string path = "/Users/masakazu/Desktop/rotation/";
+    const std::string inputName = path + "img.jpg";
+    const std::string outputName = path + "rotimg.jpg";
     
     const cv::Size frameSize(1280, 640);
     
@@ -32,20 +33,21 @@ int main(int argc, const char * argv[])
     
     cv::Mat rotImg;
     
-    float anglez = -M_PI/2.0;
-    cv::Vec3f axisz(0.0, 0.0, 1.0);
+    float anglez = M_PI/8.0;
+    cv::Vec3f axisz(1.0, 1.0, 1.0);
+    axisz = axisz / cv::norm(axisz);
     cv::Mat rotMatz;
-    Quarternion::Rodrigues2RotMat(anglez, axisz, rotMatz);
+    Rotation::RotVec2RotMat(anglez * axisz, rotMatz);
     
-    float anglex = M_PI / 9.0;
+    float anglex = 0 * M_PI / 6.0;
     cv::Vec3f axisx(1.0, 0.0, 0.0);
     cv::Mat rotMatx;
-    Quarternion::Rodrigues2RotMat(anglex, axisx, rotMatx);
+    Rotation::RotVec2RotMat(anglex * axisx, rotMatx);
     
-    float angley = M_PI / 4.0;
+    float angley = 0 * M_PI / 4.0;
     cv::Vec3f axisy(0.0, 1.0, 0.0);
     cv::Mat rotMaty;
-    Quarternion::Rodrigues2RotMat(angley, axisy, rotMaty);
+    Rotation::RotVec2RotMat(angley * axisy, rotMaty);
     
     tf.rotateImgWithRotMat(img, rotImg, rotMaty * rotMatx * rotMatz);
     
@@ -56,6 +58,8 @@ int main(int argc, const char * argv[])
     cv::imshow("rotated", rotImg);
     
     cv::waitKey(-1);
+    
+    cv::imwrite(outputName, rotImg);
     
     return 0;
 }

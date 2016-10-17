@@ -16,27 +16,29 @@
 #include <math.h>
 #include "Transform.hpp"
 #include "ExtractFeaturePoint.hpp"
-#include "Quarternion.hpp"
-
+#include "Quaternion.hpp"
+#include "Rotation.hpp"
 
 int main(int argc, const char * argv[])
 {
     const std::string path = "/Users/masakazu/Desktop/rotation/";
-    const std::string inputName = path + "R0010090.JPG";
-//    const cv::Size frameSize(5376, 2688);
-    const cv::Size frameSize(2000, 1000);
+    const std::string inputName = path + "img.jpg";
+    const std::string rotColorName = path + "rotcolor5.jpg";
+    const std::string oriColorName = path + "oricolor5.jpg";
+
+    const cv::Size frameSize(1280, 640);
     cv::Mat input = cv::imread(inputName);
     cv::Mat img;
     cv::resize(input, img, frameSize);
     
     Transform transform(frameSize);
     
-    float theta =  M_PI / 3;
+    float angle =  - M_PI/2.0 + M_PI / 6 * 5;
     cv::Vec3f axis(1, 0, 0);
     cv::Mat rotMat;
-    Quarternion::arbRotMat(theta, axis, rotMat);
+    Rotation::RotVec2RotMat(angle * axis, rotMat);
     
-    const int divNum = 3;
+    const int divNum = 6;
     
     ExtractFeaturePoint efp(frameSize, transform, divNum);
     
@@ -61,7 +63,7 @@ int main(int argc, const char * argv[])
             //} else {
             //    img.at<cv::Vec3b>(v, u) = cv::Vec3b(0, 0, 0);
             if (efp.isInLowLatitude(cv::Point2f(u, v))) {
-                rotImg.at<cv::Vec3b>(v, u) += cv::Vec3b(0, 0, 100);
+                rotImg.at<cv::Vec3b>(v, u) += cv::Vec3b(100, 100, 0);
             }
         }
     }
@@ -74,18 +76,19 @@ int main(int argc, const char * argv[])
     
     cv::namedWindow("rot img");
     cv::imshow("rot img", rotImg);
-    const std::string outputName1 = path + "rotImg.jpg";
-    cv::imwrite(outputName1, rotImg);
 
     cv::namedWindow("rot inv img");
     cv::imshow("rot inv img", rotInvImg);
-    const std::string outputName2 = path + "rotInvImg.jpg";
-    cv::imwrite(outputName2, rotInvImg);
+    
+    cv::waitKey(-1);
+    
+    cv::imwrite(rotColorName, rotImg);
+    cv::imwrite(oriColorName, rotInvImg);
     
 //    cv::namedWindow("rot");
 //    cv::imshow("rot", rotImg);
     
-    cv::waitKey(-1);
+    
     
     return 0;
 }

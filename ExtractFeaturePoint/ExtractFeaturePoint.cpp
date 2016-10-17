@@ -15,6 +15,8 @@ validHeight(transform.dphi2v(M_PI)/divNum), mergin(10),
 roi(cv::Rect(0, (frameSize.height - validHeight)/2 - mergin,
              frameSize.width, validHeight + mergin*2)),
 feature(cv::xfeatures2d::SIFT::create())
+//feature(cv::AKAZE::create())
+//feature(cv::xfeatures2d::SURF::create())
 {
 }
 
@@ -92,8 +94,10 @@ void ExtractFeaturePoint::extractFeaturePoint
 void ExtractFeaturePoint::filterLowLatitue
 (std::vector<cv::KeyPoint> &keyPoints, cv::Mat &descriptors) const
 {
-    cv::Mat destDescriptors(cv::Size(128, descriptors.rows), CV_32FC1);
-    
+    //cv::Mat destDescriptors(cv::Size(128, descriptors.rows), CV_32FC1);
+    cv::Mat destDescriptors(cv::Size(descriptors.cols, descriptors.rows),
+                            descriptors.type());
+
     for (int i=0, j=0; i<keyPoints.size(); j++) {
         // 有効範囲内の記述子をコピーする
         if (isInLowLatitude(keyPoints[i].pt)) {
@@ -104,6 +108,7 @@ void ExtractFeaturePoint::filterLowLatitue
             keyPoints.erase(keyPoints.begin() + i);
         }
     }
+
     // 空白行をなくす
     destDescriptors.resize(keyPoints.size());
     descriptors = destDescriptors.clone();

@@ -17,16 +17,15 @@
 #include "Transform.hpp"
 #include "ExtractFeaturePoint.hpp"
 #include "MatchFeaturePoint.hpp"
-#include "Quarternion.hpp"
 
 #include <random>
 
 int main(int argc, const char * argv[])
 {
-    const std::string path = "/Users/masakazu/Desktop/";
-    const std::string inputName = path + "test.jpg";
-    const std::string outputName = path + "key1.jpg";
-    const cv::Size frameSize(1000, 500);
+    const std::string path = "/Users/masakazu/Desktop/rotation/";
+    const std::string inputName = path + "rotimg.jpg";
+    const std::string outputName = path + "key2.jpg";
+    const cv::Size frameSize(600, 300);
     
     cv::Mat input, img;
     input = cv::imread(inputName);
@@ -37,19 +36,30 @@ int main(int argc, const char * argv[])
     int divNum = 6;
     ExtractFeaturePoint efp(frameSize, tf, divNum);
     
+    float distThre = 250;
+    float coordThre = 0.5;
+    MatchFeaturePoint(frameSize, tf, distThre, coordThre);
+    
     std::vector<cv::KeyPoint> keyPoints;
     cv::Mat descriptors;
     efp.extractFeaturePoint(img, keyPoints, descriptors);
     
+    
+
+
     cv::Mat imgKeyPoints;
-    cv::drawKeypoints(img, keyPoints, imgKeyPoints);
+    cv::Mat grayImg;
+    cv::cvtColor(img, grayImg, CV_BGR2GRAY);
+    cv::drawKeypoints(grayImg, keyPoints, imgKeyPoints);
     
     cv::namedWindow("key point image");
     cv::imshow("key point image", imgKeyPoints);
+
+    cv::waitKey(-1);
     
     cv::imwrite(outputName, imgKeyPoints);
     
-    cv::waitKey(-1);
+
 
     return 0;
 }

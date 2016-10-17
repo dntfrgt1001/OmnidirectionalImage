@@ -21,38 +21,41 @@
 #include "VideoReader.hpp"
 #include "VideoWriter.hpp"
 #include "Estimate.hpp"
+#include "Range.hpp"
 
 int main(int argc, const char * argv[])
 {
     // ffmpeg -f image2 -r 30 -i image%4d.jpg -pix_fmt yuv420p video.mp4
     
 //    const std::string path = "/Users/masakazu/Desktop/video/20160901/THETA/";
-    const std::string path = "/Users/masakazu/Desktop/EXILIM/";
-    const std::string inputVideoName = path + "sample1-original-rot";
+    const std::string path = "/Users/masakazu/Desktop/THETA/";
+    const std::string inputVideoName = path + "sample4";
 //    const std::string inputVideoNamePreFixed = path + "sample2-pre";
-    const std::string outputVideoName = path + "sample1";
+    const std::string outputVideoName = path + "sample4-2";
     
 //    const cv::Size frameSizeOriginal(1280, 640);
-    const cv::Size frameSizeOriginal(1000, 500);
-    const cv::Size frameSize(1000, 500);
+    const cv::Size fso(960, 480);
+    const cv::Size fs(960, 480);
     
     int stride = 1;
-    VideoReaderPic vr(frameSizeOriginal, inputVideoName, stride);
-    VideoWriterPic vw(frameSizeOriginal, outputVideoName);
+    VideoReaderPic vr(fso, inputVideoName, stride);
+    VideoWriterMov vw(fso, outputVideoName);
     
-    const Transform tfo(frameSizeOriginal);
-    const Transform tf(frameSize);
+    const Transform tfo(fso);
+    const Transform tf(fs);
     
     int divNum = 6;
-    ExtractFeaturePoint efp(frameSize, tf, divNum);
+    ExtractFeaturePoint efp(fs, tf, divNum);
     
-    int matchThres = 250;
-    float coordThres = 0.5;
-    MatchFeaturePoint mfp(frameSize, tf, matchThres, coordThres);
-    
-    float fieldAngle = M_PI / 3.0;
+    int matchThres = 150;
+    float coordThres = 0.35;
+    MatchFeaturePoint mfp(fs, tf, matchThres, coordThres);
+
+    float rangeAngle = M_PI / 3.0;
+    const Range rg(fs, tf, rangeAngle);
+
     int numThre = 10;
-    const Estimate est(tf, fieldAngle, numThre);
+    const Estimate est(tf, rg, numThre);
     MatchMain mm(tfo, tf, efp, mfp, est);
 
     cv::Mat curRotMat = (cv::Mat_<float>(3,3)

@@ -19,10 +19,11 @@
 
 #include "Transform.hpp"
 #include "Rotation.hpp"
+#include "Range.hpp"
 
 class Estimate {
 public:
-    Estimate(const Transform& tf, float fieldAngle, int numThre);
+    Estimate(const Transform& tf, const Range& rg, int numThre);
 
     // 回転行列の推定
     bool estimateRotMat
@@ -33,6 +34,7 @@ public:
     (const std::vector<cv::Point2f>& fornormals,
      const std::vector<cv::Point2f>& latnormals, cv::Mat& estRotMat,
      cv::Mat& mask) const;
+    
     // カメラの前後の特徴点を取り出す
     void extractFrontFeature
     (const std::vector<cv::Point3f>& forspheres,
@@ -40,17 +42,20 @@ public:
      std::vector<cv::Point3f>& forspheresFront,
      std::vector<cv::Point3f>& latspheresFront) const;
     
+    /*
     // 特徴点(の組)がカメラの前後にあるか
     bool isInFront
-    (const cv::Point3f& forsphere, const cv::Point3f& latsphere)const {
+    (const cv::Point3f& forsphere, const cv::Point3f& latsphere) const {
         return (forsphere.z * latsphere.z > 0) &&
                 isInFront(forsphere) && isInFront(latsphere);
     };
+     
     // 特徴点(単体)がカメラの前後にあるか
     bool isInFront(const cv::Point3f& sphere) const {
         return (sphere.x*sphere.x + sphere.y*sphere.y) <
                sphere.z*sphere.z * fieldRadius*fieldRadius;
     }
+     */
     
     // 回転後のカメラ前後に特徴点が含まれるか
     bool isInFrontRotFeature
@@ -93,7 +98,7 @@ public:
 private:
     std::vector<cv::Mat> rotMats;
     const Transform& tf;
-    const float fieldRadius;
+    const Range& rg;
     const int numThre;
     
     /*

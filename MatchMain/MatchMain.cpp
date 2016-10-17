@@ -85,6 +85,9 @@ void MatchMain::ModifylatterImg
     est.estRotMatWeightMax(forspheres, latspheres, estRotMatMax, maxIdx);
     
     std::cout << "max weight = " << maxIdx << std::endl;
+    std::cout << "max RotMat = " << std::endl
+              << estRotMatMax << std::endl;
+    
     
     cv::Mat estRotMat;
     if (maxIdx == -1) {
@@ -128,9 +131,14 @@ void MatchMain::ModifylatterImg
         est.estRotMatSpecDir
         (forspheresMax, latspheresMax, froRotMat, estRotMat, weightMax);
         
+        std::vector<cv::Point2f> forequirectsMaxLast, latequirectsMaxLast;
+        tf.sphere2equirect(forspheresMax, forequirectsMaxLast);
+        tf.sphere2equirect(latspheresMax, latequirectsMaxLast);
+        
         cv::Mat matchImgMax;
         mfp.drawMatchesVertical
-        (resForImg, forequirectsMax, resLatImg, latequirectsMax, matchImgMax);
+        (resForImg, forequirectsMaxLast,
+         resLatImg, latequirectsMaxLast, matchImgMax);
         cv::imshow("match max", matchImgMax);
     }
     
@@ -183,8 +191,8 @@ void MatchMain::ModifylatterImg
 
 void MatchMain::ModifyVideo(VideoReader &vr, VideoWriter &vw)
 {
-    cv::namedWindow("previous image");
-    cv::namedWindow("current image");
+//    cv::namedWindow("previous image");
+//    cv::namedWindow("current image");
     cv::namedWindow("modified current image");
     cv::namedWindow("match");
     cv::namedWindow("match max");
@@ -204,8 +212,8 @@ void MatchMain::ModifyVideo(VideoReader &vr, VideoWriter &vw)
         cv::Mat curModImg;
         ModifylatterImg(preImg, curImg, curModImg);
         
-        cv::imshow("previous image", preImg);
-        cv::imshow("current image", curImg);
+//        cv::imshow("previous image", preImg);
+//        cv::imshow("current image", curImg);
         cv::imshow("modified current image", curModImg);
         
         vw.writeImg(curModImg);

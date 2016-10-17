@@ -60,6 +60,14 @@
 		025ADB791DAE141F00DCE366 /* Rotation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 020D73071D2A62E800BC61BD /* Rotation.cpp */; };
 		025ADB7A1DAE143500DCE366 /* Quaternion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 02D6D9A11D8189B900862E8F /* Quaternion.cpp */; };
 		025ADB7B1DAE144D00DCE366 /* libopencv_calib3d.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 0220D4B51D3F55C500AB134C /* libopencv_calib3d.dylib */; };
+		025ADB7C1DB2548E00DCE366 /* Rotation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 020D73071D2A62E800BC61BD /* Rotation.cpp */; };
+		025ADB7D1DB2549E00DCE366 /* Quaternion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 02D6D9A11D8189B900862E8F /* Quaternion.cpp */; };
+		025ADB7E1DB254AF00DCE366 /* libopencv_calib3d.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 0220D4B51D3F55C500AB134C /* libopencv_calib3d.dylib */; };
+		025ADB7F1DB256FE00DCE366 /* Rotation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 020D73071D2A62E800BC61BD /* Rotation.cpp */; };
+		025ADB801DB2570200DCE366 /* Quaternion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 02D6D9A11D8189B900862E8F /* Quaternion.cpp */; };
+		025ADB811DB2570E00DCE366 /* libopencv_calib3d.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 0220D4B51D3F55C500AB134C /* libopencv_calib3d.dylib */; };
+		025ADB821DB26BC000DCE366 /* MatchFeaturePoint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 02E437131CF84303007C3605 /* MatchFeaturePoint.cpp */; };
+		025ADB851DB4B09A00DCE366 /* Range.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 025ADB831DB4B09A00DCE366 /* Range.cpp */; };
 		0262BA061D782418009FE5F9 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0245CD9D1C43DF3700FF5E33 /* main.cpp */; };
 		02648EAE1CF8058A00E4E948 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 02648EAD1CF8058A00E4E948 /* main.cpp */; };
 		02648EB21CF807E800E4E948 /* Transform.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0245CD8D1C4233E000FF5E33 /* Transform.cpp */; };
@@ -265,6 +273,8 @@
 		02513FA31D36648900089959 /* PerspectiveProjection */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = PerspectiveProjection; sourceTree = BUILT_PRODUCTS_DIR; };
 		02513FA51D36648900089959 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		02513FAD1D366C4000089959 /* libopencv_imgcodecs.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libopencv_imgcodecs.dylib; path = ../../../../../../../usr/local/Cellar/opencv3/3.1.0_3/lib/libopencv_imgcodecs.dylib; sourceTree = "<group>"; };
+		025ADB831DB4B09A00DCE366 /* Range.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Range.cpp; path = Range/Range.cpp; sourceTree = "<group>"; };
+		025ADB841DB4B09A00DCE366 /* Range.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = Range.hpp; path = Range/Range.hpp; sourceTree = "<group>"; };
 		02648EAB1CF8058A00E4E948 /* ExtractFeatureTest */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = ExtractFeatureTest; sourceTree = BUILT_PRODUCTS_DIR; };
 		02648EAD1CF8058A00E4E948 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		026516A81D2F7FF4004C7838 /* Mask */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Mask; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -390,6 +400,7 @@
 				027F38661D59CF500012DA39 /* libopencv_imgcodecs.dylib in Frameworks */,
 				027F38651D59CF4C0012DA39 /* libopencv_highgui.dylib in Frameworks */,
 				027F38671D59CF520012DA39 /* libopencv_imgproc.dylib in Frameworks */,
+				025ADB811DB2570E00DCE366 /* libopencv_calib3d.dylib in Frameworks */,
 				027F38681D59CF6C0012DA39 /* libopencv_xfeatures2d.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -419,6 +430,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				0287FC2A1D787E3200E4FE99 /* libopencv_core.dylib in Frameworks */,
+				025ADB7E1DB254AF00DCE366 /* libopencv_calib3d.dylib in Frameworks */,
 				0287FC2C1D787E3800E4FE99 /* libopencv_imgcodecs.dylib in Frameworks */,
 				0287FC2B1D787E3500E4FE99 /* libopencv_highgui.dylib in Frameworks */,
 				0287FC2D1D787E3C00E4FE99 /* libopencv_imgproc.dylib in Frameworks */,
@@ -561,9 +573,19 @@
 			path = PerspectiveProjection;
 			sourceTree = "<group>";
 		};
+		025ADB861DB4B0A800DCE366 /* Range */ = {
+			isa = PBXGroup;
+			children = (
+				025ADB831DB4B09A00DCE366 /* Range.cpp */,
+				025ADB841DB4B09A00DCE366 /* Range.hpp */,
+			);
+			name = Range;
+			sourceTree = "<group>";
+		};
 		02648EA61CF804E300E4E948 /* class */ = {
 			isa = PBXGroup;
 			children = (
+				025ADB861DB4B0A800DCE366 /* Range */,
 				02D6D9A01D8166CF00862E8F /* Video */,
 				02513F9E1D363CA900089959 /* Perspective */,
 				02C57C011D1055AC00F428F2 /* MatchMain */,
@@ -1045,6 +1067,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				0276EF461D016FB30013ADF4 /* Transform.cpp in Sources */,
+				025ADB821DB26BC000DCE366 /* MatchFeaturePoint.cpp in Sources */,
 				025ADB791DAE141F00DCE366 /* Rotation.cpp in Sources */,
 				0229F99A1D393CE20026000C /* ExtractFeaturePoint.cpp in Sources */,
 				025ADB7A1DAE143500DCE366 /* Quaternion.cpp in Sources */,
@@ -1059,6 +1082,7 @@
 				02A318F21D7568C6001B748D /* Transform.cpp in Sources */,
 				024307101D7560300031EFAD /* main.cpp in Sources */,
 				02A318F11D7568BF001B748D /* Rotation.cpp in Sources */,
+				025ADB851DB4B09A00DCE366 /* Range.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1122,7 +1146,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				026516B01D2F8282004C7838 /* Transform.cpp in Sources */,
+				025ADB7F1DB256FE00DCE366 /* Rotation.cpp in Sources */,
 				026516AB1D2F7FF4004C7838 /* main.cpp in Sources */,
+				025ADB801DB2570200DCE366 /* Quaternion.cpp in Sources */,
 				026516AF1D2F827E004C7838 /* ExtractFeaturePoint.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1154,7 +1180,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				0287FC281D787E0F00E4FE99 /* Transform.cpp in Sources */,
+				025ADB7D1DB2549E00DCE366 /* Quaternion.cpp in Sources */,
 				0287FC241D787B7200E4FE99 /* main.cpp in Sources */,
+				025ADB7C1DB2548E00DCE366 /* Rotation.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

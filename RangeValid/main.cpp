@@ -22,9 +22,10 @@ int main(int argc, const char * argv[])
     
     const Transform tf(frameSize);
     
-    const float filedAngle = M_PI / 2.5;
+    const float filedAngle = M_PI / 6.0;
     const int matchThre = 20;
     const Rotation rot(tf, filedAngle, matchThre);
+    
     
     for (int u = 0; u < frameSize.width; u++) {
         for (int v = 0; v < frameSize.height; v++) {

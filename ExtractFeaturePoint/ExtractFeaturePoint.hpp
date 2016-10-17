@@ -74,7 +74,7 @@ private:
     const int mergin;
     
     const cv::Ptr<cv::Feature2D> feature;
-    
+
     const int divNum;
     const cv::Rect roi;
 };
