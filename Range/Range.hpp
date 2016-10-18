@@ -10,6 +10,7 @@
 #define Range_hpp
 
 #include <stdio.h>
+#include <iostream>
 
 #include <opencv2/core.hpp>
 
@@ -26,7 +27,9 @@ public:
     }
     bool isInFront
     (const cv::Point2f& equirect) const {
-        cv::Point3f sphere; return isInFront(sphere);
+        cv::Point3f sphere;
+        tf.equirect2sphere(equirect, sphere);
+        return isInFront(sphere);
     }
     // マッチした特徴点の組が境界を跨いでいるか
     bool isStrideBorder
@@ -51,19 +54,25 @@ public:
     bool isInFront
     (const cv::Point3f& sphere, const cv::Mat& froMat) const {
         cv::Point3f sphereRot;
-        tf.sphereWithRotMat(sphere, sphereRot, froMat);
+        tf.rotateSphere(sphere, sphereRot, froMat);
         return isInFront(sphereRot);
     }
     bool isInFront
     (const cv::Point2f& equirect, const cv::Mat& froMat) const {
+        //cv::Point3f sphere, sphereRot;
+        //tf.equirect2sphere(equirect, sphere);
+        //tf.rotateSphere(sphere, sphereRot, froMat);
+        //return isInFront(sphereRot);
         cv::Point2f equirectRot;
-        tf.equirectWithRotMat(equirect, equirectRot, froMat);
+        tf.rotateEquirect(equirect, equirectRot, froMat);
         return isInFront(equirectRot);
     }
+    /*
     bool isInFront
     (const cv::KeyPoint& keyPoint, const cv::Mat& froMat) const {
         return isInFront(keyPoint.pt, froMat);
     }
+     */
     // 回転後にカメラの前後にある特徴点を取り出す
     void extRotFroFeat
     (const std::vector<cv::KeyPoint>& keyPoints, const cv::Mat& descriptors,

@@ -101,47 +101,32 @@ void Transform::rotateSphere
     }
 }
 
-void Transform::sphereWithRotMat
-(const cv::Point3f &forsphere, cv::Point3f &latsphere, const cv::Mat &rotMat)
-const
-{
-    latsphere = (cv::Point3f) cv::Mat1f(rotMat * cv::Mat1f(forsphere));
-}
-
-void Transform::equirectWithRotMat
-(const cv::Point2f &forequirect, cv::Point2f &latequirect,
- const cv::Mat &rotMat) const
-{
-    cv::Point3f forsphere, latsphere;
-    equirect2sphere(forequirect, forsphere);
-    sphereWithRotMat(forsphere, latsphere, rotMat);
-    sphere2equirect(latsphere, latequirect);
-}
-
-void Transform::rotateImgWithRotMat
+void Transform::rotateImg
 (const cv::Mat &img, cv::Mat &rotImg, const cv::Mat &rotMat) const
 {
-    rotImg = cv::Mat(frameSize, CV_8UC3);
-
+    rotImg = cv::Mat(frameSize, img.type());
+    
+    // 逆行列を用意
     cv::Mat invRotMat = rotMat.inv();
     
-
-    for (int ur=0; ur<frameSize.width; ur++) {
-        for (int vr=0; vr<frameSize.height; vr++) {
-            cv::Point2f forequirect;
-            cv::Point2f latequirect(ur, vr);
-            // 回転後の画素が回転前のどの画素に対応するか求める
-            equirectWithRotMat(latequirect, forequirect, invRotMat);
+    for (int ur = 0; ur < frameSize.width; ur++) {
+        for (int vr = 0; vr < frameSize.height; vr++) {
+            cv::Point2f equirect;
+            cv::Point2f equirectRot(ur, vr);
             
-            cv::Vec3b dot;
-            getPixelBilinear(img, forequirect, dot);
-            rotImg.at<cv::Vec3b>(vr, ur) = dot;
+            // 回転後の画素が回転前のどの画素に対応するか求める
+            rotateEquirect(equirectRot, equirect, invRotMat);
+            
+            cv::Vec3b pixel;
+            getBilinearPixel(img, equirectRot, pixel);
+            rotImg.at<cv::Vec3b>(vr, ur) = pixel;
         }
     }
 }
 
-void Transform::getPixelBilinear
-(const cv::Mat &img, const cv::Point2f& equirect, cv::Vec3b &dot) const
+template<class T>
+void Transform::getBilinearPixel
+(const cv::Mat &img, const cv::Point2f &equirect, T &pixel) const
 {
     float u = equirect.x;
     float v = equirect.y;
@@ -156,31 +141,34 @@ void Transform::getPixelBilinear
     float uup = uc - u;
     float vlow = v - vf;
     float vup = vc - v;
-
+    
     if (uc == frameSize.width) uc = 0;
     if (vc == frameSize.height) vc = 0;
     
-    dot = uup * vup * img.at<cv::Vec3b>(vf, uf)
-        + uup * vlow * img.at<cv::Vec3b>(vc, uf)
-        + ulow * vup * img.at<cv::Vec3b>(vf, uc)
-        + ulow * vlow * img.at<cv::Vec3b>(vc, uc);
+    pixel = uup * vup * img.at<T>(vf, uf)
+    + uup * vlow * img.at<T>(vc, uf)
+    + ulow * vup * img.at<T>(vf, uc)
+    + ulow * vlow * img.at<T>(vc, uc);
 }
-
-void Transform::rotateVerticalImgRect
-(float chi, const cv::Mat &img, const cv::Rect& rect, cv::Mat &rotImg) const
+ 
+void Transform::rotateImgVertRect
+(const float angle, const cv::Mat &img, const cv::Rect& rect,
+ cv::Mat &rotImg) const
 {
-    rotImg = cv::Mat(frameSize, CV_8UC3);
-    for (int ur=rect.x; ur<rect.x + rect.width; ur++) {
-        for (int vr=rect.y; vr<rect.y + rect.height; vr++) {
+    rotImg = cv::Mat(frameSize, img.type());
+    
+    for (int ur = rect.x; ur < rect.x + rect.width; ur++) {
+        for (int vr = rect.y; vr < rect.y + rect.height; vr++) {
             cv::Point2f forequirect;
-            rotateVerticalequirect(-chi, cv::Point2f(ur,vr), forequirect);
-
-            cv::Vec3b dot;
-            getPixelBilinear(img, forequirect, dot);
-            rotImg.at<cv::Vec3b>(vr, ur) = dot;
+            rotateEquirectVert(-angle, cv::Point2f(ur,vr), forequirect);
+            
+            uchar pixel;
+            getBilinearPixel(img, forequirect, pixel);
+            rotImg.at<uchar>(vr, ur) = pixel;
         }
     }
     
+    /*
     int halfWidth = frameSize.width / 2;
     // 幅が偶数の場合の幅中心の画素の補間
     if (frameSize.width % 2 == 0) {
@@ -200,26 +188,31 @@ void Transform::rotateVerticalImgRect
             1.0/2.0 * rotImg.at<cv::Vec3b>(vr, halfWidth+1);
         }
     }
+    */
 }
 
-void Transform::rotateVerticalequirect
-(float chi, const cv::Point2f &forequirect, cv::Point2f &latequirect) const
+/*
+void Transform::rotateEquirectVert
+(const float angle, const cv::Point2f &equirect,
+ cv::Point2f &equirectRot) const
 {
     cv::Point2f forpsphere, latpsphere;
-    equirect2psphere(forequirect, forpsphere);
-    rotateVerticalpsphere(chi, forpsphere, latpsphere);
-    psphere2equirect(latpsphere, latequirect);
+    equirect2psphere(equirect, forpsphere);
+    rotatePsphereVert(angle, forpsphere, latpsphere);
+    psphere2equirect(latpsphere, equirectRot);
 }
-
-void Transform::rotateVerticalpsphere
-(float chi, const cv::Point2f &forpsphere, cv::Point2f &latpsphere) const
+*/
+/*
+void Transform::rotatePsphereVert
+(const float angle, const cv::Point2f &psphere,
+ cv::Point2f &psphereRot) const
 {
-    float theta = forpsphere.x;
-    float phi = forpsphere.y;
+    float theta = psphere.x;
+    float phi = psphere.y;
     float thetar, phir;
     
     // 分母が0のときπ/2
-    float trdeno = -sinf(chi)*sinf(phi) + cosf(chi)*cosf(theta)*cosf(phi);
+    float trdeno = -sinf(angle)*sinf(phi) + cosf(angle)*cosf(theta)*cosf(phi);
     thetar = (trdeno==0.0)? M_PI/2.0: atanf(sinf(theta)*cosf(phi)/trdeno);
     
     // thetaの定義域はarctanの定義域よりも広いので場合分け
@@ -227,9 +220,10 @@ void Transform::rotateVerticalpsphere
     if (theta < 0 && 0 <= thetar) thetar -= M_PI;
     
     // 誤差によりasinの定義域に厳密に収まらない場合あり
-    float asinin = cosf(chi)*sinf(phi) + sinf(chi)*cosf(theta)*cosf(phi);
+    float asinin = cosf(angle)*sinf(phi) + sinf(angle)*cosf(theta)*cosf(phi);
     phir = (asinin<-1)? -1.0*M_PI/2.0: (1<=asinin? M_PI/2.0: asinf(asinin));
     
-    latpsphere.x = thetar;
-    latpsphere.y = phir;
+    psphereRot.x = thetar;
+    psphereRot.y = phir;
 }
+*/

@@ -29,8 +29,10 @@ public:
     // 画像座標->球面極座標
     void psphere2equirect
     (const cv::Point2f& psphere, cv::Point2f& equirect) const {
-        equirect.x = psphere.x*frameSize.width/(2.0*M_PI) + frameSize.width/2.0;
-        equirect.y = -psphere.y*frameSize.height/M_PI + frameSize.height/2.0;
+        equirect.x = psphere.x*frameSize.width/(2.0*M_PI) +
+                     frameSize.width/2.0;
+        equirect.y = -psphere.y*frameSize.height/M_PI +
+                     frameSize.height/2.0;
         correctequirect(equirect);
     }
     void psphere2equirect
@@ -40,13 +42,16 @@ public:
     // 球面極座標->画像座標
     void equirect2psphere
     (const cv::Point2f& equirect, cv::Point2f& psphere) const {
-        psphere.x = (equirect.x-frameSize.width/2.0)*2.0*M_PI/frameSize.width;
-        psphere.y = - (equirect.y-frameSize.height/2.0)*M_PI/frameSize.height;
+        psphere.x = (equirect.x-frameSize.width/2.0) *
+                    2.0*M_PI/frameSize.width;
+        psphere.y = - (equirect.y-frameSize.height/2.0) *
+                    M_PI/frameSize.height;
         correctpsphere(psphere);
     }
     void equirect2psphere
     (const std::vector<cv::Point2f>& equirects,
      std::vector<cv::Point2f>& pspheres) const;
+    
     // 画像座標と極座標の長さの変換
     float dtheta2u(float theta) const {
         return theta * frameSize.width / (2.0 * M_PI);
@@ -139,45 +144,66 @@ public:
         correctDomain(sphere.z, -1, 1);
     }
     
-    // 回転行列で球面座標を変換
-    void sphereWithRotMat
-    (const cv::Point3f& forsphere, cv::Point3f& latsphere,
-     const cv::Mat& rotMat) const;
-    // 回転行列で画像座標を変換
-    void equirectWithRotMat
-    (const cv::Point2f& forequirect, cv::Point2f& latequirect,
-     const cv::Mat& rotMat) const;
-    // 回転行列で画像を変換　逆向きの回転行列を使うことに注意
-    void rotateImgWithRotMat
-    (const cv::Mat& img, cv::Mat& rotImg, const cv::Mat& rotMat) const;
-    // バイリニア補間による画素値の決定
-    void getPixelBilinear
-    (const cv::Mat& img, const cv::Point2f& equirect, cv::Vec3b& dot) const;
-    
-    // 画像をX軸回り(縦方向)に回転
-    void rotateVerticalImgRect
-    (float chi, const cv::Mat& img,
-     const cv::Rect& rect, cv::Mat& rotImg)  const;
-    void rotateVerticalequirect
-    (float chi, const cv::Point2f& forequirect,
-     cv::Point2f& latequirect) const;
-    void rotateVerticalpsphere
-    (float chi, const cv::Point2f& forpsphere,
-     cv::Point2f& latpsphere) const;
-    
-    // 片方のレンズ正面の画像を正規化画像座標に
-    void normalCoord(const cv::Mat& img, float trange, float prange);
-    
+    // 回転行列で画像座標を回転
+    void rotateEquirect
+    (const cv::Point2f& equirect, cv::Point2f& equirectRot,
+     const cv::Mat& rotMat) const {
+        cv::Point3f sphere, sphereRot;
+        equirect2sphere(equirect, sphere);
+        rotateSphere(sphere, sphereRot, rotMat);
+        sphere2equirect(sphereRot, equirectRot);
+    }
     // 回転行列で球面座標を回転
     void rotateSphere
-    (const cv::Point3f& forsphere, cv::Point3f& latsphere,
+    (const cv::Point3f& sphere, cv::Point3f& sphereRot,
      const cv::Mat& rotMat) const {
-        latsphere = (cv::Point3f) cv::Mat1f(rotMat * cv::Mat1f(forsphere));
+        sphereRot = (cv::Point3f) cv::Mat1f(rotMat * cv::Mat1f(sphere));
     }
     void rotateSphere
     (const std::vector<cv::Point3f>& forspheres,
      std::vector<cv::Point3f>& latspheres, const cv::Mat& rotMat) const;
     
+    // 回転行列で画像を変換（逆向きの回転行列を使うことに注意）
+    void rotateImg
+    (const cv::Mat& img, cv::Mat& rotImg, const cv::Mat& rotMat) const;
+    
+    // バイリニア補間による画素値の決定
+    template<class T>
+    void getBilinearPixel
+    (const cv::Mat& img, const cv::Point2f& equirect, T& pixel) const;
+    
+    // 画像をX軸まわりに回転
+    // 特徴点抽出用なのでグレースケール
+    void rotateImgVertRect
+    (const float angle, const cv::Mat& img,
+     const cv::Rect& rect, cv::Mat& rotImg)  const;
+    // 画像座標をX軸まわりに回転
+    void rotateEquirectVert
+    (const float angle, const cv::Point2f& equirect,
+     cv::Point2f& equirectRot) const {
+        cv::Point3f sphere, sphereRot;
+        equirect2sphere(equirect, sphere);
+        rotateSphereVert(angle, sphere, sphereRot);
+        sphere2equirect(sphereRot, equirectRot);
+    }
+    // 球面座標をX軸まわりに回転
+    void rotateSphereVert
+    (const float angle, const cv::Point3f& sphere,
+     cv::Point3f& sphereRot) const {
+        float cosa = cosf(angle), sina = sinf(angle);
+        sphereRot.x = sphere.x;
+        sphereRot.y = cosa*sphere.y - sina*sphere.z;
+        sphereRot.z = sina*sphere.y + cosa*sphere.z;
+    }
+    
+    /*
+    void rotatePsphereVert
+    (const float angle, const cv::Point2f& psphere,
+     cv::Point2f& psphereRot) const;
+    */
+    
+    // 片方のレンズ正面の画像を正規化画像座標に
+    void normalCoord(const cv::Mat& img, float trange, float prange);
     
 private:
     const cv::Size& frameSize;

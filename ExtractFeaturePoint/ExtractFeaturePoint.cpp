@@ -43,7 +43,7 @@ void ExtractFeaturePoint::extractRoiFeaturePoint
     float rotAngle = -1 * M_PI /2 +  M_PI*((float)number / divNum);
     
     cv::Mat rotImg;
-    transform.rotateVerticalImgRect(rotAngle, img, roi, rotImg);
+    transform.rotateImgVertRect(rotAngle, img, roi, rotImg);
     
     // 低緯度領域で特徴点を抽出
     feature->detect(rotImg(roi), roiKeyPoints);
@@ -63,7 +63,7 @@ void ExtractFeaturePoint::rotateKeyPointCoord
 {
     for (int i=0; i<keyPoints.size(); i++) {
         cv::Point2f latequirect;
-        transform.rotateVerticalequirect(angle, keyPoints[i].pt, latequirect);
+        transform.rotateEquirectVert(angle, keyPoints[i].pt, latequirect);
         
         keyPoints[i].pt = latequirect;
     }

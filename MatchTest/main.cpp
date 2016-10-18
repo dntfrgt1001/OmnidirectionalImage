@@ -32,8 +32,8 @@ int main(int argc, const char * argv[])
     const std::string inputName1 = path + "image1.jpg";
     const std::string inputName2 = path + "image2.jpg";
 
-    const cv::Size fso(1000, 500);
-    const cv::Size fs(1000, 500);
+    const cv::Size fso(1280, 640);
+    const cv::Size fs(1280, 640);
     
     cv::Mat input1, img1, input2, img2;
     input1 = cv::imread(inputName1);
@@ -47,7 +47,7 @@ int main(int argc, const char * argv[])
     int divNum = 6;
     ExtractFeaturePoint efp(fs, tf, divNum);
     int distThre = 200;
-    float coordThre = 0.50;
+    float coordThre = 0.30;
     MatchFeaturePoint mfp(fs, tf, distThre, coordThre);
 
     
@@ -55,7 +55,7 @@ int main(int argc, const char * argv[])
     Range rg(fs, tf, fieldAngle);
     int numThre = 15;
     const Estimate est(tf, rg, numThre);
-    MatchMain mm(tfo, tf, efp, mfp, est);
+    MatchMain mm(tfo, tf, efp, mfp, est, rg);
     
     cv::Mat modImg;
     mm.ModifylatterImg(img1, img2, modImg);

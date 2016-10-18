@@ -29,7 +29,7 @@ int main(int argc, const char * argv[])
     
 //    const std::string path = "/Users/masakazu/Desktop/video/20160901/THETA/";
     const std::string path = "/Users/masakazu/Desktop/THETA/";
-    const std::string inputVideoName = path + "sample4";
+    const std::string inputVideoName = path + "sample4.mp4";
 //    const std::string inputVideoNamePreFixed = path + "sample2-pre";
     const std::string outputVideoName = path + "sample4-2";
     
@@ -38,7 +38,7 @@ int main(int argc, const char * argv[])
     const cv::Size fs(960, 480);
     
     int stride = 1;
-    VideoReaderPic vr(fso, inputVideoName, stride);
+    VideoReaderMov vr(fso, inputVideoName, stride);
     VideoWriterMov vw(fso, outputVideoName);
     
     const Transform tfo(fso);

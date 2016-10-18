@@ -40,7 +40,8 @@ void Range::extRotFroFeat
             // 特徴点追加
             keyPointsValid.push_back(keyPoints[i]);
             // 記述子追加
-            cv::vconcat(descriptorsValid, descriptors.row(i), descriptorsValid);
+            cv::vconcat
+            (descriptorsValid, descriptors.row(i), descriptorsValid);
         }
     }
 }

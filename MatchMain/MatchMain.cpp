@@ -30,62 +30,30 @@ void MatchMain::ModifylatterImg
     tf.resizeImg(forImg, resForImg);
     tf.resizeImg(latImg, resLatImg);
     
-    // 特徴点と記述子の抽出
+    // グレースケール
+    cv::Mat forGrayImg, latGrayImg;
+    cv::cvtColor(resForImg, forGrayImg, CV_BGR2GRAY);
+    cv::cvtColor(resLatImg, latGrayImg, CV_BGR2GRAY);
+    
+    // 特徴の抽出
     std::vector<cv::KeyPoint> forKeyPoints, latKeyPoints;
     cv::Mat forDescriptors, latDescriptors;
     
     if (tmpKeyPoints.size() == 0) {
         // 初期フレームの場合
-        efp.extractFeaturePoint(resForImg, forKeyPoints, forDescriptors);
+        //efp.extractFeaturePoint(resForImg, forKeyPoints, forDescriptors);
+        efp.extractFeaturePoint(forGrayImg, forKeyPoints, forDescriptors);
     } else {
         // 初期フレーム以外
         forKeyPoints = tmpKeyPoints;
         forDescriptors = tmpDescriptors;
     }
-    
-//    efp.extractFeaturePoint(resForImg, forKeyPoints, forDescriptors);
-    efp.extractFeaturePoint(resLatImg, latKeyPoints, latDescriptors);
-    
-    
-    
-    
-    /*
-    // マッチング
-    std::vector<cv::DMatch> dMatches;
-    mfp.match(forDescriptors, latDescriptors, dMatches);
-    
-    // 記述子のマッチング距離のフィルター
-    mfp.filterMatchDistance(dMatches);
-    
-    // 二次元画像の特徴点の座標のペアを取り出す
-    std::vector<cv::Point2f> forequirects, latequirects;
-    mfp.sortMatchedPair
-    (forKeyPoints, latKeyPoints, dMatches, forequirects, latequirects);
-    
-    // 球面座標へのマッピング
-    std::vector<cv::Point3f> forspheres, latspheres;
-    tf.equirect2sphere(forequirects, forspheres);
-    tf.equirect2sphere(latequirects, latspheres);
-    
-    // 特徴点の座標のユークリッド距離のフィルター
-    mfp.filterCoordDistance(forspheres, latspheres);
-     */
-/*
-    // 回転行列の推定
-    cv::Mat estRotMat;
-    //rotation.estimate3DRotMatSVD(forspheres, latspheres, estRotMat);
-    rotation.estimate3DRotMatEssential(fornormals, latnormals, estRotMat);
-*/
-    /*
-    // 回転行列の推定
-    cv::Mat estRotMat;
-//    bool isEstimated = rot.estimateRotMat(forspheres, latspheres, estRotMat);
-    bool isEstimated = est.estimateRotMat(forspheres, latspheres, estRotMat);
-     */
-    
-    
-    
 
+    // 次フレームの特徴の抽出
+    //efp.extractFeaturePoint(resLatImg, latKeyPoints, latDescriptors);
+    efp.extractFeaturePoint(latGrayImg, latKeyPoints, latDescriptors);
+
+    
     // 推定に使用する特徴点座標を取り出す
     std::vector<cv::Point3f> forSpheres, latSpheres;
     getMatchCoord
@@ -107,11 +75,15 @@ void MatchMain::ModifylatterImg
         " Estimation failed. ***" << std::endl;
         preMat.copyTo(estRotMat);
     } else {
+        // 回転ベクトル取得
         cv::Vec3f estRotVecMax;
         Rotation::RotMat2RotVec(estRotMatMax, estRotVecMax);
-        
+        // 回転軸方向の回転行列
         cv::Mat froRotMat;
         Rotation::vec2zDirMat(estRotVecMax, froRotMat);
+        
+        std::cout << "front Matrix = " << std::endl <<
+                    froRotMat << std::endl;
         
         // 回転させて正面の特徴点を抽出
         std::vector<cv::KeyPoint> forKeyPointsMax, latKeyPointsMax;
@@ -124,35 +96,10 @@ void MatchMain::ModifylatterImg
         (latKeyPoints, latDescriptors,
          latKeyPointsMax, latDescriptorsMax, froRotMat);
         
-        /*
-        est.extRotFrontFeature
-        (forKeyPoints, forDescriptors,
-         forKeyPointsMax, forDescriptorsMax, froRotMat);
-        est.extRotFrontFeature
-        (latKeyPoints, latDescriptors,
-         latKeyPointsMax, latDescriptorsMax, froRotMat);
-        */
-        
         std::vector<cv::Point3f> forspheresMax, latspheresMax;
         getMatchCoord
         (forKeyPointsMax, forDescriptorsMax, latKeyPointsMax, latDescriptorsMax,
          forspheresMax, latspheresMax);
-        /*
-        // 重み最大の方向でマッチング
-        std::vector<cv::DMatch> dMatchesMax;
-        mfp.match(forDescriptorsMax, latDescriptorsMax, dMatchesMax);
-        mfp.filterMatchDistance(dMatchesMax);
-    
-        std::vector<cv::Point2f> forequirectsMax, latequirectsMax;
-        mfp.sortMatchedPair
-        (forKeyPointsMax, latKeyPointsMax, dMatchesMax,
-         forequirectsMax, latequirectsMax);
-    
-        std::vector<cv::Point3f> forspheresMax, latspheresMax;
-        tf.equirect2sphere(forequirectsMax, forspheresMax);
-        tf.equirect2sphere(latequirectsMax, latspheresMax);
-        mfp.filterCoordDistance(forspheresMax, latspheresMax);
-        */
         
         // 重み最大の方向で回転行列推定
         float weightMax;
@@ -194,7 +141,7 @@ void MatchMain::ModifylatterImg
     // 集積した回転行列を正規化
     Rotation::normalRotMat(accMat);
     // 回転行列を使って画像を修正
-    otf.rotateImgWithRotMat(latImg, modLatImg, accMat);
+    otf.rotateImg(latImg, modLatImg, accMat);
     std::cout << "======================================" << std::endl;
     std::cout << "accMat = " << std::endl << accMat << std::endl;
     std::cout << "======================================" << std::endl;
