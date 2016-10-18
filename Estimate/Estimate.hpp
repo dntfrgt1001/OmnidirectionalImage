@@ -25,16 +25,19 @@ class Estimate {
 public:
     Estimate(const Transform& tf, const Range& rg, int numThre);
 
+    /*
     // 回転行列の推定
     bool estimateRotMat
     (const std::vector<cv::Point3f>& forspheres,
      const std::vector<cv::Point3f>& latspheres, cv::Mat& estRotMat) const;
+     */
     // 基本行列の分解により回転行列を推定する
     void estRotMatEssMatCore
     (const std::vector<cv::Point2f>& fornormals,
      const std::vector<cv::Point2f>& latnormals, cv::Mat& estRotMat,
      cv::Mat& mask) const;
     
+    /*
     // カメラの前後の特徴点を取り出す
     void extractFrontFeature
     (const std::vector<cv::Point3f>& forspheres,
@@ -42,7 +45,7 @@ public:
      std::vector<cv::Point3f>& forspheresFront,
      std::vector<cv::Point3f>& latspheresFront) const;
     
-    /*
+    
     // 特徴点(の組)がカメラの前後にあるか
     bool isInFront
     (const cv::Point3f& forsphere, const cv::Point3f& latsphere) const {
@@ -55,7 +58,7 @@ public:
         return (sphere.x*sphere.x + sphere.y*sphere.y) <
                sphere.z*sphere.z * fieldRadius*fieldRadius;
     }
-     */
+     
     
     // 回転後のカメラ前後に特徴点が含まれるか
     bool isInFrontRotFeature
@@ -71,6 +74,7 @@ public:
     (const std::vector<cv::KeyPoint>& keyPoints, const cv::Mat& descriptors,
      std::vector<cv::KeyPoint>& keyPointsRotFront,
      cv::Mat& descriptorsRotFront, const cv::Mat& frontMat) const;
+    */
     
     // 最終的な回転角，回転軸を決定
     void integrateRotVec
@@ -89,11 +93,16 @@ public:
      const std::vector<cv::Point3f>& latspheres,
      cv::Mat& estRotMatMax, int& rotIdx) const;
     
-    // rotIdxの方向の特徴点で回転行列を推定
+    // 特定方向の特徴点で回転行列を推定
     void estRotMatSpecDir
     (const std::vector<cv::Point3f>& forspheres,
      const std::vector<cv::Point3f>& latspheres,
      const cv::Mat& frontMat, cv::Mat& estRotMat, float& weight) const;
+    
+    void estRotMatAxisDir
+    (const std::vector<cv::KeyPoint>& forKeyPoints,
+     const std::vector<cv::KeyPoint>& latKeyPoints,
+     const cv::Mat& axisMat, cv::Mat estRotMat) const;
     
 private:
     std::vector<cv::Mat> rotMats;

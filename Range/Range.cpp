@@ -29,13 +29,18 @@ void Range::extFroSphere
 }
 
 void Range::extRotFroFeat
-(const std::vector<cv::KeyPoint> &keyPoints,
+(const std::vector<cv::KeyPoint> &keyPoints, const cv::Mat &descriptors,
+ std::vector<cv::KeyPoint> &keyPointsValid, cv::Mat &descriptorsValid,
  const cv::Mat &froMat) const
 {
+    descriptorsValid = cv::Mat (0, descriptors.cols, descriptors.type());
     
     for (int i = 0; i < keyPoints.size(); i++) {
-        if (isInFront(keyPoints.pt)) {
-            <#statements#>
+        if (isInFront(keyPoints[i].pt, froMat)) {
+            // 特徴点追加
+            keyPointsValid.push_back(keyPoints[i]);
+            // 記述子追加
+            cv::vconcat(descriptorsValid, descriptors.row(i), descriptorsValid);
         }
     }
 }

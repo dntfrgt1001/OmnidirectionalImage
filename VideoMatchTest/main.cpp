@@ -56,7 +56,7 @@ int main(int argc, const char * argv[])
 
     int numThre = 10;
     const Estimate est(tf, rg, numThre);
-    MatchMain mm(tfo, tf, efp, mfp, est);
+    MatchMain mm(tfo, tf, efp, mfp, est, rg);
 
     cv::Mat curRotMat = (cv::Mat_<float>(3,3)
                          << -0.39498305, -0.34497485, 0.85145819,

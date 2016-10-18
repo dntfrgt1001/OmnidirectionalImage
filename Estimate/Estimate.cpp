@@ -33,7 +33,7 @@ tf(tf), rg(rg), numThre(numThre)
                        1.0/sqrt3, 1.0/sqrt3, -1.0/sqrt3));
 }
 
-
+/*
 bool Estimate::estimateRotMat
 (const std::vector<cv::Point3f> &forspheres,
  const std::vector<cv::Point3f> &latspheres, cv::Mat &estRotMat) const
@@ -103,6 +103,7 @@ bool Estimate::estimateRotMat
 
     return true;
 }
+ */
 
 void Estimate::estRotMatEssMatCore
 (const std::vector<cv::Point2f> &fornormals,
@@ -135,20 +136,7 @@ void Estimate::estRotMatEssMatCore
     }
 }
 
-void Estimate::extractFrontFeature
-(const std::vector<cv::Point3f> &forspheres,
- const std::vector<cv::Point3f> &latspheres,
- std::vector<cv::Point3f> &forspheresFront,
- std::vector<cv::Point3f> &latspheresFront) const
-{
-    for (int i=0; i<forspheres.size(); i++) {
-        if (isInFront(forspheres[i], latspheres[i])) {
-            forspheresFront.push_back(forspheres[i]);
-            latspheresFront.push_back(latspheres[i]);
-        }
-    }
-}
-
+/*
 void Estimate::extRotFrontFeature
 (const std::vector<cv::KeyPoint> &keyPoints,
  const cv::Mat &descriptors, std::vector<cv::KeyPoint> &keyPointsRotFront,
@@ -168,6 +156,7 @@ void Estimate::extRotFrontFeature
         }
     }
 }
+ */
 
 void Estimate::integrateRotVec
 (const std::vector<cv::Vec3f>& rotVecs, std::vector<float>& weights,
@@ -178,7 +167,6 @@ void Estimate::integrateRotVec
                                                         weights.end());
     size_t index = std::distance(weights.begin(), itr);
     rotVec = rotVecs[index];
-
 }
 
 float Estimate::getWeight(cv::Mat &mask) const
@@ -227,7 +215,6 @@ void Estimate::estRotMatWeightMax
         (forspheres, latspheres, rotMats[i], estRotMats[i], weights[i]);
         
         if (weights[i] >= 0) estSucFlag = true;
-        
     }
     
     // どの方向でも特徴点が閾値以下で推定できない
@@ -253,7 +240,7 @@ void Estimate::estRotMatSpecDir
     
     // カメラの前後の特徴点を取り出す
     std::vector<cv::Point3f> forspheresFront, latspheresFront;
-    rg.extFroFeat
+    rg.extFroSphere
     (forspheresRot, latspheresRot, forspheresFront, latspheresFront);
     /*
     extractFrontFeature

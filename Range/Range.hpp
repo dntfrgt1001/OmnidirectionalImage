@@ -66,7 +66,8 @@ public:
     }
     // 回転後にカメラの前後にある特徴点を取り出す
     void extRotFroFeat
-    (const std::vector<cv::KeyPoint>& keyPoints ,
+    (const std::vector<cv::KeyPoint>& keyPoints, const cv::Mat& descriptors,
+     std::vector<cv::KeyPoint>& keyPointsValid, cv::Mat& descriptorsValid,
      const cv::Mat& froMat) const;
     
     // 画像の正面を塗りつぶす

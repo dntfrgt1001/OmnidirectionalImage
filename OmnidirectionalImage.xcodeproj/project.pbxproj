@@ -75,6 +75,8 @@
 		026516AF1D2F827E004C7838 /* ExtractFeaturePoint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 02E4371C1CF845D7007C3605 /* ExtractFeaturePoint.cpp */; };
 		026516B01D2F8282004C7838 /* Transform.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0245CD8D1C4233E000FF5E33 /* Transform.cpp */; };
 		026B3EB51CA1ABF4008B59CD /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 026B3EB41CA1ABF4008B59CD /* main.cpp */; };
+		027572861DB51D8800AC36A3 /* Range.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 025ADB831DB4B09A00DCE366 /* Range.cpp */; };
+		027572871DB51D8900AC36A3 /* Range.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 025ADB831DB4B09A00DCE366 /* Range.cpp */; };
 		0276EF461D016FB30013ADF4 /* Transform.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0245CD8D1C4233E000FF5E33 /* Transform.cpp */; };
 		027F38641D59CF490012DA39 /* libopencv_core.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 02513F7E1D34B01C00089959 /* libopencv_core.dylib */; };
 		027F38651D59CF4C0012DA39 /* libopencv_highgui.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 02513F801D34B02800089959 /* libopencv_highgui.dylib */; };
@@ -1098,6 +1100,7 @@
 				0220D4C31D3F675500AB134C /* MatchMain.cpp in Sources */,
 				0220D4C11D3F674500AB134C /* MatchFeaturePoint.cpp in Sources */,
 				02D6D9A31D8189B900862E8F /* Quaternion.cpp in Sources */,
+				027572861DB51D8800AC36A3 /* Range.cpp in Sources */,
 				0245CD801C41382500FF5E33 /* main.cpp in Sources */,
 				0220D4BF1D3F674000AB134C /* Rotation.cpp in Sources */,
 			);
@@ -1115,6 +1118,7 @@
 				02C768881D17E7F00069E8C3 /* MatchFeaturePoint.cpp in Sources */,
 				02C768891D17E7F40069E8C3 /* ExtractFeaturePoint.cpp in Sources */,
 				02D6D9A41D8189B900862E8F /* Quaternion.cpp in Sources */,
+				027572871DB51D8900AC36A3 /* Range.cpp in Sources */,
 				0245CDA71C43E24200FF5E33 /* Transform.cpp in Sources */,
 				02C768851D17E7D80069E8C3 /* VideoReader.cpp in Sources */,
 			);

@@ -21,14 +21,15 @@
 #include "VideoReader.hpp"
 #include "VideoWriter.hpp"
 #include "Estimate.hpp"
+#include "Range.hpp"
 
 class MatchMain
 {
 public:
     MatchMain
     (const Transform& otf, const Transform& tf,
-     const ExtractFeaturePoint& efp,
-     const MatchFeaturePoint& mfp, const Estimate& est);
+     const ExtractFeaturePoint& efp, const MatchFeaturePoint& mfp,
+     const Estimate& est, const Range& rg);
     ~MatchMain();
     
     // １つ目の画像に合わせて２つ目の画像を修正する
@@ -47,12 +48,21 @@ public:
     
     void ModifyVideo(VideoReader& vr, VideoWriter& vw);
     
+    void getMatchCoord
+    (const std::vector<cv::KeyPoint>& forKeyPoints,
+     const cv::Mat& forDescriptors,
+     const std::vector<cv::KeyPoint>& latKeyPoints,
+     const cv::Mat& latDescriprots,
+     std::vector<cv::Point3f>& forSpheres,
+     std::vector<cv::Point3f>& latSpheres) ;
+    
 private:
     const Transform& otf;
     const Transform& tf;
     const ExtractFeaturePoint& efp;
     const MatchFeaturePoint& mfp;
     const Estimate& est;
+    const Range& rg;
     cv::Mat accMat;
     cv::Mat preMat;
     std::vector<cv::KeyPoint> tmpKeyPoints;

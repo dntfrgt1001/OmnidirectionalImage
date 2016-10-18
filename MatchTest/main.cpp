@@ -24,6 +24,7 @@
 #include "Quaternion.hpp"
 #include "VideoReader.hpp"
 #include "VideoWriter.hpp"
+#include "Range.hpp"
 
 int main(int argc, const char * argv[])
 {
@@ -31,27 +32,29 @@ int main(int argc, const char * argv[])
     const std::string inputName1 = path + "image1.jpg";
     const std::string inputName2 = path + "image2.jpg";
 
-    const cv::Size frameSizeOriginal(1000, 500);
-    const cv::Size frameSize(1000, 500);
+    const cv::Size fso(1000, 500);
+    const cv::Size fs(1000, 500);
     
     cv::Mat input1, img1, input2, img2;
     input1 = cv::imread(inputName1);
-    cv::resize(input1, img1, frameSize);
+    cv::resize(input1, img1, fs);
     input2 = cv::imread(inputName2);
-    cv::resize(input2, img2, frameSize);
+    cv::resize(input2, img2, fs);
     
-    const Transform tfo(frameSizeOriginal);
-    const Transform tf(frameSize);
+    const Transform tfo(fso);
+    const Transform tf(fs);
     
     int divNum = 6;
-    ExtractFeaturePoint efp(frameSize, tf, divNum);
+    ExtractFeaturePoint efp(fs, tf, divNum);
     int distThre = 200;
     float coordThre = 0.50;
-    MatchFeaturePoint mfp(frameSize, tf, distThre, coordThre);
+    MatchFeaturePoint mfp(fs, tf, distThre, coordThre);
 
+    
     float fieldAngle = M_PI / 3.0;
+    Range rg(fs, tf, fieldAngle);
     int numThre = 15;
-    const Estimate est(tf, fieldAngle, numThre);
+    const Estimate est(tf, rg, numThre);
     MatchMain mm(tfo, tf, efp, mfp, est);
     
     cv::Mat modImg;
