@@ -20,15 +20,20 @@
 class Perspective
 {
 public:
-    Perspective(const Transform& transform, cv::Mat& inParaMat):
-    transform(transform), inParaMat(inParaMat){};
+    Perspective
+    (const Transform& tf, cv::Mat& inParaMat, const float rangeAngle):
+    tf(tf), inParaMat(inParaMat), rangeRadius(tanf(rangeAngle)) {}
 
+    /*
     // 指定したθとφの範囲の透視投影画像を得る
     void persProjImg
     (const cv::Mat& img, float rtheta, float rphi,
      cv::Mat& persedImg) ;
+    */
     
-    void getPersImg(const cv::Mat& img, cv::Mat persImg, bool isFront);
+    void getPersImg
+    (const cv::Mat& img, cv::Mat& persImg,
+     const cv::Mat& froMat, const bool isFront) const;
     
     void setPersCenter(float cud, float cvd) {
         inParaMat.at<float>(0, 2) = cud;
@@ -65,8 +70,10 @@ public:
     }
     
 private:
-    const Transform& transform;
+    const Transform& tf;
     cv::Mat& inParaMat;
+    
+    const float rangeRadius;
 };
 
 #endif /* Perspective_hpp */

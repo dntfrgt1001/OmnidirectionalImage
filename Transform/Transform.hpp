@@ -130,8 +130,22 @@ public:
     void pers2normal
     (const cv::Point2f& pers, cv::Point2f& normal,
      const cv::Mat& inParaMat) const {
-        normal.x = (pers.x-inParaMat.at<float>(0,2))/inParaMat.at<float>(0,0);
-        normal.y = (pers.y-inParaMat.at<float>(1,2))/inParaMat.at<float>(1,1);
+        normal.x = (pers.x - inParaMat.at<float>(0,2)) /
+                    inParaMat.at<float>(0,0);
+        normal.y = (pers.y - inParaMat.at<float>(1,2)) /
+                    inParaMat.at<float>(1,1);
+    }
+    
+    // 正規化画像座標->球面座標
+    void normal2sphere
+    (const cv::Point2f& normal, cv::Point3f& sphere,
+     const bool isFront) const {
+        float denomi = sqrtf(normal.x*normal.x + normal.y*normal.y + 1.0);
+        sphere.x = normal.x / denomi;
+        sphere.y = normal.y / denomi;
+        sphere.z = 1 / denomi;
+        if (!isFront) sphere = -1 * sphere;
+        
     }
     
     // 点群変換のテンプレート

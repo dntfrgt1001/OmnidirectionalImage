@@ -8,7 +8,7 @@
 
 #include "Perspective.hpp"
 
-
+/*
 void Perspective::persProjImg
 (const cv::Mat &img, float rtheta, float rphi, cv::Mat &persedImg)
 {
@@ -52,17 +52,17 @@ void Perspective::persProjImg
             transform.getDotBilinear(img, equirect, dot);
             persedImg.at<cv::Vec3b>(vd, ud) = dot;
             
-            /*
-            if (ud == 0 && vd == 0) {
-                std::cout << "(ud, vd) = (0, 0), " << "(theta, phi) = (" << theta << ", " << phi << ")" << std::endl;
-            }
-            if (ud == (int) dudInt/2 && vd == (int)dvdInt/2) {
-                std::cout << "(ud, vd) = (rud/2, dvd/2), " << "(theta, phi) = (" << theta << ", " << phi << ")" << std::endl;
-            }
-            if (ud == dudInt - 1 && vd == dvdInt - 1) {
-                std::cout << "(ud, vd) = (rud/2, dvd/2), " << "(theta, phi) = (" << theta << ", " << phi << ")" << std::endl;
-            }
-            */
+ 
+//            if (ud == 0 && vd == 0) {
+//                std::cout << "(ud, vd) = (0, 0), " << "(theta, phi) = (" << theta << ", " << phi << ")" << std::endl;
+//            }
+//            if (ud == (int) dudInt/2 && vd == (int)dvdInt/2) {
+//                std::cout << "(ud, vd) = (rud/2, dvd/2), " << "(theta, phi) = (" << theta << ", " << phi << ")" << std::endl;
+//            }
+//            if (ud == dudInt - 1 && vd == dvdInt - 1) {
+//                std::cout << "(ud, vd) = (rud/2, dvd/2), " << "(theta, phi) = (" << theta << ", " << phi << ")" << std::endl;
+//            }
+ 
         }
     }
     
@@ -73,3 +73,46 @@ void Perspective::persProjImg
     
    // cv::undistort(tmp, persedImg, cameraMat, distCoeffs);
 }
+*/
+
+void Perspective::getPersImg
+(const cv::Mat &img, cv::Mat &persImg,
+ const cv::Mat& froMat, const bool isFront) const
+{
+    // 透視投影画像内の有効な楕円部分の軸長
+    float ellLengHori = inParaMat.at<float>(0, 0) * rangeRadius;
+    float ellLengVert = inParaMat.at<float>(1, 1) * rangeRadius;
+    
+    float persWidth = inParaMat.at<float>(0, 2) + ellLengHori;
+    float persHeight = inParaMat.at<float>(1, 2) + ellLengVert;
+    
+    const cv::Mat froMatInv = froMat.inv();
+    
+    persImg = cv::Mat(persWidth, persHeight, CV_8UC3);
+    
+    for (int u = 0; u < persWidth; u++) {
+        for (int v = 0; v < persHeight; v++) {
+            cv::Point2f pers(u, v);
+            cv::Point2f normal;
+            tf.pers2normal(pers, normal, inParaMat);
+            
+            float lmr = normal.x*normal.x + normal.y*normal.y -
+            rangeRadius*rangeRadius;
+            
+            if (lmr < 0) {
+                cv::Point3f sphere, sphereRot;
+                tf.normal2sphere(normal, sphere, isFront);
+                tf.rotateSphere(sphere, sphereRot, froMat.inv());
+                
+                cv::Point2f equirect;
+                tf.sphere2equirect(sphereRot, equirect);
+                
+                cv::Vec3b pixel;
+                tf.getBilinearPixel(img, equirect, pixel);
+                persImg.at<cv::Vec3b>(v, u) = pixel;
+            }
+        }
+    }
+
+}
+

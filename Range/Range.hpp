@@ -18,7 +18,9 @@
 
 class Range {
 public:
-    Range(const cv::Size& frameSize, const Transform& tf, const float rangeAngle);
+    Range
+    (const cv::Size& frameSize, const Transform& tf,
+     const float rangeAngle);
     
     // 特徴点がカメラの前後にあるか
     bool isInFront(const cv::Point3f& sphere) const {
@@ -59,20 +61,11 @@ public:
     }
     bool isInFront
     (const cv::Point2f& equirect, const cv::Mat& froMat) const {
-        //cv::Point3f sphere, sphereRot;
-        //tf.equirect2sphere(equirect, sphere);
-        //tf.rotateSphere(sphere, sphereRot, froMat);
-        //return isInFront(sphereRot);
         cv::Point2f equirectRot;
         tf.rotateEquirect(equirect, equirectRot, froMat);
         return isInFront(equirectRot);
     }
-    /*
-    bool isInFront
-    (const cv::KeyPoint& keyPoint, const cv::Mat& froMat) const {
-        return isInFront(keyPoint.pt, froMat);
-    }
-     */
+ 
     // 回転後にカメラの前後にある特徴点を取り出す
     void extRotFroFeat
     (const std::vector<cv::KeyPoint>& keyPoints, const cv::Mat& descriptors,

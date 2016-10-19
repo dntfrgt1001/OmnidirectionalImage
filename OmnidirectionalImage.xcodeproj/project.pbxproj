@@ -68,6 +68,9 @@
 		025ADB811DB2570E00DCE366 /* libopencv_calib3d.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 0220D4B51D3F55C500AB134C /* libopencv_calib3d.dylib */; };
 		025ADB821DB26BC000DCE366 /* MatchFeaturePoint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 02E437131CF84303007C3605 /* MatchFeaturePoint.cpp */; };
 		025ADB851DB4B09A00DCE366 /* Range.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 025ADB831DB4B09A00DCE366 /* Range.cpp */; };
+		025ADB871DB7621E00DCE366 /* Rotation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 020D73071D2A62E800BC61BD /* Rotation.cpp */; };
+		025ADB881DB7622700DCE366 /* Quaternion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 02D6D9A11D8189B900862E8F /* Quaternion.cpp */; };
+		025ADB891DB7623900DCE366 /* libopencv_calib3d.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 0220D4B51D3F55C500AB134C /* libopencv_calib3d.dylib */; };
 		0262BA061D782418009FE5F9 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0245CD9D1C43DF3700FF5E33 /* main.cpp */; };
 		02648EAE1CF8058A00E4E948 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 02648EAD1CF8058A00E4E948 /* main.cpp */; };
 		02648EB21CF807E800E4E948 /* Transform.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0245CD8D1C4233E000FF5E33 /* Transform.cpp */; };
@@ -375,6 +378,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				02513FAF1D366C4000089959 /* libopencv_imgcodecs.dylib in Frameworks */,
+				025ADB891DB7623900DCE366 /* libopencv_calib3d.dylib in Frameworks */,
 				02513FAC1D366BE000089959 /* libopencv_core.dylib in Frameworks */,
 				02513FB01D374E6700089959 /* libopencv_highgui.dylib in Frameworks */,
 				02513FB11D375C0300089959 /* libopencv_imgproc.dylib in Frameworks */,
@@ -1129,7 +1133,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				02513FAB1D366BD100089959 /* Transform.cpp in Sources */,
+				025ADB871DB7621E00DCE366 /* Rotation.cpp in Sources */,
 				02513FAA1D366BCA00089959 /* Perspective.cpp in Sources */,
+				025ADB881DB7622700DCE366 /* Quaternion.cpp in Sources */,
 				02513FA61D36648900089959 /* main.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
