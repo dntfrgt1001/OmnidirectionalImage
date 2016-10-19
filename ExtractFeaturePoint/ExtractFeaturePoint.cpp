@@ -117,11 +117,11 @@ void ExtractFeaturePoint::filterLowLatitue
 
 bool ExtractFeaturePoint::isInLowLatitude(const cv::Point2f& equirect) const
 {
-    cv::Point2f psphere;
-    transform.equirect2psphere(equirect, psphere);
+    cv::Point2f polar;
+    transform.equirect2polar(equirect, polar);
     
-    float theta = psphere.x;
-    float phi =psphere.y;
+    float theta = polar.x;
+    float phi = polar.y;
     
     if (cosf(theta) == 0.0) return false;
     float latitude = atanf(-tanf(phi)/cosf(theta));

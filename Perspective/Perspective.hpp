@@ -20,49 +20,19 @@
 class Perspective
 {
 public:
-    Perspective(const Transform& transform, cv::Mat& cameraMat):
-    transform(transform), cameraMat(cameraMat){};
-    
-    // 球面座標->正規化画像座標
-    static void psphere2regular
-    (const cv::Point2f& psphere, cv::Point2f& regular) {
-        regular.x = tanf(psphere.x);
-        regular.y = - tanf(psphere.y)/cosf(psphere.x);
-    }
-    static void psphere2regular
-    (const std::vector<cv::Point2f>& forRegular,
-     std::vector<cv::Point2f>& latRegular);
-    
-    // 正規化画像座標->球面座標
-    static void regular2psphere
-    (const cv::Point2f& regular, cv::Point2f& psphere) {
-        psphere.x = atanf(regular.x);
-        psphere.y = - atanf(regular.y / sqrtf(1 + regular.x*regular.x));
-    }
-    
-    // 正規化画像座標->透視投影画像座標
-    void regular2pers
-    (const cv::Point2f& regular, cv::Point2f& pers) const {
-        pers.x = cameraMat.at<float>(0, 0) *
-                 regular.x+cameraMat.at<float>(0, 2);
-        pers.y = cameraMat.at<float>(1, 1) *
-                 regular.y+cameraMat.at<float>(1, 2);
-    }
-
-    // 透視投影画像座標から正規化画像座標に変換
-    void pers2regular(const cv::Point2f& pers, cv::Point2f& regular) const {
-        regular.x = (pers.x-cameraMat.at<float>(0,2))/cameraMat.at<float>(0,0);
-        regular.y = (pers.y-cameraMat.at<float>(1,2))/cameraMat.at<float>(1,1);
-    }
+    Perspective(const Transform& transform, cv::Mat& inParaMat):
+    transform(transform), inParaMat(inParaMat){};
 
     // 指定したθとφの範囲の透視投影画像を得る
     void persProjImg
     (const cv::Mat& img, float rtheta, float rphi,
      cv::Mat& persedImg) ;
     
+    void getPersImg(const cv::Mat& img, cv::Mat persImg, bool isFront);
+    
     void setPersCenter(float cud, float cvd) {
-        cameraMat.at<float>(0, 2) = cud;
-        cameraMat.at<float>(1, 2) = cvd;
+        inParaMat.at<float>(0, 2) = cud;
+        inParaMat.at<float>(1, 2) = cvd;
     }
     // 透視投影画像の画像中心を計算する
     void calcPersLength
@@ -85,10 +55,10 @@ public:
     }
     // 正規化画像座標の距離を透視投影画像座標の距離に変換
     float dx2dud(float dx) const {
-        return cameraMat.at<float>(0, 0) * dx;
+        return inParaMat.at<float>(0, 0) * dx;
     }
     float dy2dvd(float dy) const {
-        return cameraMat.at<float>(1, 1) * dy;
+        return inParaMat.at<float>(1, 1) * dy;
     }
     void dregular2dpers(float dx, float dy, float& dud, float& dvd) const {
         dud = dx2dud(dx); dvd = dy2dvd(dy);
@@ -96,7 +66,7 @@ public:
     
 private:
     const Transform& transform;
-    cv::Mat& cameraMat;
+    cv::Mat& inParaMat;
 };
 
 #endif /* Perspective_hpp */

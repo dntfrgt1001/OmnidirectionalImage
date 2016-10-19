@@ -32,8 +32,8 @@ int main(int argc, const char * argv[])
     const std::string inputName1 = path + "image1.jpg";
     const std::string inputName2 = path + "image2.jpg";
 
-    const cv::Size fso(1280, 640);
-    const cv::Size fs(1280, 640);
+    const cv::Size fso(800, 400);
+    const cv::Size fs(800, 400);
     
     cv::Mat input1, img1, input2, img2;
     input1 = cv::imread(inputName1);

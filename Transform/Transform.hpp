@@ -27,30 +27,30 @@ public:
     }
     
     // 画像座標->球面極座標
-    void psphere2equirect
-    (const cv::Point2f& psphere, cv::Point2f& equirect) const {
-        equirect.x = psphere.x*frameSize.width/(2.0*M_PI) +
+    void polar2equirect
+    (const cv::Point2f& polar, cv::Point2f& equirect) const {
+        equirect.x = polar.x*frameSize.width/(2.0*M_PI) +
                      frameSize.width/2.0;
-        equirect.y = -psphere.y*frameSize.height/M_PI +
+        equirect.y = -polar.y*frameSize.height/M_PI +
                      frameSize.height/2.0;
         correctequirect(equirect);
     }
-    void psphere2equirect
-    (const std::vector<cv::Point2f>& pspheres,
+    void polar2equirect
+    (const std::vector<cv::Point2f>& polars,
      std::vector<cv::Point2f>& equirects) const;
     
     // 球面極座標->画像座標
-    void equirect2psphere
-    (const cv::Point2f& equirect, cv::Point2f& psphere) const {
-        psphere.x = (equirect.x-frameSize.width/2.0) *
+    void equirect2polar
+    (const cv::Point2f& equirect, cv::Point2f& polar) const {
+        polar.x = (equirect.x-frameSize.width/2.0) *
                     2.0*M_PI/frameSize.width;
-        psphere.y = - (equirect.y-frameSize.height/2.0) *
+        polar.y = - (equirect.y-frameSize.height/2.0) *
                     M_PI/frameSize.height;
-        correctpsphere(psphere);
+        correctpsphere(polar);
     }
-    void equirect2psphere
+    void equirect2polar
     (const std::vector<cv::Point2f>& equirects,
-     std::vector<cv::Point2f>& pspheres) const;
+     std::vector<cv::Point2f>& polars) const;
     
     // 画像座標と極座標の長さの変換
     float dtheta2u(float theta) const {
@@ -61,27 +61,27 @@ public:
     }
     
     // 球面極座標->球面座標
-    void psphere2sphere
-    (const cv::Point2f& psphere, cv::Point3f& sphere) const {
-        sphere.x = sinf(psphere.x) * cosf(psphere.y);
-        sphere.y = - sinf(psphere.y);
-        sphere.z = cosf(psphere.x) * cosf(psphere.y);
+    void polar2sphere
+    (const cv::Point2f& polar, cv::Point3f& sphere) const {
+        sphere.x = sinf(polar.x) * cosf(polar.y);
+        sphere.y = - sinf(polar.y);
+        sphere.z = cosf(polar.x) * cosf(polar.y);
         correctsphere(sphere);
     }
-    void psphere2sphere
-    (const std::vector<cv::Point2f>& pspheres,
+    void polar2sphere
+    (const std::vector<cv::Point2f>& polars,
      std::vector<cv::Point3f>& spheres) const;
     
     // 球面座標->球面極座標
-    void sphere2psphere
-    (const cv::Point3f& sphere, cv::Point2f& psphere) const {
+    void sphere2polar
+    (const cv::Point3f& sphere, cv::Point2f& polar) const {
         float theta = (sphere.z!=0)? atanf(sphere.x/sphere.z):
                       ((sphere.x>0)? M_PI/2.0: -M_PI/2.0);
         if (sphere.z<0) { if (sphere.x < 0) theta -= M_PI; else theta += M_PI; }
         float phi = sphere.y<-1.0? asinf(-1.0):
                     (1.0<sphere.y? asinf(1.0): asinf(-sphere.y));
-        psphere.x = theta; psphere.y = phi;
-        correctpsphere(psphere);
+        polar.x = theta; polar.y = phi;
+        correctpsphere(polar);
     }
     void sphere2psphere
     (const std::vector<cv::Point3f>& spheres,
@@ -90,9 +90,9 @@ public:
     // 画像座標->球面座標
     void equirect2sphere
     (const cv::Point2f& equirect, cv::Point3f& sphere) const {
-        cv::Point2f psphere;
-        equirect2psphere(equirect, psphere);
-        psphere2sphere(psphere, sphere);
+        cv::Point2f polar;
+        equirect2polar(equirect, polar);
+        polar2sphere(polar, sphere);
     }
     void equirect2sphere
     (const std::vector<cv::Point2f>& equirects,
@@ -100,9 +100,9 @@ public:
     // 球面座標->画像座標
     void sphere2equirect
     (const cv::Point3f& sphere, cv::Point2f& equirect) const {
-        cv::Point2f psphere;
-        sphere2psphere(sphere, psphere);
-        psphere2equirect(psphere, equirect);
+        cv::Point2f polar;
+        sphere2polar(sphere, polar);
+        polar2equirect(polar, equirect);
     }
     void sphere2equirect
     (const std::vector<cv::Point3f>& spheres,
@@ -117,6 +117,22 @@ public:
     void sphere2normal
     (const std::vector<cv::Point3f>& spheres,
      std::vector<cv::Point2f>& normals) const;
+    
+    // 正規化画像座標->透視投影画像座標
+    void normal2pers
+    (const cv::Point2f& normal, cv::Point2f& pers,
+     const cv::Mat& inParaMat) const {
+        pers.x = inParaMat.at<float>(0,0)*normal.x+inParaMat.at<float>(0,2);
+        pers.y = inParaMat.at<float>(1,1)*normal.y+inParaMat.at<float>(1,2);
+    }
+    
+    // 透視投影画像座標->正規化画像座標
+    void pers2normal
+    (const cv::Point2f& pers, cv::Point2f& normal,
+     const cv::Mat& inParaMat) const {
+        normal.x = (pers.x-inParaMat.at<float>(0,2))/inParaMat.at<float>(0,0);
+        normal.y = (pers.y-inParaMat.at<float>(1,2))/inParaMat.at<float>(1,1);
+    }
     
     // 点群変換のテンプレート
     template
@@ -160,8 +176,8 @@ public:
         sphereRot = (cv::Point3f) cv::Mat1f(rotMat * cv::Mat1f(sphere));
     }
     void rotateSphere
-    (const std::vector<cv::Point3f>& forspheres,
-     std::vector<cv::Point3f>& latspheres, const cv::Mat& rotMat) const;
+    (const std::vector<cv::Point3f>& spheres,
+     std::vector<cv::Point3f>& spheresRot, const cv::Mat& rotMat) const;
     
     // 回転行列で画像を変換（逆向きの回転行列を使うことに注意）
     void rotateImg
@@ -172,8 +188,7 @@ public:
     void getBilinearPixel
     (const cv::Mat& img, const cv::Point2f& equirect, T& pixel) const;
     
-    // 画像をX軸まわりに回転
-    // 特徴点抽出用なのでグレースケール
+    // 画像をX軸まわりに回転（グレースケール）
     void rotateImgVertRect
     (const float angle, const cv::Mat& img,
      const cv::Rect& rect, cv::Mat& rotImg)  const;
