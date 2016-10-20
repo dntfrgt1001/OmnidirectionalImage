@@ -16,13 +16,21 @@
 #include <opencv2/calib3d.hpp>
 
 #include "Transform.hpp"
+/*
+float ellLengHori = inParaMat.at<float>(0, 0) * rangeRadius;
+float ellLengVert = inParaMat.at<float>(1, 1) * rangeRadius;
+
+float persWidth = inParaMat.at<float>(0, 2) + ellLengHori;
+float persHeight = inParaMat.at<float>(1, 2) + ellLengVert;
+*/
 
 class Perspective
 {
 public:
     Perspective
-    (const Transform& tf, cv::Mat& inParaMat, const float rangeAngle):
-    tf(tf), inParaMat(inParaMat), rangeRadius(tanf(rangeAngle)) {}
+    (const Transform& tf, const cv::Mat& inParaMat,
+     const float rangeAngle);
+
 
     /*
     // 指定したθとφの範囲の透視投影画像を得る
@@ -35,6 +43,9 @@ public:
     (const cv::Mat& img, cv::Mat& persImg,
      const cv::Mat& froMat, const bool isFront) const;
     
+    void getMask(cv::Mat& mask);
+    
+    /*
     void setPersCenter(float cud, float cvd) {
         inParaMat.at<float>(0, 2) = cud;
         inParaMat.at<float>(1, 2) = cvd;
@@ -68,12 +79,18 @@ public:
     void dregular2dpers(float dx, float dy, float& dud, float& dvd) const {
         dud = dx2dud(dx); dvd = dy2dvd(dy);
     }
+     */
     
 private:
     const Transform& tf;
-    cv::Mat& inParaMat;
+    const cv::Mat& inParaMat;
+    cv::Mat mask;
     
     const float rangeRadius;
+    const float ellLengHori;
+    const float ellLengVert;
+    const float persWidth;
+    const float persHeight;
 };
 
 #endif /* Perspective_hpp */

@@ -8,6 +8,17 @@
 
 #include "Perspective.hpp"
 
+
+Perspective::Perspective
+(const Transform& tf, const cv::Mat& inParaMat, const float rangeAngle):
+tf(tf), inParaMat(inParaMat), rangeRadius(tanf(rangeAngle)),
+ellLengHori(inParaMat.at<float>(0,0) * rangeRadius),
+ellLengVert(inParaMat.at<float>(1,1) * rangeRadius),
+persWidth(inParaMat.at<float>(0,2) + ellLengHori),
+persHeight(inParaMat.at<float>(1,2) + ellLengVert)
+{
+    getMask(mask);
+}
 /*
 void Perspective::persProjImg
 (const cv::Mat &img, float rtheta, float rphi, cv::Mat &persedImg)
@@ -79,13 +90,6 @@ void Perspective::getPersImg
 (const cv::Mat &img, cv::Mat &persImg,
  const cv::Mat& froMat, const bool isFront) const
 {
-    // 透視投影画像内の有効な楕円部分の軸長
-    float ellLengHori = inParaMat.at<float>(0, 0) * rangeRadius;
-    float ellLengVert = inParaMat.at<float>(1, 1) * rangeRadius;
-    
-    float persWidth = inParaMat.at<float>(0, 2) + ellLengHori;
-    float persHeight = inParaMat.at<float>(1, 2) + ellLengVert;
-    
     const cv::Mat froMatInv = froMat.inv();
     
     persImg = cv::Mat(persWidth, persHeight, CV_8UC3);
@@ -116,3 +120,23 @@ void Perspective::getPersImg
 
 }
 
+void Perspective::getMask(cv::Mat &mask)
+{
+    mask = cv::Mat::zeros(persWidth, persHeight, CV_8U);
+    
+    for (int u = 0; u < persWidth; u++) {
+        for (int v = 0; v < persHeight; v++) {
+            cv::Point2f pers(u, v);
+            cv::Point2f normal;
+            
+            tf.pers2normal(pers, normal, inParaMat);
+            
+            float lmr = normal.x*normal.x + normal.y*normal.y -
+            (rangeRadius-0.1)*(rangeRadius-0.1);
+            
+            if (lmr < 0) {
+                mask.at<uchar>(v, u) = 255;
+            }
+        }
+    }
+}

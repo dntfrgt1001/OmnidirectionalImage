@@ -16,19 +16,23 @@
 #include "Transform.hpp"
 #include "Perspective.hpp"
 #include "Rotation.hpp"
+#include "OpticalFlow.hpp"
 
 int main(int argc, const char * argv[])
 {
     const std::string path = "/Users/masakazu/Desktop/";
-    const std::string inputName = path + "img.jpg";
+    const std::string inputName1 = path + "image1.jpg";
+    const std::string inputName2 = path + "image2.jpg";
     
     const cv::Size frameSize(5376, 2688);
     
     Transform tf(frameSize);
     
-    cv::Mat input, img;
-    input = cv::imread(inputName);
-    cv::resize(input, img, frameSize);
+    cv::Mat input1, img1, input2, img2;
+    input1 = cv::imread(inputName1);
+    cv::resize(input1, img1, frameSize);
+    input2 = cv::imread(inputName2);
+    cv::resize(input2, img2, frameSize);
     
     float halfWidth = 200;
     float halfHeight = 200;
@@ -40,23 +44,42 @@ int main(int argc, const char * argv[])
     
     const float rangeAngle = M_PI / 4.0;
     Perspective pers(tf, inParaMat, rangeAngle);
-    
 
-    cv::Mat persImg;
     const float angle = M_PI/2.0;
-    const cv::Vec3f rotVec = angle * cv::Vec3f(1.0, 0.0, 0.0);
+    const cv::Vec3f rotVec = angle * cv::Vec3f(0.0, 1.0, 0.0);
     cv::Mat rotMat;
     Rotation::RotVec2RotMat(rotVec, rotMat);
-
+    
+    cv::Mat persImg1, persImg2;
     const bool isFront = true;
-    pers.getPersImg(img, persImg, rotMat, isFront);
+    pers.getPersImg(img1, persImg1, rotMat, isFront);
+    pers.getPersImg(img2, persImg2, rotMat, isFront);
     
-    //    float rangeTheta = M_PI / 1.5;
-//    float rangePhi = M_PI / 3.0;
-//    pers.persProjImg(img, rangeTheta, rangePhi, persImg);
+    cv::namedWindow("pers 1");
+    cv::namedWindow("pers 2");
+    cv::imshow("pers 1", persImg1);
+    cv::imshow("pers 2", persImg2);
     
-    cv::namedWindow("Perspective");
-    cv::imshow("Perspective", persImg);
+    
+    OpticalFlow opf;
+    std::vector<cv::Point2f> forPoints, latPoints;
+    
+    cv::Mat mask;
+    pers.getMask(mask);
+    opf.getFeatures(persImg1, forPoints, mask);
+    
+    cv::Mat keyImg;
+    opf.drawPoint(persImg1, forPoints, keyImg);
+    cv::namedWindow("key");
+    cv::imshow("key", keyImg);
+    
+    opf.getOpticalFlow(persImg1, persImg2, forPoints, latPoints);
+    
+    cv::Mat optImg;
+    opf.drawOpticalFlow(persImg1, forPoints, latPoints, optImg);
+    
+    cv::namedWindow("opt");
+    cv::imshow("opt", optImg);
     
 //    const std::string outName = "5.jpg";
 //    cv::imwrite(path + outName, persImg);
