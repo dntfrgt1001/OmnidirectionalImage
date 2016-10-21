@@ -31,21 +31,30 @@ public:
     (const Transform& tf, const cv::Mat& inParaMat,
      const float rangeAngle);
 
-
+    // 透視投影画像を返す
+    void getPersImg
+    (const cv::Mat& img, cv::Mat& persImg,
+     const cv::Mat& froMat, const bool isFront) const;
+    
+    // 透視投影画像の中で有効な部分のマスク
+    void getMask(cv::Mat& mask);
+    
+    // 透視投影画像中の中心を返す
+    void getPersCenter(cv::Point2f& center) const {
+        center = cv::Point2f(inParaMat.at<float>(0, 2),
+                             inParaMat.at<float>(1, 2));
+    }
+    
+    const cv::Mat& getInParaMat() const {
+        return inParaMat;
+    }
+    
     /*
     // 指定したθとφの範囲の透視投影画像を得る
     void persProjImg
     (const cv::Mat& img, float rtheta, float rphi,
      cv::Mat& persedImg) ;
-    */
-    
-    void getPersImg
-    (const cv::Mat& img, cv::Mat& persImg,
-     const cv::Mat& froMat, const bool isFront) const;
-    
-    void getMask(cv::Mat& mask);
-    
-    /*
+
     void setPersCenter(float cud, float cvd) {
         inParaMat.at<float>(0, 2) = cud;
         inParaMat.at<float>(1, 2) = cvd;
@@ -84,7 +93,6 @@ public:
 private:
     const Transform& tf;
     const cv::Mat& inParaMat;
-    cv::Mat mask;
     
     const float rangeRadius;
     const float ellLengHori;

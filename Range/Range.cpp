@@ -21,7 +21,7 @@ void Range::extFroSphere
  std::vector<cv::Point3f> &latspheresFront) const
 {
     for (int i = 0; i < forspheres.size(); i++) {
-        if (isInFrontNotStride(forspheres[i], latspheres[i])) {
+        if (isValidSpherePair(forspheres[i], latspheres[i])) {
             forspheresFront.push_back(forspheres[i]);
             latspheresFront.push_back(latspheres[i]);
         }
@@ -36,7 +36,7 @@ void Range::extRotFroFeat
     descriptorsValid = cv::Mat (0, descriptors.cols, descriptors.type());
     
     for (int i = 0; i < keyPoints.size(); i++) {
-        if (isInFront(keyPoints[i].pt, froMat)) {
+        if (isInRange(keyPoints[i].pt, froMat)) {
             // 特徴点追加
             keyPointsValid.push_back(keyPoints[i]);
             // 記述子追加

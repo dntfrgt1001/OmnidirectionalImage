@@ -22,16 +22,22 @@ public:
     (const cv::Size& frameSize, const Transform& tf,
      const float rangeAngle);
     
+    
     // 特徴点がカメラの前後にあるか
-    bool isInFront(const cv::Point3f& sphere) const {
-        return (sphere.x*sphere.x + sphere.y*sphere.y) <
-                sphere.z*sphere.z * rangeRadius*rangeRadius;
+    bool isInRangeNormal(const cv::Point2f& normal) const {
+        return normal.x*normal.x + normal.y*normal.y <
+               rangeRadius*rangeRadius;
     }
-    bool isInFront
+    bool isInRangeSphere(const cv::Point3f& sphere) const {
+        cv::Point2f normal;
+        tf.sphere2normal(sphere, normal);
+        return isInRangeNormal(normal);
+    }
+    bool isInRangeEquirect
     (const cv::Point2f& equirect) const {
         cv::Point3f sphere;
         tf.equirect2sphere(equirect, sphere);
-        return isInFront(sphere);
+        return isInRangeSphere(sphere);
     }
     // マッチした特徴点の組が境界を跨いでいるか
     bool isStrideBorder
@@ -39,9 +45,9 @@ public:
         return forsphere.z * latsphere.z < 0;
     }
     // 推定に使う特徴点か(カメラ前後にあり境界を跨がない)
-    bool isInFrontNotStride
+    bool isValidSpherePair
     (const cv::Point3f& forsphere, const cv::Point3f& latsphere) const {
-        return isInFront(forsphere) && isInFront(latsphere) &&
+        return isInRangeSphere(forsphere) && isInRangeSphere(latsphere) &&
                !isStrideBorder(forsphere, latsphere);
     }
     
@@ -53,17 +59,17 @@ public:
      std::vector<cv::Point3f>& latspheresFront) const;
     
     // 回転後の特徴点がカメラの前後にあるか
-    bool isInFront
+    bool isInRange
     (const cv::Point3f& sphere, const cv::Mat& froMat) const {
         cv::Point3f sphereRot;
         tf.rotateSphere(sphere, sphereRot, froMat);
-        return isInFront(sphereRot);
+        return isInRangeSphere(sphereRot);
     }
-    bool isInFront
+    bool isInRange
     (const cv::Point2f& equirect, const cv::Mat& froMat) const {
         cv::Point2f equirectRot;
         tf.rotateEquirect(equirect, equirectRot, froMat);
-        return isInFront(equirectRot);
+        return isInRangeEquirect(equirectRot);
     }
  
     // 回転後にカメラの前後にある特徴点を取り出す

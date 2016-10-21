@@ -61,7 +61,7 @@ int main(int argc, const char * argv[])
     cv::imshow("pers 2", persImg2);
     
     
-    OpticalFlow opf;
+    OpticalFlow opf(tf, pers);
     std::vector<cv::Point2f> forPoints, latPoints;
     
     cv::Mat mask;

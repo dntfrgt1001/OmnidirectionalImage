@@ -17,8 +17,65 @@ ellLengVert(inParaMat.at<float>(1,1) * rangeRadius),
 persWidth(inParaMat.at<float>(0,2) + ellLengHori),
 persHeight(inParaMat.at<float>(1,2) + ellLengVert)
 {
-    getMask(mask);
+
 }
+
+
+void Perspective::getPersImg
+(const cv::Mat &img, cv::Mat &persImg,
+ const cv::Mat& froMat, const bool isFront) const
+{
+    const cv::Mat froMatInv = froMat.inv();
+    
+    persImg = cv::Mat(persWidth, persHeight, CV_8UC3);
+    
+    for (int u = 0; u < persWidth; u++) {
+        for (int v = 0; v < persHeight; v++) {
+            cv::Point2f pers(u, v);
+            cv::Point2f normal;
+            tf.pers2normal(pers, normal, inParaMat);
+            
+            float lmr = normal.x*normal.x + normal.y*normal.y -
+            rangeRadius*rangeRadius;
+            
+            if (lmr < 0) {
+                cv::Point3f sphere, sphereRot;
+                tf.normal2sphere(normal, sphere, isFront);
+                tf.rotateSphere(sphere, sphereRot, froMat.inv());
+                
+                cv::Point2f equirect;
+                tf.sphere2equirect(sphereRot, equirect);
+                
+                cv::Vec3b pixel;
+                tf.getBilinearPixel(img, equirect, pixel);
+                persImg.at<cv::Vec3b>(v, u) = pixel;
+            }
+        }
+    }
+    
+}
+
+void Perspective::getMask(cv::Mat &mask)
+{
+    mask = cv::Mat::zeros(persWidth, persHeight, CV_8U);
+    
+    for (int u = 0; u < persWidth; u++) {
+        for (int v = 0; v < persHeight; v++) {
+            cv::Point2f pers(u, v);
+            cv::Point2f normal;
+            tf.pers2normal(pers, normal, inParaMat);
+            
+            
+            float lmr = normal.x*normal.x + normal.y*normal.y -
+            (rangeRadius-0.1)*(rangeRadius-0.1);
+            
+            if (lmr < 0) {
+                mask.at<uchar>(v, u) = 255;
+            }
+        }
+    }
+}
+
 /*
 void Perspective::persProjImg
 (const cv::Mat &img, float rtheta, float rphi, cv::Mat &persedImg)
@@ -86,57 +143,3 @@ void Perspective::persProjImg
 }
 */
 
-void Perspective::getPersImg
-(const cv::Mat &img, cv::Mat &persImg,
- const cv::Mat& froMat, const bool isFront) const
-{
-    const cv::Mat froMatInv = froMat.inv();
-    
-    persImg = cv::Mat(persWidth, persHeight, CV_8UC3);
-    
-    for (int u = 0; u < persWidth; u++) {
-        for (int v = 0; v < persHeight; v++) {
-            cv::Point2f pers(u, v);
-            cv::Point2f normal;
-            tf.pers2normal(pers, normal, inParaMat);
-            
-            float lmr = normal.x*normal.x + normal.y*normal.y -
-            rangeRadius*rangeRadius;
-            
-            if (lmr < 0) {
-                cv::Point3f sphere, sphereRot;
-                tf.normal2sphere(normal, sphere, isFront);
-                tf.rotateSphere(sphere, sphereRot, froMat.inv());
-                
-                cv::Point2f equirect;
-                tf.sphere2equirect(sphereRot, equirect);
-                
-                cv::Vec3b pixel;
-                tf.getBilinearPixel(img, equirect, pixel);
-                persImg.at<cv::Vec3b>(v, u) = pixel;
-            }
-        }
-    }
-
-}
-
-void Perspective::getMask(cv::Mat &mask)
-{
-    mask = cv::Mat::zeros(persWidth, persHeight, CV_8U);
-    
-    for (int u = 0; u < persWidth; u++) {
-        for (int v = 0; v < persHeight; v++) {
-            cv::Point2f pers(u, v);
-            cv::Point2f normal;
-            
-            tf.pers2normal(pers, normal, inParaMat);
-            
-            float lmr = normal.x*normal.x + normal.y*normal.y -
-            (rangeRadius-0.1)*(rangeRadius-0.1);
-            
-            if (lmr < 0) {
-                mask.at<uchar>(v, u) = 255;
-            }
-        }
-    }
-}
