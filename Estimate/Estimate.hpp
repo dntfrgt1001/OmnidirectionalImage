@@ -34,8 +34,8 @@ public:
     // 基本行列の分解により回転行列を推定する
     void estRotMatEssMatCore
     (const std::vector<cv::Point2f>& fornormals,
-     const std::vector<cv::Point2f>& latnormals, cv::Mat& estRotMat,
-     cv::Mat& mask) const;
+     const std::vector<cv::Point2f>& latnormals,
+     cv::Mat& estRotMat, cv::Mat& mask) const;
     
     /*
     // カメラの前後の特徴点を取り出す

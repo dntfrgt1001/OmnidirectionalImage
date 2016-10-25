@@ -28,16 +28,17 @@ class Perspective
 {
 public:
     Perspective
-    (const Transform& tf, const cv::Mat& inParaMat,
-     const float rangeAngle);
-
+    (const Transform& tf, const int persRad, const float rangeAngle);
+    
+    cv::Mat getInParaMat(const int persRad, const float ratio) const;
+    
     // 透視投影画像を返す
     void getPersImg
     (const cv::Mat& img, cv::Mat& persImg,
      const cv::Mat& froMat, const bool isFront) const;
     
     // 透視投影画像の中で有効な部分のマスク
-    void getMask(cv::Mat& mask);
+    void getMask(const float margin, cv::Mat& mask) const;
     
     // 透視投影画像中の中心を返す
     void getPersCenter(cv::Point2f& center) const {
@@ -48,6 +49,12 @@ public:
     const cv::Mat& getInParaMat() const {
         return inParaMat;
     }
+    
+private:
+    const Transform& tf;
+    const cv::Mat inParaMat;
+    const cv::Size pfs;
+    const float normalRad;
     
     /*
     // 指定したθとφの範囲の透視投影画像を得る
@@ -90,15 +97,7 @@ public:
     }
      */
     
-private:
-    const Transform& tf;
-    const cv::Mat& inParaMat;
-    
-    const float rangeRadius;
-    const float ellLengHori;
-    const float ellLengVert;
-    const float persWidth;
-    const float persHeight;
+
 };
 
 #endif /* Perspective_hpp */

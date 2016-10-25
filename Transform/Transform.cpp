@@ -76,6 +76,20 @@ void Transform::sphere2normal
     &Transform::sphere2normal>(spheres, normals);
 }
 
+void Transform::pers2normal
+(const std::vector<cv::Point2f> &perss,
+ std::vector<cv::Point2f> &normals,
+ const cv::Mat& inParaMat) const
+{
+    normals.clear();
+    
+    for (int i = 0; i < perss.size(); i++) {
+        cv::Point2f normal;
+        pers2normal(perss[i], normal, inParaMat);
+        normals.push_back(normal);
+    }
+}
+
 template
 <class forTp, class latTp, void (Transform::*func)(const forTp&, latTp&) const>
 void Transform::points2points

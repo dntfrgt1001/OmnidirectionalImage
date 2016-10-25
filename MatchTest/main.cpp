@@ -25,12 +25,14 @@
 #include "VideoReader.hpp"
 #include "VideoWriter.hpp"
 #include "Range.hpp"
+#include "Perspective.hpp"
+#include "OpticalFlow.hpp"
 
 int main(int argc, const char * argv[])
 {
     const std::string path = "/Users/masakazu/Desktop/";
-    const std::string inputName1 = path + "image1.jpg";
-    const std::string inputName2 = path + "image2.jpg";
+    const std::string inputName1 = path + "image0035.jpg";
+    const std::string inputName2 = path + "image0036.jpg";
 
     const cv::Size fso(800, 400);
     const cv::Size fs(800, 400);
@@ -50,12 +52,16 @@ int main(int argc, const char * argv[])
     float coordThre = 0.30;
     MatchFeaturePoint mfp(fs, tf, distThre, coordThre);
 
-    
     float fieldAngle = M_PI / 3.0;
     Range rg(fs, tf, fieldAngle);
     int numThre = 15;
     const Estimate est(tf, rg, numThre);
-    MatchMain mm(tfo, tf, efp, mfp, est, rg);
+    
+    const int persRad = 200;
+    float rangeAngle = M_PI / 4.0;
+    Perspective ps(tf, persRad, rangeAngle);
+    OpticalFlow of(tf, ps, est);
+    MatchMain mm(tfo, tf, efp, mfp, est, rg, of);
     
     cv::Mat modImg;
     mm.ModifylatterImg(img1, img2, modImg);

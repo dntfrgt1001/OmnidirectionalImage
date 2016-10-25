@@ -10,8 +10,9 @@
 
 MatchMain::MatchMain
 (const Transform& otf, const Transform& tf, const ExtractFeaturePoint& efp,
- const MatchFeaturePoint& mfp, const Estimate& est, const Range& rg):
-otf(otf), tf(tf), efp(efp), mfp(mfp), est(est), rg(rg),
+ const MatchFeaturePoint& mfp, const Estimate& est, const Range& rg,
+ const OpticalFlow& of):
+otf(otf), tf(tf), efp(efp), mfp(mfp), est(est), rg(rg), of(of),
 accMat(cv::Mat::eye(3, 3, CV_32FC1))
 {
 
@@ -115,6 +116,15 @@ void MatchMain::ModifylatterImg
         (resForImg, forequirectsMaxLast,
          resLatImg, latequirectsMaxLast, matchImgMax);
         cv::imshow("match max", matchImgMax);
+        
+        cv::Mat estRotMatOpt;
+        of.estRotMatFromOpticalFlow
+        (resForImg, resLatImg, froRotMat, estRotMatOpt);
+        
+        std::cout << "opt rot mat = " << std::endl << estRotMatOpt <<
+        std::endl;
+        
+        estRotMatOpt.copyTo(estRotMat);
     }
     
     /*

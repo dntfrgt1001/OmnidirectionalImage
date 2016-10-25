@@ -17,12 +17,14 @@
 #include "Perspective.hpp"
 #include "Rotation.hpp"
 #include "OpticalFlow.hpp"
+#include "Estimate.hpp"
+#include "Range.hpp"
 
 int main(int argc, const char * argv[])
 {
     const std::string path = "/Users/masakazu/Desktop/";
-    const std::string inputName1 = path + "image1.jpg";
-    const std::string inputName2 = path + "image2.jpg";
+    const std::string inputName1 = path + "image0041.jpg";
+    const std::string inputName2 = path + "image0042.jpg";
     
     const cv::Size frameSize(5376, 2688);
     
@@ -33,23 +35,20 @@ int main(int argc, const char * argv[])
     cv::resize(input1, img1, frameSize);
     input2 = cv::imread(inputName2);
     cv::resize(input2, img2, frameSize);
+    cv::cvtColor(img1, img1, CV_BGR2GRAY);
+    cv::cvtColor(img2, img2, CV_BGR2GRAY);
     
-    float halfWidth = 200;
-    float halfHeight = 200;
     
-    cv::Mat inParaMat = (cv::Mat_<float>(3, 3) <<
-                                    halfWidth, 0, halfWidth,
-                                    0, halfHeight, halfHeight,
-                                    0, 0, 1);
+    const int uniPixel = 300;
     
     const float rangeAngle = M_PI / 4.0;
-    Perspective pers(tf, inParaMat, rangeAngle);
+    Perspective pers(tf, uniPixel, rangeAngle);
 
     const float angle = M_PI/2.0;
     const cv::Vec3f rotVec = angle * cv::Vec3f(0.0, 1.0, 0.0);
     cv::Mat rotMat;
     Rotation::RotVec2RotMat(rotVec, rotMat);
-    
+
     cv::Mat persImg1, persImg2;
     const bool isFront = true;
     pers.getPersImg(img1, persImg1, rotMat, isFront);
@@ -60,23 +59,35 @@ int main(int argc, const char * argv[])
     cv::imshow("pers 1", persImg1);
     cv::imshow("pers 2", persImg2);
     
+    const float rangeAngle2 = M_PI/3.0;
+    Range rg(frameSize, tf, rangeAngle2);
+    const int numThre = 10;
+    Estimate est(tf, rg, numThre);
+    OpticalFlow opf(tf, pers, est);
+    std::vector<cv::Point2f> forPerss, latPerss;
     
-    OpticalFlow opf(tf, pers);
-    std::vector<cv::Point2f> forPoints, latPoints;
     
     cv::Mat mask;
-    pers.getMask(mask);
-    opf.getFeatures(persImg1, forPoints, mask);
+    //pers.getMask(mask);
+    opf.getFeatures(persImg1, forPerss, mask);
     
     cv::Mat keyImg;
-    opf.drawPoint(persImg1, forPoints, keyImg);
+    opf.drawPoint(persImg1, forPerss, keyImg);
     cv::namedWindow("key");
     cv::imshow("key", keyImg);
     
-    opf.getOpticalFlow(persImg1, persImg2, forPoints, latPoints);
+    opf.getOpticalFlow(persImg1, persImg2, forPerss, latPerss);
+    
+    cv::Mat rawOptImg;
+    opf.drawOpticalFlow(persImg1, forPerss, latPerss, rawOptImg);
+    
+    cv::namedWindow("raw opt");
+    cv::imshow("raw opt", rawOptImg);
+    
+    opf.removeOutlier(forPerss, latPerss);
     
     cv::Mat optImg;
-    opf.drawOpticalFlow(persImg1, forPoints, latPoints, optImg);
+    opf.drawOpticalFlow(persImg1, forPerss, latPerss, optImg);
     
     cv::namedWindow("opt");
     cv::imshow("opt", optImg);

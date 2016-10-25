@@ -69,6 +69,11 @@
 			<key>orderHint</key>
 			<integer>8</integer>
 		</dict>
+		<key>Test.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>12</integer>
+		</dict>
 		<key>VideoMatchTest.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
@@ -128,6 +133,11 @@
 			<true/>
 		</dict>
 		<key>02513FA21D36648900089959</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>025ADB971DB9FF7F00DCE366</key>
 		<dict>
 			<key>primary</key>
 			<true/>

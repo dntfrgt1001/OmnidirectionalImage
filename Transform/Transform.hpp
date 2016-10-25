@@ -135,6 +135,10 @@ public:
         normal.y = (pers.y - inParaMat.at<float>(1,2)) /
                     inParaMat.at<float>(1,1);
     }
+    void pers2normal
+    (const std::vector<cv::Point2f>& perss,
+     std::vector<cv::Point2f>& normals,
+     const cv::Mat& inParaMat) const;
     
     // 正規化画像座標->球面座標
     void normal2sphere

@@ -28,18 +28,18 @@ int main(int argc, const char * argv[])
     // ffmpeg -f image2 -r 30 -i image%4d.jpg -pix_fmt yuv420p video.mp4
     
 //    const std::string path = "/Users/masakazu/Desktop/video/20160901/THETA/";
-    const std::string path = "/Users/masakazu/Desktop/THETA/";
-    const std::string inputVideoName = path + "sample4.mp4";
+    const std::string path = "/Users/masakazu/Desktop/bowling/";
+    const std::string inputVideoName = path + "bowl-rot";
 //    const std::string inputVideoNamePreFixed = path + "sample2-pre";
-    const std::string outputVideoName = path + "sample4-2";
+    const std::string outputVideoName = path + "bowl1";
     
 //    const cv::Size frameSizeOriginal(1280, 640);
     const cv::Size fso(960, 480);
     const cv::Size fs(960, 480);
     
     int stride = 1;
-    VideoReaderMov vr(fso, inputVideoName, stride);
-    VideoWriterMov vw(fso, outputVideoName);
+    VideoReaderPic vr(fso, inputVideoName, stride);
+    VideoWriterPic vw(fso, outputVideoName);
     
     const Transform tfo(fso);
     const Transform tf(fs);
@@ -47,8 +47,8 @@ int main(int argc, const char * argv[])
     int divNum = 6;
     ExtractFeaturePoint efp(fs, tf, divNum);
     
-    int matchThres = 150;
-    float coordThres = 0.35;
+    int matchThres = 180;
+    float coordThres = 0.4;
     MatchFeaturePoint mfp(fs, tf, matchThres, coordThres);
 
     float rangeAngle = M_PI / 3.0;

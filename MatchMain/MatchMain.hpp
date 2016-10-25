@@ -22,6 +22,7 @@
 #include "VideoWriter.hpp"
 #include "Estimate.hpp"
 #include "Range.hpp"
+#include "OpticalFlow.hpp"
 
 class MatchMain
 {
@@ -29,7 +30,7 @@ public:
     MatchMain
     (const Transform& otf, const Transform& tf,
      const ExtractFeaturePoint& efp, const MatchFeaturePoint& mfp,
-     const Estimate& est, const Range& rg);
+     const Estimate& est, const Range& rg, const OpticalFlow& of);
     ~MatchMain();
     
     // １つ目の画像に合わせて２つ目の画像を修正する
@@ -63,6 +64,8 @@ private:
     const MatchFeaturePoint& mfp;
     const Estimate& est;
     const Range& rg;
+    const OpticalFlow& of;
+    
     cv::Mat accMat;
     cv::Mat preMat;
     std::vector<cv::KeyPoint> tmpKeyPoints;
