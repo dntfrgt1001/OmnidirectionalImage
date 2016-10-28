@@ -95,12 +95,14 @@ template
 void Transform::points2points
 (const std::vector<forTp>& forPoints, std::vector<latTp>& latPoints) const
 {
-    latPoints.clear();
+//latPoints.clear();
+    latPoints = std::vector<latTp>(forPoints.size());
     
     for (int i = 0; i < forPoints.size(); i++) {
         latTp latPoint;
         (this->*func)(forPoints[i], latPoint);
-        latPoints.push_back(latPoint);
+//latPoints.push_back(latPoint);
+        latPoints[i] = latPoint;
     }
 }
 

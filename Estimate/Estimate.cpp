@@ -158,6 +158,7 @@ void Estimate::extRotFrontFeature
 }
  */
 
+/*
 void Estimate::integrateRotVec
 (const std::vector<cv::Vec3f>& rotVecs, std::vector<float>& weights,
  cv::Vec3f& rotVec) const
@@ -168,6 +169,7 @@ void Estimate::integrateRotVec
     size_t index = std::distance(weights.begin(), itr);
     rotVec = rotVecs[index];
 }
+ */
 
 float Estimate::getWeight(cv::Mat &mask) const
 {

@@ -132,4 +132,15 @@ void MatchFeaturePoint::sortMatchedPair
     }
 }
 
-
+void MatchFeaturePoint::getMatchKeyPoint
+(const std::vector<cv::KeyPoint> &forKeyPointsSet,
+ const std::vector<cv::KeyPoint> &latKeyPointsSet,
+ const std::vector<cv::DMatch> &matchs,
+ std::vector<cv::KeyPoint> &forKeyPoints,
+ std::vector<cv::KeyPoint> &latKeyPoints) const
+{
+    for (int i = 0; i < matchs.size(); i++) {
+        forKeyPoints.push_back(forKeyPointsSet[matchs[i].queryIdx]);
+        latKeyPoints.push_back(latKeyPointsSet[matchs[i].trainIdx]);
+    }
+}

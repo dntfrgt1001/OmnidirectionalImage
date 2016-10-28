@@ -76,11 +76,13 @@ public:
      cv::Mat& descriptorsRotFront, const cv::Mat& frontMat) const;
     */
     
+    /*
     // 最終的な回転角，回転軸を決定
     void integrateRotVec
     (const std::vector<cv::Vec3f>& rotVecs, std::vector<float>& weights,
      cv::Vec3f& rotVec) const;
-
+     */
+    
     // それぞれの方向で推定された回転の重みを返す
     float getWeight(cv::Mat& mask) const;
     

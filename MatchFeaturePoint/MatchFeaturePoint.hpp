@@ -61,6 +61,14 @@ public:
      std::vector<cv::Point2f>& for2DPoints,
      std::vector<cv::Point2f>& lat2DPoints);
     
+    // マッチした特徴点を返す
+    void getMatchKeyPoint
+    (const std::vector<cv::KeyPoint>& forKeyPointsSet,
+     const std::vector<cv::KeyPoint>& latKeyPointsSet,
+     const std::vector<cv::DMatch>& matchs,
+     std::vector<cv::KeyPoint>& forKeyPoints,
+     std::vector<cv::KeyPoint>& latKeyPoints) const;
+    
 private:
     const cv::Size& frameSize;
     const Transform& transform;

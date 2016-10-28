@@ -255,6 +255,3 @@ void MatchMain::getMatchCoord
     // 特徴点座標の組のユークリッド距離のフィルタリング
     mfp.filterCoordDistance(forSpheres, latSpheres);
 }
-
-
-

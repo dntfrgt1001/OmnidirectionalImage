@@ -77,9 +77,6 @@ public:
     (const std::vector<cv::KeyPoint>& keyPoints, const cv::Mat& descriptors,
      std::vector<cv::KeyPoint>& keyPointsValid, cv::Mat& descriptorsValid,
      const cv::Mat& froMat) const;
-    
-    // 画像の正面を塗りつぶす
-    
 
 private:
     const cv::Size& fs;

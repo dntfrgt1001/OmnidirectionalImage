@@ -27,12 +27,15 @@
 #include "Range.hpp"
 #include "Perspective.hpp"
 #include "OpticalFlow.hpp"
+#include "MainProcess.hpp"
+#include "FeatureMatchEstimator.hpp"
+#include "Epipolar.hpp"
 
 int main(int argc, const char * argv[])
 {
     const std::string path = "/Users/masakazu/Desktop/";
-    const std::string inputName1 = path + "image0035.jpg";
-    const std::string inputName2 = path + "image0036.jpg";
+    const std::string inputName1 = path + "image1.jpg";
+    const std::string inputName2 = path + "image2.jpg";
 
     const cv::Size fso(800, 400);
     const cv::Size fs(800, 400);
@@ -54,17 +57,27 @@ int main(int argc, const char * argv[])
 
     float fieldAngle = M_PI / 3.0;
     Range rg(fs, tf, fieldAngle);
+    
     int numThre = 15;
-    const Estimate est(tf, rg, numThre);
+    Epipolar epi(tf, rg, numThre);
+    
+    FeatureMatchEstimator fme(fs, tf, efp, mfp, epi);
+    
+    MainProcess mp(tf, fme);
+    
+    cv::Mat modImg2;
+    mp.modifyLatImg(img1, img2, modImg2);
+    
+    cv::waitKey();
     
     const int persRad = 200;
     float rangeAngle = M_PI / 4.0;
     Perspective ps(tf, persRad, rangeAngle);
-    OpticalFlow of(tf, ps, est);
-    MatchMain mm(tfo, tf, efp, mfp, est, rg, of);
+ //   OpticalFlow of(tf, ps, est);
+ //   MatchMain mm(tfo, tf, efp, mfp, est, rg, of);
     
     cv::Mat modImg;
-    mm.ModifylatterImg(img1, img2, modImg);
+//    mm.ModifylatterImg(img1, img2, modImg);
     
     cv::namedWindow("img1");
     cv::namedWindow("img2");

@@ -77,15 +77,6 @@ public:
         
         const float cosRange = 1.0 / 4.0;
         
-        /*
-        std::cout << "cv = " << cirVec << ", " << cv::norm(cirVec) << std::endl;
-        std::cout << "rv = " << radVec << ", " << cv::norm(radVec) <<std::endl;
-        std::cout << "dot = " << cirVec.dot(radVec) << std::endl;
-        
-        float dotValue = radVec.x * cirVec.x + radVec.y * cirVec.y;
-        std::cout << "dot = " << dotValue << std::endl << std::endl;
-        */
-        
         if (-cosRange < cosAng && cosAng < cosRange) {
             return true;
         } else {

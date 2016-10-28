@@ -55,8 +55,9 @@ public:
      const std::vector<cv::KeyPoint>& latKeyPoints,
      const cv::Mat& latDescriprots,
      std::vector<cv::Point3f>& forSpheres,
-     std::vector<cv::Point3f>& latSpheres) ;
+     std::vector<cv::Point3f>& latSpheres);
     
+        
 private:
     const Transform& otf;
     const Transform& tf;
