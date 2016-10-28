@@ -14,22 +14,28 @@
 #include <opencv2/core.hpp>
 
 #include "Estimator.hpp"
-#include "OpticalFlow.hpp"
 #include "Perspective.hpp"
 #include "Epipolar.hpp"
+#include "Rotation.hpp"
+#include "CalcOpticalFlow.hpp"
 
 class OpticalFlowEstimator: public Estimator
 {
 public:
     OpticalFlowEstimator
-    (const cv::Size& fs, const Transform& tf,
-     const OpticalFlow& of, const Perspective& pers, const Epipolar& epi):
-    Estimator(fs, tf), of(of), epi(epi) {};
+    (const Transform& tf, const CalcOpticalFlow& cof,
+     const Perspective& per, const Epipolar& epi):
+    Estimator(tf), cof(cof), per(per), epi(epi) {};
     
-    cv::Mat getRotMat(const cv::Mat& forImg, const cv::Mat latImg) const;
+    cv::Mat getRotMat(const cv::Mat& forImg, const cv::Mat& latImg) const;
+    
+    cv::Mat getRotMat
+    (const cv::Mat& forImg, const cv::Mat& latImg,
+     const cv::Mat& froChgMat) const;
     
 private:
-    const OpticalFlow& of;
+    const CalcOpticalFlow& cof;
+    const Perspective& per;
     const Epipolar& epi;
 };
 

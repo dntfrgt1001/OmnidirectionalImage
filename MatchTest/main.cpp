@@ -17,19 +17,18 @@
 #include <opencv2/calib3d.hpp>
 
 #include "Transform.hpp"
-#include "MatchMain.hpp"
 #include "Rotation.hpp"
 #include "ExtractFeaturePoint.hpp"
 #include "MatchFeaturePoint.hpp"
 #include "Quaternion.hpp"
-#include "VideoReader.hpp"
-#include "VideoWriter.hpp"
 #include "Range.hpp"
 #include "Perspective.hpp"
-#include "OpticalFlow.hpp"
 #include "MainProcess.hpp"
 #include "FeatureMatchEstimator.hpp"
+#include "OpticalFlowEstimator.hpp"
+#include "CalcOpticalFlow.hpp"
 #include "Epipolar.hpp"
+
 
 int main(int argc, const char * argv[])
 {
@@ -49,132 +48,50 @@ int main(int argc, const char * argv[])
     const Transform tfo(fso);
     const Transform tf(fs);
     
-    int divNum = 6;
-    ExtractFeaturePoint efp(fs, tf, divNum);
-    int distThre = 200;
-    float coordThre = 0.30;
-    MatchFeaturePoint mfp(fs, tf, distThre, coordThre);
+    // -----------------------------------------------------
+    const int persRad = 200;
+    const float ranAng = M_PI / 4.0;
+    const Perspective per(tf, persRad, ranAng);
+    
+    const float margin = 0.1;
+    const float angRag = M_PI / 6.0;
+    const CalcOpticalFlow cof(margin, per, angRag);
 
-    float fieldAngle = M_PI / 3.0;
-    Range rg(fs, tf, fieldAngle);
-    
     int numThre = 15;
-    Epipolar epi(tf, rg, numThre);
+    const Epipolar epi(numThre);
+
+    const OpticalFlowEstimator ofe(tf, cof, per, epi);
     
-    FeatureMatchEstimator fme(fs, tf, efp, mfp, epi);
+    // -----------------------------------------------------
     
-    MainProcess mp(tf, fme);
+    const int divNum = 6;
+    ExtractFeaturePoint efp(fs, tf, divNum);
+    
+    const float distThre = 200;
+    const float coordThre = 0.4;
+    MatchFeaturePoint mfp(fs, tf, distThre, coordThre);
+    
+    float fieldAngle = M_PI / 4.0;
+    const Range ran(fs, tf, fieldAngle);
+    
+    const FeatureMatchEstimator fme(tf, efp, mfp, epi, ran);
+    
+    // -----------------------------------------------------
+    
+    MainProcess mp(tfo, fme, ofe);
     
     cv::Mat modImg2;
-    mp.modifyLatImg(img1, img2, modImg2);
-    
-    cv::waitKey();
-    
-    const int persRad = 200;
-    float rangeAngle = M_PI / 4.0;
-    Perspective ps(tf, persRad, rangeAngle);
- //   OpticalFlow of(tf, ps, est);
- //   MatchMain mm(tfo, tf, efp, mfp, est, rg, of);
-    
-    cv::Mat modImg;
-//    mm.ModifylatterImg(img1, img2, modImg);
+    mp.modifyLatImgOpticalFlow(img1, img2, modImg2);
     
     cv::namedWindow("img1");
     cv::namedWindow("img2");
-    cv::namedWindow("mod");
+    cv::namedWindow("mod img2");
     
     cv::imshow("img1", img1);
     cv::imshow("img2", img2);
-    cv::imshow("mod", modImg);
+    cv::imshow("mod img2", modImg2);
     
-    cv::waitKey(-1);
-    
-    /*
-    cv::Mat modImg(frameSize, CV_8UC3);
-    match.rotateYMatch(img2, modImg);
-
-    
-    cv::namedWindow("standard image", CV_WINDOW_AUTOSIZE|CV_WINDOW_FREERATIO);
-    cv::namedWindow("query image", CV_WINDOW_AUTOSIZE|CV_WINDOW_FREERATIO);
-    cv::namedWindow("modified image", CV_WINDOW_AUTOSIZE|CV_WINDOW_FREERATIO);
-    
-    cv::imshow("standard image", img);
-    cv::imshow("query image", img2);
-    cv::imshow("modified image", modImg);
-    */
-    /*
-    
-    cv::Rect roi(0, frameSize.height/2 - orthRange/2,
-                 frameSize.width, orthRange);
-    
-    cv::Mat roi1 = img(roi);
-    cv::Mat roi2 = img2(roi);
-    
-//    cv::initModule_nonfree();
-    
-    cv::Ptr<cv::FeatureDetector> detector = cv::FeatureDetector::create("SIFT");
-    
-    cv::vector<cv::KeyPoint> keyPoints1, keyPoints2;
-    
-    detector->detect(roi1, keyPoints1);
-    detector->detect(roi2, keyPoints2);
-    
-    cv::Ptr<cv::DescriptorExtractor> extractor = cv::DescriptorExtractor::create("SIFT");
-    
-    cv::Mat descriptor1, descriptor2;
-    
-    extractor->compute(roi1, keyPoints1, descriptor1);
-    extractor->compute(roi2, keyPoints2, descriptor2);
-    
-    cv::Ptr<cv::DescriptorMatcher> matcher = cv::DescriptorMatcher::create("BruteForce");
-    
-    cv::vector<cv::DMatch> dmatch12, dmatch21, dmatch;
-    
-    matcher->match(descriptor1, descriptor2, dmatch12);
-    matcher->match(descriptor2, descriptor1, dmatch21);
-    
-    for (int i=0; i<dmatch12.size(); i++) {
-        cv::DMatch forward = dmatch12[i];
-        cv::DMatch backward = dmatch21[forward.trainIdx];
-        
-        if (backward.trainIdx == forward.queryIdx) {
-            dmatch.push_back(forward);
-        }
-    }
-    
-    std::cout << "match number = " << dmatch.size() << std::endl;
-    
-    int count = 0;
-    cv::Point2f avePoint(0.0, 0.0);
-    for (int i=0; i<dmatch.size(); i++) {
-        cv::Point2f pt1 = keyPoints1[dmatch[i].queryIdx].pt;
-        cv::Point2f pt2 = keyPoints2[dmatch[i].trainIdx].pt;
-        
-        count++;
-        if (pt1.x <= pt2.x) {
-            avePoint += pt2 - pt1;
-        }else{
-            avePoint += cv::Point2f(frameSize.width, 0.0) + pt2 - pt1;
-        }
-    }
-    avePoint = avePoint * (1.0/count);
-    
-    
-    std::cout << "delta Point = " << avePoint << std::endl;
-    
-    cv::Mat result;
-    
-//    cv::drawKeypoints(roi1, keyPoints1, roi1);
-    
-    
-    cv::drawMatches(roi1, keyPoints1, roi2, keyPoints2, dmatch, result);
-    
-    std::cout << "number of keypoint is " << keyPoints1.size() << std::endl;
-    
-    
-    cv::namedWindow("result");
-    cv::imshow("result", result);
-    */
+    cv::waitKey();
     
     return 0;
 }

@@ -8,20 +8,20 @@
 
 #include "MainProcess.hpp"
 
-void MainProcess::modifyLatImg
+void MainProcess::modifyLatImgFeatureMatch
 (const cv::Mat &forImg, const cv::Mat &latImg, cv::Mat &modLatImg)
 {
-    cv::Mat estRotMat = fme.estRotMat(forImg, latImg);
+    cv::Mat estRotMat = fme.getRotMat(forImg, latImg);
     
     tf.rotateImg(latImg, modLatImg, estRotMat);
+}
+
+void MainProcess::modifyLatImgOpticalFlow
+(const cv::Mat &forImg, const cv::Mat &latImg, cv::Mat &modLatImg)
+{
+    cv::Mat froChgMat = (cv::Mat_<float>(3,3) << 0,0,1,0,1,0,-1,0,0);
     
-    cv::namedWindow("previous");
-    cv::namedWindow("next");
-    cv::namedWindow("mod next");
+    cv::Mat estRotMat = ofe.getRotMat(forImg, latImg, froChgMat);
     
-    cv::imshow("previous", forImg);
-    cv::imshow("next", latImg);
-    cv::imshow("mod next", modLatImg);
-    
-    cv::waitKey();
+    tf.rotateImg(latImg, modLatImg, estRotMat);
 }

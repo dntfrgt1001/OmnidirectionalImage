@@ -82,6 +82,21 @@ void Rotation::vec2zDirMat(const cv::Vec3f &vec, cv::Mat &rotMat)
     RotVec2RotMat(rotVec, rotMat);
 }
 
+void Rotation::chgRotMat
+(const cv::Mat &rotMat, const cv::Mat &froChgMat, cv::Mat& rotMatChg)
+{
+    // 回転ベクトルに変換
+    cv::Vec3f rotVec;
+    RotMat2RotVec(rotMat, rotVec);
+    
+    // 回転ベクトルを回転
+    cv::Vec3f rotVecChg = cv::Vec3f(cv::Mat1f(froChgMat *
+                                              cv::Mat1f(rotVec)));
+    
+    // 回転行列に変換
+    RotVec2RotMat(rotVecChg, rotMatChg);
+}
+
 void Rotation::normalRotMat(cv::Mat &rotMat)
 {
     Quaternion quat;

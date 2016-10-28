@@ -77,7 +77,7 @@ void OpticalFlow::getNormalPairOneDir
     
     const float margin = 0.1;
     cv::Mat mask;
-    ps.getMask(margin, mask);
+//    ps.getMask(margin, mask);
     
     // 特徴点抽出
     std::vector<cv::Point2f> forPerss, latPerss;

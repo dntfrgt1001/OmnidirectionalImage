@@ -12,19 +12,57 @@
 #include <stdio.h>
 
 #include <opencv2/core.hpp>
-#include <opencv2/tracking.hpp>
+#include <opencv2/video.hpp>
+
+#include "Perspective.hpp"
 
 class CalcOpticalFlow {
 public:
-    CalcOpticalFlow();
+    CalcOpticalFlow
+    (const float margin, const Perspective& per, const float angRag):
+    optflowMask(per.getMask(margin)), cosRag(cosf(angRag)) {};
     
+    // 正面/背面の特徴点の組を求める
+    void getNormalPair
+    (const cv::Mat& forPersImg, const cv::Mat& latPersImg,
+     const cv::Mat& froChgMat, std::vector<cv::Point2f>& forNormals,
+     std::vector<cv::Point2f>& latNormals) const;
+    
+    // 正面か背面の特徴点の組を求める
+    void getNormalPairOneDir
+    (const cv::Mat& forPersImg, const cv::Mat& latPersImg,
+     const cv::Mat& froChgMat, const bool isFront,
+     std::vector<cv::Point2f>& forNormals,
+     std::vector<cv::Point2f>& latNormals) const;
+    
+    // オプティカルフローを求める
     void getOpticalFlow
-    (const cv::Mat& forPersImg, const cv::Mat& latPersImg);
+    (const cv::Mat& forPersImg, const cv::Mat& latPersImg,
+     std::vector<cv::Point2f>& forPerss,
+     std::vector<cv::Point2f>& latPerss) const;
     
-    cv::Mat getMask();
+    // 正規化画像座標で半径方向と直交しないものを取り除く
+    void remOrthOutlier
+    (std::vector<cv::Point2f>& forNormals,
+     std::vector<cv::Point2f>& latNormals) const;
+    
+    // 直交の条件を満たすか
+    bool isOrthCond
+    (const cv::Point2f& forNormal, const cv::Point2f& latNormal) const {
+        cv::Point2f rad = (forNormal + latNormal) / 2.0;
+        cv::Point2f cir = latNormal - forNormal;
+        
+        // 半径方向となす角のコサイン
+        float cosAng = rad.dot(cir) / (cv::norm(rad)*cv::norm(cir));
+        
+        if (-cosRag < cosAng && cosAng < cosRag) return true;
+        else return false;
+    }
+    
     
 private:
-    
+    const cv::Mat optflowMask;
+    const float cosRag;
 };
 
 #endif /* CalcOpticalFlow_hpp */

@@ -16,13 +16,6 @@
 #include <opencv2/calib3d.hpp>
 
 #include "Transform.hpp"
-/*
-float ellLengHori = inParaMat.at<float>(0, 0) * rangeRadius;
-float ellLengVert = inParaMat.at<float>(1, 1) * rangeRadius;
-
-float persWidth = inParaMat.at<float>(0, 2) + ellLengHori;
-float persHeight = inParaMat.at<float>(1, 2) + ellLengVert;
-*/
 
 class Perspective
 {
@@ -37,8 +30,16 @@ public:
     (const cv::Mat& img, cv::Mat& persImg,
      const cv::Mat& froMat, const bool isFront) const;
     
-    // 透視投影画像の中で有効な部分のマスク
-    void getMask(const float margin, cv::Mat& mask) const;
+    // 透視投影画像の中で有効な部分のマスク(CalcOpticalFlow用)
+    cv::Mat getMask(const float margin) const;
+    
+    // 有効範囲内か
+    bool isInRange
+    (const cv::Point2f& pers, const float rad) const {
+        cv::Point2f normal;
+        tf.pers2normal(pers, normal, inParaMat);
+        return normal.x*normal.x + normal.y*normal.y < rad*rad;
+    }
     
     // 透視投影画像中の中心を返す
     void getPersCenter(cv::Point2f& center) const {
@@ -46,9 +47,8 @@ public:
                              inParaMat.at<float>(1, 2));
     }
     
-    const cv::Mat& getInParaMat() const {
-        return inParaMat;
-    }
+    //内部パラメータ行列を返す
+    const cv::Mat& getInParaMat() const { return inParaMat; }
     
 private:
     const Transform& tf;

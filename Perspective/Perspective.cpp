@@ -36,16 +36,14 @@ void Perspective::getPersImg
     for (int u = 0; u < pfs.width; u++) {
         for (int v = 0; v < pfs.height; v++) {
             cv::Point2f pers(u, v);
-            cv::Point2f normal;
-            tf.pers2normal(pers, normal, inParaMat);
             
-            float lmr = normal.x*normal.x + normal.y*normal.y -
-            normalRad*normalRad;
-            
-            if (lmr < 0) {
+            if (isInRange(pers, normalRad)) {
+                cv::Point2f normal;
+                tf.pers2normal(pers, normal, inParaMat);
+                
                 cv::Point3f sphere, sphereRot;
                 tf.normal2sphere(normal, sphere, isFront);
-                // 回転
+                
                 tf.rotateSphere(sphere, sphereRot, froMatInv);
                 
                 cv::Point2f equirectRot;
@@ -69,25 +67,21 @@ void Perspective::getPersImg
     cv::waitKey();
 }
 
-void Perspective::getMask(const float margin, cv::Mat &mask) const
+cv::Mat Perspective::getMask(const float margin) const
 {
-    mask = cv::Mat::zeros(pfs, CV_8U);
+    cv::Mat mask = cv::Mat::zeros(pfs, CV_8UC1);
     
     for (int u = 0; u < pfs.width; u++) {
         for (int v = 0; v < pfs.height; v++) {
             cv::Point2f pers(u, v);
-            cv::Point2f normal;
-            tf.pers2normal(pers, normal, inParaMat);
             
-            
-            float lmr = normal.x*normal.x + normal.y*normal.y -
-            (normalRad-margin)*(normalRad-margin);
-            
-            if (lmr < 0) {
+            if (isInRange(pers, normalRad - margin)) {
                 mask.at<uchar>(v, u) = 255;
             }
         }
     }
+    
+    return mask;
 }
 
 /*
