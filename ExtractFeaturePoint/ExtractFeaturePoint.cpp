@@ -9,18 +9,13 @@
 #include "ExtractFeaturePoint.hpp"
 
 ExtractFeaturePoint::ExtractFeaturePoint
-(const cv::Size& frameSize, const Transform& transform, int divNum):
-frameSize(frameSize), transform(transform), divNum(divNum),
-validHeight(transform.dphi2v(M_PI)/divNum), mergin(10),
-roi(cv::Rect(0, (frameSize.height - validHeight)/2 - mergin,
-             frameSize.width, validHeight + mergin*2)),
-feature(cv::xfeatures2d::SIFT::create())
+(const cv::Size& fs, const Transform& tf, const int divNum):
+fs(fs), tf(tf), divNum(divNum), validHeight(tf.dphi2v(M_PI)/divNum),
+mergin(10), roi(cv::Rect(0, (fs.height - validHeight)/2 - mergin,
+                         fs.width, validHeight + mergin*2)),
+//feature(cv::xfeatures2d::SIFT::create())
 //feature(cv::AKAZE::create())
-//feature(cv::xfeatures2d::SURF::create())
-{
-}
-
-ExtractFeaturePoint::~ExtractFeaturePoint()
+feature(cv::xfeatures2d::SURF::create())
 {
 }
 
@@ -43,7 +38,7 @@ void ExtractFeaturePoint::extractRoiFeaturePoint
     float rotAngle = -1 * M_PI /2 +  M_PI*((float)number / divNum);
     
     cv::Mat rotImg;
-    transform.rotateImgVertRect(rotAngle, img, roi, rotImg);
+    tf.rotateImgVertRect(rotAngle, img, roi, rotImg);
     
     // 低緯度領域で特徴点を抽出
     feature->detect(rotImg(roi), roiKeyPoints);
@@ -63,7 +58,7 @@ void ExtractFeaturePoint::rotateKeyPointCoord
 {
     for (int i=0; i<keyPoints.size(); i++) {
         cv::Point2f latequirect;
-        transform.rotateEquirectVert(angle, keyPoints[i].pt, latequirect);
+        tf.rotateEquirectVert(angle, keyPoints[i].pt, latequirect);
         
         keyPoints[i].pt = latequirect;
     }
@@ -115,10 +110,11 @@ void ExtractFeaturePoint::filterLowLatitue
 }
 
 
-bool ExtractFeaturePoint::isInLowLatitude(const cv::Point2f& equirect) const
+bool ExtractFeaturePoint::isInLowLatitude
+(const cv::Point2f& equirect) const
 {
     cv::Point2f polar;
-    transform.equirect2polar(equirect, polar);
+    tf.equirect2polar(equirect, polar);
     
     float theta = polar.x;
     float phi = polar.y;

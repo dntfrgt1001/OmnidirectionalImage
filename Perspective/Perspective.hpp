@@ -23,6 +23,7 @@ public:
     Perspective
     (const Transform& tf, const int persRad, const float rangeAngle);
     
+    // 内部パラメータ行列を返す
     cv::Mat getInParaMat(const int persRad, const float ratio) const;
     
     // 透視投影画像を返す

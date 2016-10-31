@@ -125,6 +125,10 @@ public:
         pers.x = inParaMat.at<float>(0,0)*normal.x+inParaMat.at<float>(0,2);
         pers.y = inParaMat.at<float>(1,1)*normal.y+inParaMat.at<float>(1,2);
     }
+    void normal2pers
+    (const std::vector<cv::Point2f>& normals,
+     std::vector<cv::Point2f>& perss,
+     const cv::Mat& inParaMat) const;
     
     // 透視投影画像座標->正規化画像座標
     void pers2normal
@@ -149,7 +153,6 @@ public:
         sphere.y = normal.y / denomi;
         sphere.z = 1 / denomi;
         if (!isFront) sphere = -1 * sphere;
-        
     }
     
     // 点群変換のテンプレート

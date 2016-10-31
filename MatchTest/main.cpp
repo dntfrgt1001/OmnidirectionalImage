@@ -33,11 +33,11 @@
 int main(int argc, const char * argv[])
 {
     const std::string path = "/Users/masakazu/Desktop/";
-    const std::string inputName1 = path + "image1.jpg";
-    const std::string inputName2 = path + "image2.jpg";
+    const std::string inputName1 = path + "img1.jpg";
+    const std::string inputName2 = path + "img2.jpg";
 
-    const cv::Size fso(800, 400);
-    const cv::Size fs(500, 250);
+    const cv::Size fso(1000, 500);
+    const cv::Size fs(1000, 500);
     
     cv::Mat input1, img1, input2, img2;
     input1 = cv::imread(inputName1);
@@ -45,38 +45,35 @@ int main(int argc, const char * argv[])
     input2 = cv::imread(inputName2);
     cv::resize(input2, img2, fso);
     
-    
     const Transform tfo(fso);
     const Transform tf(fs);
     
-    // -----------------------------------------------------
-    const int persRad = 100;
-    const float ranAng = M_PI / 3.0;
-    const Perspective per(tf, persRad, ranAng);
-    
-    const float margin = 0.1;
-    const float angRag = M_PI / 6.0;
-    const CalcOpticalFlow cof(margin, per, angRag);
-
-    int numThre = 15;
+    const int numThre = 15;
     const Epipolar epi(numThre);
-
-    const OpticalFlowEstimator ofe(tf, cof, per, epi);
-    
     // -----------------------------------------------------
-    
+    // 特徴点マッチング用
     const int divNum = 6;
     ExtractFeaturePoint efp(fs, tf, divNum);
     
     const float distThre = 200;
     const float coordThre = 0.4;
-    MatchFeaturePoint mfp(fs, tf, distThre, coordThre);
+    MatchFeaturePoint mfp(tf, distThre, coordThre);
     
-    float fieldAngle = M_PI / 4.0;
+    const float fieldAngle = M_PI / 4.0;
     const Range ran(fs, tf, fieldAngle);
     
     const FeatureMatchEstimator fme(tf, efp, mfp, epi, ran);
+    // -----------------------------------------------------
+    // オプティカルフロー用
+    const int persRad = 150;
+    const float ranAng = M_PI / 4.0;
+    const Perspective per(tf, persRad, ranAng);
     
+    const float margin = 0.1;
+    const float angRag = M_PI / 3.0;
+    const CalcOpticalFlow cof(margin, per, angRag);
+    
+    const OpticalFlowEstimator ofe(tf, cof, per, epi);
     // -----------------------------------------------------
     
     MainProcess mp(tfo, fme, ofe);

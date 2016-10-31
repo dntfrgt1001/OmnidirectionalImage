@@ -90,6 +90,20 @@ void Transform::pers2normal
     }
 }
 
+void Transform::normal2pers
+(const std::vector<cv::Point2f> &normals,
+ std::vector<cv::Point2f> &perss,
+ const cv::Mat &inParaMat) const
+{
+    perss.clear();
+    
+    for (int i = 0; i < normals.size(); i++) {
+        cv::Point2f pers;
+        normal2pers(normals[i], pers, inParaMat);
+        perss.push_back(pers);
+    }
+}
+
 template
 <class forTp, class latTp, void (Transform::*func)(const forTp&, latTp&) const>
 void Transform::points2points

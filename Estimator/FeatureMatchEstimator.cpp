@@ -127,6 +127,7 @@ cv::Mat FeatureMatchEstimator::getRotMatWeightMax
     
     bool sucFlag = false;
     
+    // ５方向で推定
     for (int i = 0; i < froChgMats.size(); i++) {
         rotMats[i] =
         getRotMatSpecDir
@@ -141,5 +142,16 @@ cv::Mat FeatureMatchEstimator::getRotMatWeightMax
     }
     
     maxIdx = epi.getMaxWeightIndex(weights);
+    
+    /*
+    // 回転軸方向で推定
+    cv::Mat froChgMatAxis;
+    Rotation::getFroChgMat(rotMats[maxIdx], froChgMatAxis);
+    cv::Mat rotMatAxis;
+    float weightAxis;
+    rotMatAxis =
+    getRotMatSpecDir(forSpheres, latSpheres, froChgMatAxis, weightAxis);
+    */
+    
     return rotMats[maxIdx];
 }

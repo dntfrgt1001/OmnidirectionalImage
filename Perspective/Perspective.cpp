@@ -15,6 +15,7 @@ tf(tf), normalRad(tanf(rangeAngle)),
 inParaMat(getInParaMat(persRad, tanf(rangeAngle))),
 pfs(cv::Size(persRad*2, persRad*2))
 {
+    std::cout << "InParaMat = " << std::endl << inParaMat << std::endl;
 }
 
 cv::Mat Perspective::getInParaMat
@@ -58,10 +59,6 @@ void Perspective::getPersImg
             }
         }
     }
-    
-    cv::namedWindow("pers");
-    cv::imshow("pers", persImg);
-    cv::waitKey();
 }
 
 cv::Mat Perspective::getMask(const float margin) const

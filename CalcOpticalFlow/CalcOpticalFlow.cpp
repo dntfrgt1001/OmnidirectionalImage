@@ -55,8 +55,6 @@ void CalcOpticalFlow::getNormalPairOneDir
     // オプティカルフローを抽出
     std::vector<cv::Point2f> forPerss, latPerss;
     getOpticalFlow(forPersImg, latPersImg, forPerss, latPerss);
-    
-    
 }
 
 void CalcOpticalFlow::getOpticalFlow
@@ -105,5 +103,20 @@ void CalcOpticalFlow::remOrthOutlier
         } else {
             i++;
         }
+    }
+}
+
+void CalcOpticalFlow::drawOpticalFlow
+(const cv::Mat &persImg, const std::vector<cv::Point2f> &forPerss,
+ const std::vector<cv::Point2f> &latPerss, cv::Mat &drawImg) const
+{
+    drawImg = persImg.clone();
+    
+    for (int i = 0; i < forPerss.size(); i++) {
+        cv::line
+        (drawImg, forPerss[i], latPerss[i],
+         cv::Scalar(rand()%256, rand()%256, rand()%256), 2, CV_AA);
+        cv::circle
+        (drawImg, latPerss[i], 3, cv::Scalar(0, 0, 0), -1, CV_AA);
     }
 }

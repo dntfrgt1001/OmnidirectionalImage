@@ -23,47 +23,66 @@
 #include "Estimate.hpp"
 #include "Range.hpp"
 
+#include "Epipolar.hpp"
+#include "FeatureMatchEstimator.hpp"
+#include "OpticalFlowEstimator.hpp"
+#include "MainProcess.hpp"
+
 int main(int argc, const char * argv[])
 {
     // ffmpeg -f image2 -r 30 -i image%4d.jpg -pix_fmt yuv420p video.mp4
     
-//    const std::string path = "/Users/masakazu/Desktop/video/20160901/THETA/";
-    const std::string path = "/Users/masakazu/Desktop/bowling/";
-    const std::string inputVideoName = path + "bowl-rot";
-//    const std::string inputVideoNamePreFixed = path + "sample2-pre";
-    const std::string outputVideoName = path + "bowl1";
+    const std::string path = "/Users/masakazu/Desktop/";
+    const std::string inputVideoName = path + "rot.mp4";
+    const std::string outputVideoName = path + "rotation-test.mp4";
     
-//    const cv::Size frameSizeOriginal(1280, 640);
-    const cv::Size fso(960, 480);
-    const cv::Size fs(960, 480);
+    const cv::Size fso(720, 360);
+    const cv::Size fs(720, 360);
     
     int stride = 1;
-    VideoReaderPic vr(fso, inputVideoName, stride);
-    VideoWriterPic vw(fso, outputVideoName);
+    VideoReaderMov vr(fso, inputVideoName, stride);
+    VideoWriterMov vw(fso, outputVideoName);
     
     const Transform tfo(fso);
     const Transform tf(fs);
     
-    int divNum = 6;
-    ExtractFeaturePoint efp(fs, tf, divNum);
+    const int numThre = 15;
+    const Epipolar epi(numThre);
+    // -----------------------------------------------------
+    // 特徴点マッチ用
+    const int divNum = 6;
+    const ExtractFeaturePoint efp(fs, tf, divNum);
     
-    int matchThres = 180;
-    float coordThres = 0.4;
-    MatchFeaturePoint mfp(fs, tf, matchThres, coordThres);
-
-    float rangeAngle = M_PI / 3.0;
-    const Range rg(fs, tf, rangeAngle);
-
-    int numThre = 10;
-    const Estimate est(tf, rg, numThre);
-    MatchMain mm(tfo, tf, efp, mfp, est, rg);
-
+    const float distThre = 200;
+    const float coordThre = 0.4;
+    const MatchFeaturePoint mfp(tf, distThre, coordThre);
+    
+    const float fieldAngle = M_PI / 4.0;
+    const Range ran(fs, tf, fieldAngle);
+    
+    const FeatureMatchEstimator fme(tf, efp, mfp, epi, ran);
+    // -----------------------------------------------------
+    // オプティカルフロー用
+    const int persRad = 150;
+    const float ranAng = M_PI / 4.0;
+    const Perspective per(tf, persRad, ranAng);
+    
+    const float margin = 0.1;
+    const float angRag = M_PI / 4.0;
+    const CalcOpticalFlow cof(margin, per, angRag);
+    
+    const OpticalFlowEstimator ofe(tf, cof, per, epi);
+    // -----------------------------------------------------
+    
+    MainProcess mp(tfo, fme, ofe);
+    
+    mp.modVideo(vr, vw);
+    
     cv::Mat curRotMat = (cv::Mat_<float>(3,3)
                          << -0.39498305, -0.34497485, 0.85145819,
                             -0.64893043, 0.76081359, 0.0072172284,
                             -0.65029073, -0.54968637, -0.52437317);
     
-    mm.ModifyVideo(vr, vw);
     //VideoReaderPic vrPreFixed(frameSizeOriginal, inputVideoNamePreFixed, stride);
     //mm.ModifyVideoMid(vr, vrPreFixed, vw, 30, curRotMat);
     

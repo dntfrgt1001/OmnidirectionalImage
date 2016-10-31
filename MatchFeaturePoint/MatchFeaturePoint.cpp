@@ -9,15 +9,11 @@
 #include "MatchFeaturePoint.hpp"
 
 MatchFeaturePoint::MatchFeaturePoint
-(const cv::Size& frameSize, const Transform& transform,
- float distThreshold, float coordThreshold):
-frameSize(frameSize), transform(transform),
+(const Transform& transform, const float distThreshold,
+ const float coordThreshold):
+transform(transform),
 distThreshold(distThreshold), coordThreshold(coordThreshold),
 matcher(cv::DescriptorMatcher::create("BruteForce"))
-{
-}
-
-MatchFeaturePoint::~MatchFeaturePoint()
 {
 }
 
@@ -40,11 +36,12 @@ void MatchFeaturePoint::crossMatch
 {
     dMatches.clear();
     
-    for (int i=0; i<dMatches1.size(); i++) {
+    for (int i = 0; i < dMatches1.size(); i++) {
         cv::DMatch forward = dMatches1[i];
         cv::DMatch backward = dMatches2[forward.trainIdx];
         
-        if (forward.queryIdx == backward.trainIdx) dMatches.push_back(forward);
+        if (forward.queryIdx == backward.trainIdx)
+            dMatches.push_back(forward);
     }
 }
 
@@ -52,7 +49,7 @@ void MatchFeaturePoint::filterMatchDistance
 (std::vector<cv::DMatch> &dMatches) const
 {
     // .eraseに注意
-    for (int i=0; i<dMatches.size();  ) {
+    for (int i = 0; i < dMatches.size();  ) {
         if (dMatches[i].distance > distThreshold)
             dMatches.erase(dMatches.begin() + i);
         else
@@ -61,14 +58,14 @@ void MatchFeaturePoint::filterMatchDistance
 }
 
 void MatchFeaturePoint::filterCoordDistance
-(std::vector<cv::Point3f> &for3DPoints,
- std::vector<cv::Point3f> &lat3DPoints) const
+(std::vector<cv::Point3f> &forSpheres,
+ std::vector<cv::Point3f> &latSpheres) const
 {
     // .eraseに注意
-    for (int i=0; i<for3DPoints.size(); ) {
-        if (cv::norm(for3DPoints[i] - lat3DPoints[i]) > coordThreshold) {
-            for3DPoints.erase(for3DPoints.begin() + i);
-            lat3DPoints.erase(lat3DPoints.begin() + i);
+    for (int i = 0; i < forSpheres.size(); ) {
+        if (cv::norm(forSpheres[i] - latSpheres[i]) > coordThreshold) {
+            forSpheres.erase(forSpheres.begin() + i);
+            latSpheres.erase(latSpheres.begin() + i);
         } else {
             i++;
         }
@@ -117,19 +114,6 @@ void MatchFeaturePoint::drawMatchLine
     cv::line
     (outImg, forPoint, latPoint,
      cv::Scalar(rand()%256, rand()%256, rand()%256), 2, CV_AA);
-}
-
-void MatchFeaturePoint::sortMatchedPair
-(const std::vector<cv::KeyPoint> &forKeyPoints,
- const std::vector<cv::KeyPoint> &latKeyPoints,
- const std::vector<cv::DMatch> &dMatches,
- std::vector<cv::Point2f> &for2DPoints,
- std::vector<cv::Point2f> &lat2DPoints)
-{
-    for (auto dMatch: dMatches) {
-        for2DPoints.push_back(forKeyPoints[dMatch.queryIdx].pt);
-        lat2DPoints.push_back(latKeyPoints[dMatch.trainIdx].pt);
-    }
 }
 
 void MatchFeaturePoint::getMatchKeyPoint

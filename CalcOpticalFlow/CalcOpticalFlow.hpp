@@ -55,10 +55,15 @@ public:
         // 半径方向となす角のコサイン
         float cosAng = rad.dot(cir) / (cv::norm(rad)*cv::norm(cir));
         
+        // コサインの範囲内か
         if (-cosRag < cosAng && cosAng < cosRag) return true;
         else return false;
     }
     
+    // オプティカルフロー描画
+    void drawOpticalFlow
+    (const cv::Mat& persImg, const std::vector<cv::Point2f>& forPerss,
+     const std::vector<cv::Point2f>& latPerss, cv::Mat& drawImg) const;
     
 private:
     const cv::Mat optflowMask;
