@@ -37,20 +37,21 @@ int main(int argc, const char * argv[])
     const std::string inputName2 = path + "image2.jpg";
 
     const cv::Size fso(800, 400);
-    const cv::Size fs(800, 400);
+    const cv::Size fs(500, 250);
     
     cv::Mat input1, img1, input2, img2;
     input1 = cv::imread(inputName1);
-    cv::resize(input1, img1, fs);
+    cv::resize(input1, img1, fso);
     input2 = cv::imread(inputName2);
-    cv::resize(input2, img2, fs);
+    cv::resize(input2, img2, fso);
+    
     
     const Transform tfo(fso);
     const Transform tf(fs);
     
     // -----------------------------------------------------
-    const int persRad = 200;
-    const float ranAng = M_PI / 4.0;
+    const int persRad = 100;
+    const float ranAng = M_PI / 3.0;
     const Perspective per(tf, persRad, ranAng);
     
     const float margin = 0.1;
@@ -81,6 +82,7 @@ int main(int argc, const char * argv[])
     MainProcess mp(tfo, fme, ofe);
     
     cv::Mat modImg2;
+    //mp.modifyLatImgFeatureMatch(img1, img2, modImg2);
     mp.modifyLatImgOpticalFlow(img1, img2, modImg2);
     
     cv::namedWindow("img1");

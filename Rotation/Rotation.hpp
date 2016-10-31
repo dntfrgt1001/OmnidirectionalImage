@@ -46,13 +46,14 @@ public:
     (const cv::Mat& rotMat, cv::Vec3f& rotVec);
     
     // ベクトルをz軸正の向きになるよう回転させる行列
-    static void vec2zDirMat(const cv::Vec3f& vec, cv::Mat& rotMat);
+    static void getFroChgMat(const cv::Mat& rotMat, cv::Mat& froChgMat);
     
     // 回転行列の座標系を変更
-    static void chgRotMat
+    static void chgRotMatCoo
     (const cv::Mat& rotMat, const cv::Mat& froChgMat, cv::Mat& rotMatChg);
 
     // 回転行列を正規化
     static void normalRotMat(cv::Mat& rotMat);
 };
+
 #endif /* Rotation_hpp */

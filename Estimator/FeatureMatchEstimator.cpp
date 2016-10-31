@@ -18,7 +18,6 @@ Estimator(tf), efp(efp), mfp(mfp), epi(epi), ran(ran)
     froChgMats.push_back((cv::Mat_<float>(3,3) << 0,0,-1,0,1,0,1,0,0));
     froChgMats.push_back((cv::Mat_<float>(3,3) << 1,0,0,0,0,-1,0,1,0));
     
-    // 斜め方向に変換
     float sqrt6 = sqrtf(6.0);
     float sqrt3 = sqrtf(3.0);
     float sqrt2 = sqrtf(2.0);
@@ -108,7 +107,7 @@ cv::Mat FeatureMatchEstimator::getRotMatSpecDir
     if (weight < 0) { return cv::Mat::zeros(3, 3, CV_32FC1); }
     else {
         cv::Mat rotMatChg;
-        Rotation::chgRotMat(rotMat, froChgMat.inv(), rotMatChg);
+        Rotation::chgRotMatCoo(rotMat, froChgMat.inv(), rotMatChg);
 
         std::cout << "--------------------------------------" << std::endl;
         std::cout << "weight = " << weight << std::endl;
@@ -141,34 +140,6 @@ cv::Mat FeatureMatchEstimator::getRotMatWeightMax
         return cv::Mat::zeros(3, 3, CV_32FC1);
     }
     
-    maxIdx = getMaxWeightIndex(weights);
+    maxIdx = epi.getMaxWeightIndex(weights);
     return rotMats[maxIdx];
-}
-
-float FeatureMatchEstimator::getWeight(const cv::Mat &mask) const
-{
-    int count = 0;
-    for (int v = 0; v < mask.rows; v++) {
-        if (mask.at<uchar>(v, 0) != 0) count++;
-    }
-    
-    std::cout << "(all, inlier) = (" << mask.rows
-              << ", " << count << ")" << std::endl;
-    
-    return (float) count;
-}
-
-int FeatureMatchEstimator::getMaxWeightIndex
-(const std::vector<float> &weights) const
-{
-    std::cout << "weights = ";
-    for (int i = 0; i < weights.size(); i++) {
-        std::cout << weights[i] << " ";
-    }
-    std::cout << std::endl;
-    
-    std::vector<float>::const_iterator itr =
-    std::max_element(weights.begin(), weights.end());
-    
-    return (int) std::distance(weights.begin(), itr);
 }

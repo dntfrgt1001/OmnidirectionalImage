@@ -38,7 +38,7 @@ cv::Mat OpticalFlowEstimator::getRotMat
     
     // 回転行列の座標系を変更
     cv::Mat rotMatChg;
-    Rotation::chgRotMat(rotMat, froChgMat.inv(), rotMatChg);
+    Rotation::chgRotMatCoo(rotMat, froChgMat.inv(), rotMatChg);
     
     return rotMatChg;
 }

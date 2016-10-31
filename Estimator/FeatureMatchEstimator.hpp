@@ -40,12 +40,6 @@ public:
     (const std::vector<cv::Point3f>& forSpheres,
      const std::vector<cv::Point3f>& latSpheres, int& maxIdx) const;
     
-    // マスクから重みを計算する
-    float getWeight(const cv::Mat& mask) const;
-    
-    // 最も重みの大きいインデックスを返す
-    int getMaxWeightIndex(const std::vector<float>& weights) const;
-    
 private:
     const ExtractFeaturePoint& efp;
     const MatchFeaturePoint& mfp;

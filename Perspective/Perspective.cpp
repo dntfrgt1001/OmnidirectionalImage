@@ -59,9 +59,6 @@ void Perspective::getPersImg
         }
     }
     
-    cv::namedWindow("ori");
-    cv::imshow("ori", img);
-    
     cv::namedWindow("pers");
     cv::imshow("pers", persImg);
     cv::waitKey();

@@ -67,22 +67,25 @@ void Rotation::RotMat2RotVec
     cv::Rodrigues(rotMat, rotVec);
 }
 
-void Rotation::vec2zDirMat(const cv::Vec3f &vec, cv::Mat &rotMat)
+void Rotation::getFroChgMat(const cv::Mat &rotMat, cv::Mat &froChgMat)
 {
-    cv::Vec3f uniVec = vec/cv::norm(vec);
+    cv::Vec3f rotVec;
+    RotMat2RotVec(rotMat, rotVec);
+    
+    cv::Vec3f rotVecUni = rotVec/cv::norm(rotVec);
     
     // 回転角
-    float angle = acosf(uniVec[2]);
+    float angle = acosf(rotVecUni[2]);
     // 回転軸
-    float normAxis = sqrtf(uniVec[0]*uniVec[0] + uniVec[1]*uniVec[1]);
-    cv::Vec3f axis = cv::Vec3f(uniVec[1], -uniVec[0], 0) / normAxis;
+    float normAxis = sqrtf(rotVecUni[0]*rotVecUni[0]+rotVecUni[1]*rotVecUni[1]);
+    cv::Vec3f axis = cv::Vec3f(rotVecUni[1], -rotVecUni[0], 0) / normAxis;
     // 回転ベクトル
-    cv::Vec3f rotVec = angle * axis;
+    cv::Vec3f froChgVec = angle * axis;
     
-    RotVec2RotMat(rotVec, rotMat);
+    RotVec2RotMat(froChgVec, froChgMat);
 }
 
-void Rotation::chgRotMat
+void Rotation::chgRotMatCoo
 (const cv::Mat &rotMat, const cv::Mat &froChgMat, cv::Mat& rotMatChg)
 {
     // 回転ベクトルに変換
