@@ -10,45 +10,17 @@
 
 void CalcOpticalFlow::getNormalPair
 (const cv::Mat &forPersImg, const cv::Mat &latPersImg,
- const cv::Mat &froChgMat, std::vector<cv::Point2f> &forNormals,
+ const cv::Mat &curRotMat, std::vector<cv::Point2f> &forNormals,
  std::vector<cv::Point2f> &latNormals) const
 {
-    // 特徴点を一時的に格納
-    std::vector<cv::Point2f> forNormalsTmp, latNormalsTmp;
-    
-    // 正面の特徴点
-    bool isFront = true;
     getNormalPairOneDir
-    (forPersImg, latPersImg, froChgMat, isFront,
+    (forPersImg, latPersImg, curRotMat, isFront,
      forNormalsTmp, latNormalsTmp);
-    
-    // コピー
-    std::copy
-    (forNormalsTmp.begin(), forNormalsTmp.end(),
-     std::back_inserter(forNormals));
-    std::copy
-    (latNormalsTmp.begin(), latNormalsTmp.end(),
-     std::back_inserter(latNormals));
-    
-    /*
-     // 背面の特徴点
-     isFront = false;
-     getNormalPairOneDir
-     (forImg, latImg, rotMat, forNormalsTmp, latNormalsTmp, isFront);
-     
-     // コピー
-     std::copy
-     (forNormalsTmp.begin(), forNormalsTmp.end(),
-     std::back_inserter(forNormals));
-     std::copy
-     (latNormalsTmp.begin(), latNormalsTmp.end(),
-     std::back_inserter(latNormals));
-     */
 }
 
 void CalcOpticalFlow::getNormalPairOneDir
 (const cv::Mat &forPersImg, const cv::Mat &latPersImg,
- const cv::Mat &froChgMat, const bool isFront,
+ const cv::Mat &curRotMat, const bool isFront,
  std::vector<cv::Point2f> &forNormals,
  std::vector<cv::Point2f> &latNormals) const
 {

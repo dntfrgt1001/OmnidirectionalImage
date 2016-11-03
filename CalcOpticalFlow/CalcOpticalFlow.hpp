@@ -25,13 +25,13 @@ public:
     // 正面/背面の特徴点の組を求める
     void getNormalPair
     (const cv::Mat& forPersImg, const cv::Mat& latPersImg,
-     const cv::Mat& froChgMat, std::vector<cv::Point2f>& forNormals,
+     const cv::Mat& curRotMat, std::vector<cv::Point2f>& forNormals,
      std::vector<cv::Point2f>& latNormals) const;
     
     // 正面か背面の特徴点の組を求める
     void getNormalPairOneDir
     (const cv::Mat& forPersImg, const cv::Mat& latPersImg,
-     const cv::Mat& froChgMat, const bool isFront,
+     const cv::Mat& curRotMat, const bool isFront,
      std::vector<cv::Point2f>& forNormals,
      std::vector<cv::Point2f>& latNormals) const;
     
@@ -60,11 +60,18 @@ public:
         else return false;
     }
     
+    // 回転方向が逆ではないか
+    bool isRotDirCond
+    (const cv::Point2f& forNormal, const cv::Point2f& latNormal) const {
+        
+    }
+    
     // オプティカルフロー描画
     void drawOpticalFlow
     (const cv::Mat& persImg, const std::vector<cv::Point2f>& forPerss,
      const std::vector<cv::Point2f>& latPerss, cv::Mat& drawImg) const;
     
+
 private:
     const cv::Mat optflowMask;
     const float cosRag;

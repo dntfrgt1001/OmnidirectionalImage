@@ -70,6 +70,10 @@ public:
     // 特徴点が有効範囲にあるか
     bool isInLowLatitude(const cv::Point2f& equirect) const;
     
+    void drawKeyPoint
+    (const cv::Mat& img, const std::vector<cv::KeyPoint>& keyPoints,
+     cv::Mat& outImg) const;
+    
 private:
     const cv::Size& fs;
     const Transform& tf;

@@ -26,7 +26,7 @@ public:
     MainProcess
     (const Transform& tf, const FeatureMatchEstimator& fme,
      const OpticalFlowEstimator& ofe):
-    tf(tf), fme(fme), ofe(ofe), froChgMat(cv::Mat::eye(3,3,CV_32F)),
+    tf(tf), fme(fme), ofe(ofe), curRotMat(cv::Mat::eye(3,3,CV_32F)),
     accRotMat(cv::Mat::eye(3,3,CV_32F)) {};
     
     void modifyLatImgFeatureMatch
@@ -44,7 +44,7 @@ private:
     const FeatureMatchEstimator& fme;
     const OpticalFlowEstimator& ofe;
     cv::Mat accRotMat;
-    cv::Mat froChgMat;
+    cv::Mat curRotMat;
 };
 
 #endif /* MainProcess_hpp */

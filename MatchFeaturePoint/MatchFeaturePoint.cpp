@@ -72,48 +72,23 @@ void MatchFeaturePoint::filterCoordDistance
     }
 }
 
-void MatchFeaturePoint::drawMatchVertical
-(const cv::Mat &img1, const std::vector<cv::KeyPoint> &keyPoints1,
- const cv::Mat &img2, const std::vector<cv::KeyPoint> &keyPoints2,
- const std::vector<cv::DMatch> &dMatches, cv::Mat &outImg)
-{
-    cv::vconcat(img1, img2, outImg);
-    
-    for (int i=0; i<dMatches.size(); i++) {
-        cv::Point2f dpt1 = keyPoints1[dMatches[i].queryIdx].pt;
-        cv::Point2f dpt2 = keyPoints2[dMatches[i].trainIdx].pt;
-        
-        // 縦に重ねる分の座標を足す
-        dpt2.y = dpt2.y + img1.rows;
-        
-        drawMatchLine(dpt1, dpt2, outImg);
-    }
-}
-
-void MatchFeaturePoint::drawMatchesVertical
-(const cv::Mat &img1, const std::vector<cv::Point2f> &for2DPoints,
- const cv::Mat &img2, const std::vector<cv::Point2f> &lat2DPoints,
+void MatchFeaturePoint::drawMatchVert
+(const cv::Mat &img1, const std::vector<cv::Point2f> &forEquirects,
+ const cv::Mat &img2, const std::vector<cv::Point2f> &latEquirects,
  cv::Mat &outImg)
 {
     cv::vconcat(img1, img2, outImg);
     
-    for (int i=0; i<for2DPoints.size(); i++) {
-        cv::Point2f dpt1 = for2DPoints[i];
-        cv::Point2f dpt2 = lat2DPoints[i];
+    for (int i=0; i<forEquirects.size(); i++) {
+        cv::Point2f forEquirect = forEquirects[i];
+        cv::Point2f latEquirect = latEquirects[i];
         
-        dpt2.y = dpt2.y + img1.rows;
+        latEquirect.y = latEquirect.y + img1.rows;
         
-        drawMatchLine(dpt1, dpt2, outImg);
+        cv::line
+        (outImg, forEquirect, latEquirect,
+         cv::Scalar(rand()%256, rand()%256, rand()%256), 2, CV_AA);
     }
-}
-
-void MatchFeaturePoint::drawMatchLine
-(const cv::Point2f &forPoint, const cv::Point2f &latPoint,
- cv::Mat &outImg)
-{
-    cv::line
-    (outImg, forPoint, latPoint,
-     cv::Scalar(rand()%256, rand()%256, rand()%256), 2, CV_AA);
 }
 
 void MatchFeaturePoint::getMatchKeyPoint

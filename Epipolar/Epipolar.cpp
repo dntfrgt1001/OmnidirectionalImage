@@ -12,6 +12,12 @@ cv::Mat Epipolar::getRotMatEssMat
 (const std::vector<cv::Point2f> &forNormals,
  const std::vector<cv::Point2f> &latNormals, cv::Mat &mask) const
 {
+    // 閾値以下の数の特徴点
+    if (forNormals.size() < numThre) {
+        std::cout << "there are few matched points" << std::endl;
+        return cv::Mat::zeros(3, 3, CV_32FC1);
+    }
+    
     const double focal = 1.0;
     const cv::Point2d pp(0.0, 0.0);
     const int method = cv::RANSAC;

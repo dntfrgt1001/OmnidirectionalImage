@@ -16,8 +16,12 @@ cv::Mat OpticalFlowEstimator::getRotMat
 
 cv::Mat OpticalFlowEstimator::getRotMat
 (const cv::Mat &forImg, const cv::Mat &latImg,
- const cv::Mat &froChgMat) const
+ const cv::Mat &curRotMat) const
 {
+    // 直前の回転行列から正面を変更
+    cv::Mat froChgMat;
+    Rotation::getFroChgMat(curRotMat, froChgMat);
+    
     //画像を縮小
     cv::Mat resForImg, resLatImg;
     tf.resizeImg(forImg, resForImg);

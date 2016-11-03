@@ -33,11 +33,11 @@
 int main(int argc, const char * argv[])
 {
     const std::string path = "/Users/masakazu/Desktop/";
-    const std::string inputName1 = path + "img1.jpg";
-    const std::string inputName2 = path + "img2.jpg";
+    const std::string inputName1 = path + "image0034.jpg";
+    const std::string inputName2 = path + "image0035.jpg";
 
-    const cv::Size fso(1000, 500);
-    const cv::Size fs(1000, 500);
+    const cv::Size fso(640, 320);
+    const cv::Size fs(640, 320);
     
     cv::Mat input1, img1, input2, img2;
     input1 = cv::imread(inputName1);
@@ -79,8 +79,8 @@ int main(int argc, const char * argv[])
     MainProcess mp(tfo, fme, ofe);
     
     cv::Mat modImg2;
-    //mp.modifyLatImgFeatureMatch(img1, img2, modImg2);
-    mp.modifyLatImgOpticalFlow(img1, img2, modImg2);
+    mp.modifyLatImgFeatureMatch(img1, img2, modImg2);
+    //mp.modifyLatImgOpticalFlow(img1, img2, modImg2);
     
     cv::namedWindow("img1");
     cv::namedWindow("img2");

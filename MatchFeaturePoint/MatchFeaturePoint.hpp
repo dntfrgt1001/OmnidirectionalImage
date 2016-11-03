@@ -44,22 +44,12 @@ public:
     (std::vector<cv::Point3f>& forSpheres,
      std::vector<cv::Point3f>& latSpheres) const;
     
-    // マッチの描画 (画像を縦に並べる)
-    static void drawMatchVertical
-    (const cv::Mat& img1, const std::vector<cv::KeyPoint>& keyPoints1,
-     const cv::Mat& img2, const std::vector<cv::KeyPoint>& keyPoints2,
-     const std::vector<cv::DMatch>& dMatches, cv::Mat& outImg);
-    
-    // マッチの描画 DMatchなし
-    static void drawMatchesVertical
-    (const cv::Mat& img1, const std::vector<cv::Point2f>& for2DPoints,
-     const cv::Mat& img2, const std::vector<cv::Point2f>& lat2DPoints,
+    // マッチの描画
+    static void drawMatchVert
+    (const cv::Mat& img1, const std::vector<cv::Point2f>& forEquirects,
+     const cv::Mat& img2, const std::vector<cv::Point2f>& latEquirects,
      cv::Mat& outImg);
-    
-    // マッチのラインの描画
-    static void drawMatchLine
-    (const cv::Point2f& forPoint, const cv::Point2f& latPoint, cv::Mat& outImg);
-    
+
     // マッチした特徴点を返す
     void getMatchKeyPoint
     (const std::vector<cv::KeyPoint>& forKeyPointsSet,

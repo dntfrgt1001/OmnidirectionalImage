@@ -31,7 +31,7 @@ public:
     
     cv::Mat getRotMat
     (const cv::Mat& forImg, const cv::Mat& latImg,
-     const cv::Mat& froChgMat) const;
+     const cv::Mat& curRotMat) const;
     
 private:
     const CalcOpticalFlow& cof;

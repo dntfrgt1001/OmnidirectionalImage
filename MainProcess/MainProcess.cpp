@@ -21,7 +21,7 @@ void MainProcess::modifyLatImgFeatureMatch
 void MainProcess::modifyLatImgOpticalFlow
 (const cv::Mat &forImg, const cv::Mat &latImg, cv::Mat &modLatImg)
 {
-    cv::Mat rotMat = ofe.getRotMat(forImg, latImg, froChgMat);
+    cv::Mat rotMat = ofe.getRotMat(forImg, latImg, curRotMat);
     
     setMatInfo(rotMat);
     
@@ -32,6 +32,7 @@ void MainProcess::setMatInfo(const cv::Mat rotMat)
 {
     accRotMat = accRotMat * rotMat;
     
+    cv::Mat froChgMat;
     Rotation::getFroChgMat(rotMat, froChgMat);
     
     std::cout <<  "------------------------------------------------";

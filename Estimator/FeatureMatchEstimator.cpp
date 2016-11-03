@@ -51,6 +51,16 @@ cv::Mat FeatureMatchEstimator::getRotMat
     efp.extractFeaturePoint(forImgGray, forKeyPointsSet, forDescs);
     efp.extractFeaturePoint(latImgGray, latKeyPointsSet, latDescs);
     
+    cv::Mat imgKeyPoint1;
+    cv::Mat imgKeyPoint2;
+    efp.drawKeyPoint(forImg, forKeyPointsSet, imgKeyPoint1);
+    efp.drawKeyPoint(latImg, latKeyPointsSet, imgKeyPoint2);
+    cv::namedWindow("KeyPoint 1");
+    cv::namedWindow("KeyPoint 2");
+    cv::imshow("KeyPoint 1", imgKeyPoint1);
+    cv::imshow("KeyPoint 2", imgKeyPoint2);
+    cv::waitKey();
+    
     // マッチング＆フィルタリング
     std::vector<cv::DMatch> matchs;
     mfp.match(forDescs, latDescs, matchs);
@@ -69,11 +79,24 @@ cv::Mat FeatureMatchEstimator::getRotMat
         latEquirects[i] = latKeyPoints[i].pt;
     }
     
+    
     // 球面座標に変換
     std::vector<cv::Point3f> forSpheres, latSpheres;
     tf.equirect2sphere(forEquirects, forSpheres);
     tf.equirect2sphere(latEquirects, latSpheres);
     
+    mfp.filterCoordDistance(forSpheres, latSpheres);
+    
+    std::vector<cv::Point2f> forEquiLast, latEquiLast;
+    tf.sphere2equirect(forSpheres, forEquiLast);
+    tf.sphere2equirect(latSpheres, latEquiLast);
+    cv::Mat imgMatch;
+    mfp.drawMatchVert
+    (forImg, forEquiLast, latImg, latEquiLast, imgMatch);
+    cv::namedWindow("match");
+    cv::imshow("match", imgMatch);
+    cv::waitKey();
+
     int maxIdx;
     return getRotMatWeightMax(forSpheres, latSpheres, maxIdx);
 }
@@ -104,7 +127,7 @@ cv::Mat FeatureMatchEstimator::getRotMatSpecDir
     weight = epi.getWeight(mask);
     
     // 重みで推定できているか判定
-    if (weight < 0) { return cv::Mat::zeros(3, 3, CV_32FC1); }
+    if (weight <= 0) { return cv::Mat::zeros(3, 3, CV_32FC1); }
     else {
         cv::Mat rotMatChg;
         Rotation::chgRotMatCoo(rotMat, froChgMat.inv(), rotMatChg);
@@ -133,9 +156,10 @@ cv::Mat FeatureMatchEstimator::getRotMatWeightMax
         getRotMatSpecDir
         (forSpheres, latSpheres, froChgMats[i], weights[i]);
         
-        if (0 <= weights[i]) sucFlag = true;
+        if (0 < weights[i]) sucFlag = true;
     }
     
+    // どの方向でも推定に失敗
     if (!sucFlag) {
         maxIdx = -1;
         return cv::Mat::zeros(3, 3, CV_32FC1);
