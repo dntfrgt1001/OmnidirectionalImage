@@ -87,6 +87,7 @@ cv::Mat FeatureMatchEstimator::getRotMat
     
     mfp.filterCoordDistance(forSpheres, latSpheres);
     
+    /*
     std::vector<cv::Point2f> forEquiLast, latEquiLast;
     tf.sphere2equirect(forSpheres, forEquiLast);
     tf.sphere2equirect(latSpheres, latEquiLast);
@@ -96,7 +97,7 @@ cv::Mat FeatureMatchEstimator::getRotMat
     cv::namedWindow("match");
     cv::imshow("match", imgMatch);
     cv::waitKey();
-
+     */
     int maxIdx;
     return getRotMatWeightMax(forSpheres, latSpheres, maxIdx);
 }

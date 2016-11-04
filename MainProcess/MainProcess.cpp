@@ -34,10 +34,15 @@ void MainProcess::setMatInfo(const cv::Mat rotMat)
     
     cv::Mat froChgMat;
     Rotation::getFroChgMat(rotMat, froChgMat);
-    
+    cv::Vec3f rotVec;
+    Rotation::RotMat2RotVec(rotMat, rotVec);
     std::cout <<  "------------------------------------------------";
     std::cout << std::endl;
     std::cout << "Rot Mat = " << std::endl << rotMat << std::endl;
+    std::cout <<  "------------------------------------------------";
+    std::cout << std::endl;
+    std::cout << "Rot Vec = " << rotVec << std::endl;
+//    std::cout << std::endl;
     std::cout <<  "------------------------------------------------";
     std::cout << std::endl;
     std::cout << "Acc Mat = " << std::endl << accRotMat << std::endl;

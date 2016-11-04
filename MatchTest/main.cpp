@@ -36,8 +36,8 @@ int main(int argc, const char * argv[])
     const std::string inputName1 = path + "image0034.jpg";
     const std::string inputName2 = path + "image0035.jpg";
 
-    const cv::Size fso(640, 320);
-    const cv::Size fs(640, 320);
+    const cv::Size fso(960, 480);
+    const cv::Size fs(960, 480);
     
     cv::Mat input1, img1, input2, img2;
     input1 = cv::imread(inputName1);
@@ -71,7 +71,8 @@ int main(int argc, const char * argv[])
     
     const float margin = 0.1;
     const float angRag = M_PI / 3.0;
-    const CalcOpticalFlow cof(margin, per, angRag);
+    const float normRat = 3.0;
+    const CalcOpticalFlow cof(margin, per, angRag, normRat);
     
     const OpticalFlowEstimator ofe(tf, cof, per, epi);
     // -----------------------------------------------------
@@ -79,8 +80,8 @@ int main(int argc, const char * argv[])
     MainProcess mp(tfo, fme, ofe);
     
     cv::Mat modImg2;
-    mp.modifyLatImgFeatureMatch(img1, img2, modImg2);
-    //mp.modifyLatImgOpticalFlow(img1, img2, modImg2);
+    //mp.modifyLatImgFeatureMatch(img1, img2, modImg2);
+    mp.modifyLatImgOpticalFlow(img1, img2, modImg2);
     
     cv::namedWindow("img1");
     cv::namedWindow("img2");

@@ -8,27 +8,6 @@
 
 #include "CalcOpticalFlow.hpp"
 
-void CalcOpticalFlow::getNormalPair
-(const cv::Mat &forPersImg, const cv::Mat &latPersImg,
- const cv::Mat &curRotMat, std::vector<cv::Point2f> &forNormals,
- std::vector<cv::Point2f> &latNormals) const
-{
-    getNormalPairOneDir
-    (forPersImg, latPersImg, curRotMat, isFront,
-     forNormalsTmp, latNormalsTmp);
-}
-
-void CalcOpticalFlow::getNormalPairOneDir
-(const cv::Mat &forPersImg, const cv::Mat &latPersImg,
- const cv::Mat &curRotMat, const bool isFront,
- std::vector<cv::Point2f> &forNormals,
- std::vector<cv::Point2f> &latNormals) const
-{
-    // オプティカルフローを抽出
-    std::vector<cv::Point2f> forPerss, latPerss;
-    getOpticalFlow(forPersImg, latPersImg, forPerss, latPerss);
-}
-
 void CalcOpticalFlow::getOpticalFlow
 (const cv::Mat &forPersImg, const cv::Mat &latPersImg,
  std::vector<cv::Point2f> &forPerss,
@@ -40,7 +19,7 @@ void CalcOpticalFlow::getOpticalFlow
     
     // 前透視投影画像からトラッキング用の特徴点を抽出
     cv::goodFeaturesToTrack
-    (forGrayPersImg, forPerss, 300, 0.01, 2, optflowMask);
+    (forGrayPersImg, forPerss, 400, 0.01, 1, optflowMask);
     
     // グレースケールに変換
     cv::Mat latGrayPersImg;
@@ -70,6 +49,34 @@ void CalcOpticalFlow::remOrthOutlier
 {
     for (int i = 0; i < forNormals.size(); ) {
         if (!isOrthCond(forNormals[i], latNormals[i])) {
+            forNormals.erase(forNormals.begin() + i);
+            latNormals.erase(latNormals.begin() + i);
+        } else {
+            i++;
+        }
+    }
+}
+
+void CalcOpticalFlow::remRotOutlier
+(std::vector<cv::Point2f> &forNormals,
+ std::vector<cv::Point2f> &latNormals) const
+{
+    for (int i = 0; i < forNormals.size(); ) {
+        if (!isRotDirCond(forNormals[i], latNormals[i])) {
+            forNormals.erase(forNormals.begin() + i);
+            latNormals.erase(latNormals.begin() + i);
+        } else {
+            i++;
+        }
+    }
+}
+
+void CalcOpticalFlow::remNormOutlier
+(std::vector<cv::Point2f> &forNormals,
+ std::vector<cv::Point2f> &latNormals, const float rotAng) const
+{
+    for (int i = 0; i < forNormals.size(); ) {
+        if (!isNormCond(forNormals[i], latNormals[i], rotAng)) {
             forNormals.erase(forNormals.begin() + i);
             latNormals.erase(latNormals.begin() + i);
         } else {

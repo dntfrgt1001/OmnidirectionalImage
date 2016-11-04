@@ -41,8 +41,18 @@ cv::Mat OpticalFlowEstimator::getRotMat
     tf.pers2normal(forPerss, forNormals, per.getInParaMat());
     tf.pers2normal(latPerss, latNormals, per.getInParaMat());
     
+    // 回転方向が逆のものを削除
+    //cof.remRotOutlier(forNormals, latNormals);
+    
     // 円周方向にないものを削除
     //cof.remOrthOutlier(forNormals, latNormals);
+    
+    cv::Vec3f curRotVec;
+    Rotation::RotMat2RotVec(curRotMat, curRotVec);
+    const float rotAng = cv::norm(curRotVec);
+    
+    // ノルムがおかしいものを削除
+    cof.remNormOutlier(forNormals, latNormals, rotAng);
     
     // 回転行列を推定
     cv::Mat mask;
