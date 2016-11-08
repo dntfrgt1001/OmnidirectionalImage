@@ -74,6 +74,7 @@
 		0287FC241D787B7200E4FE99 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0287FC231D787B7200E4FE99 /* main.cpp */; };
 		0287FC281D787E0F00E4FE99 /* Transform.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0245CD8D1C4233E000FF5E33 /* Transform.cpp */; };
 		029994151C72A9CB00792144 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 029994141C72A9CB00792144 /* main.cpp */; };
+		029C14911DD19B6F00E73135 /* Core.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 029C148F1DD19B6F00E73135 /* Core.cpp */; };
 		02A318F11D7568BF001B748D /* Rotation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 020D73071D2A62E800BC61BD /* Rotation.cpp */; };
 		02A318F21D7568C6001B748D /* Transform.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0245CD8D1C4233E000FF5E33 /* Transform.cpp */; };
 		02A9B6D21DC0C5BC00D4A0E7 /* libopencv_core.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 02A9B6D11DC0C5BC00D4A0E7 /* libopencv_core.dylib */; };
@@ -277,6 +278,8 @@
 		0290BBB21D12A08900C83FF2 /* MatchMain.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MatchMain.cpp; path = MatchMain/MatchMain.cpp; sourceTree = "<group>"; };
 		029994121C72A9CB00792144 /* PlayVideo */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = PlayVideo; sourceTree = BUILT_PRODUCTS_DIR; };
 		029994141C72A9CB00792144 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
+		029C148F1DD19B6F00E73135 /* Core.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Core.cpp; path = Core/Core.cpp; sourceTree = "<group>"; };
+		029C14901DD19B6F00E73135 /* Core.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = Core.hpp; path = Core/Core.hpp; sourceTree = "<group>"; };
 		02A9B6D11DC0C5BC00D4A0E7 /* libopencv_core.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libopencv_core.dylib; path = ../../../../../../../usr/local/Cellar/opencv3/3.1.0_4/lib/libopencv_core.dylib; sourceTree = "<group>"; };
 		02A9B6D31DC0C5D300D4A0E7 /* libopencv_highgui.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libopencv_highgui.dylib; path = ../../../../../../../usr/local/Cellar/opencv3/3.1.0_4/lib/libopencv_highgui.dylib; sourceTree = "<group>"; };
 		02A9B6D51DC0C5E000D4A0E7 /* libopencv_imgcodecs.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libopencv_imgcodecs.dylib; path = ../../../../../../../usr/local/Cellar/opencv3/3.1.0_4/lib/libopencv_imgcodecs.dylib; sourceTree = "<group>"; };
@@ -578,6 +581,7 @@
 		02648EA61CF804E300E4E948 /* class */ = {
 			isa = PBXGroup;
 			children = (
+				029C148E1DD19B5000E73135 /* Core */,
 				02D6D9A01D8166CF00862E8F /* Video */,
 				02A9B6F41DC1EE8A00D4A0E7 /* MainProcess */,
 				02A9B6F31DC1E9BA00D4A0E7 /* Epipolar */,
@@ -715,6 +719,15 @@
 				029994141C72A9CB00792144 /* main.cpp */,
 			);
 			path = PlayVideo;
+			sourceTree = "<group>";
+		};
+		029C148E1DD19B5000E73135 /* Core */ = {
+			isa = PBXGroup;
+			children = (
+				029C148F1DD19B6F00E73135 /* Core.cpp */,
+				029C14901DD19B6F00E73135 /* Core.hpp */,
+			);
+			name = Core;
 			sourceTree = "<group>";
 		};
 		02A9B6E61DC1C2D500D4A0E7 /* Estimator */ = {
@@ -1153,6 +1166,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				029C14911DD19B6F00E73135 /* Core.cpp in Sources */,
 				0245CD901C4235AA00FF5E33 /* Transform.cpp in Sources */,
 				02A9B6FD1DC232AA00D4A0E7 /* OpticalFlowEstimator.cpp in Sources */,
 				0221B5451DBDE83400E59B7E /* Perspective.cpp in Sources */,
