@@ -15,6 +15,7 @@
 #include <opencv2/core.hpp>
 #include <opencv2/calib3d.hpp>
 
+#include "Core.hpp"
 #include "Transform.hpp"
 
 class Perspective
@@ -36,8 +37,8 @@ public:
     
     // 有効範囲内か
     bool isInRange
-    (const cv::Point2f& pers, const float rad) const {
-        cv::Point2f normal;
+    (const Pers& pers, const float rad) const {
+        Normal normal;
         tf.pers2normal(pers, normal, inParaMat);
         return normal.x*normal.x + normal.y*normal.y < rad*rad;
     }

@@ -14,98 +14,92 @@ frameSize(frameSize)
 }
 
 void Transform::polar2equirect
-(const std::vector<cv::Point2f> &polars,
- std::vector<cv::Point2f> &equirects) const
+(const std::vector<Polar> &polars,
+ std::vector<Equirect> &equirects) const
 {
     points2points
-    <cv::Point2f, cv::Point2f,
-    &Transform::polar2equirect>(polars, equirects);
+    <Polar, Equirect, &Transform::polar2equirect>(polars, equirects);
 }
 
 void Transform::equirect2polar
-(const std::vector<cv::Point2f> &equirects,
- std::vector<cv::Point2f> &polars) const
+(const std::vector<Equirect> &equirects,
+ std::vector<Polar> &polars) const
 {
     points2points
-    <cv::Point2f, cv::Point2f,
-    &Transform::equirect2polar>(equirects, polars);
+    <Equirect, Polar, &Transform::equirect2polar>(equirects, polars);
 }
 
 void Transform::polar2sphere
-(const std::vector<cv::Point2f> &polars,
- std::vector<cv::Point3f> &spheres) const
+(const std::vector<Polar> &polars,
+ std::vector<Sphere> &spheres) const
 {
     points2points
-    <cv::Point2f, cv::Point3f,
-    &Transform::polar2sphere>(polars, spheres);
+    <Polar, Sphere, &Transform::polar2sphere>(polars, spheres);
 }
 
-void Transform::sphere2psphere
-(const std::vector<cv::Point3f> &spheres,
- std::vector<cv::Point2f> &polars) const
+void Transform::sphere2polar
+(const std::vector<Sphere> &spheres,
+ std::vector<Polar> &polars) const
 {
     points2points
-    <cv::Point3f, cv::Point2f,
-    &Transform::sphere2polar>(spheres, polars);
+    <Sphere, Polar, &Transform::sphere2polar>(spheres, polars);
 }
 
 void Transform::equirect2sphere
-(const std::vector<cv::Point2f> &equirects,
- std::vector<cv::Point3f> &spheres) const
+(const std::vector<Equirect> &equirects,
+ std::vector<Sphere> &spheres) const
 {
     points2points
-    <cv::Point2f, cv::Point3f,
+    <Equirect, Sphere,
     &Transform::equirect2sphere>(equirects, spheres);
 }
 
 void Transform::sphere2equirect
-(const std::vector<cv::Point3f> &spheres,
- std::vector<cv::Point2f> &equirects) const
+(const std::vector<Sphere> &spheres,
+ std::vector<Equirect> &equirects) const
 {
     points2points
-    <cv::Point3f, cv::Point2f,
+    <Sphere, Equirect,
     &Transform::sphere2equirect>(spheres, equirects);
 }
 
 void Transform::sphere2normal
-(const std::vector<cv::Point3f> &spheres,
- std::vector<cv::Point2f> &normals) const
+(const std::vector<Sphere> &spheres,
+ std::vector<Normal> &normals) const
 {
     points2points
-    <cv::Point3f, cv::Point2f,
-    &Transform::sphere2normal>(spheres, normals);
+    <Sphere, Normal, &Transform::sphere2normal>(spheres, normals);
 }
 
 void Transform::pers2normal
-(const std::vector<cv::Point2f> &perss,
- std::vector<cv::Point2f> &normals,
+(const std::vector<Pers> &perss, std::vector<Normal> &normals,
  const cv::Mat& inParaMat) const
 {
     normals.clear();
     
     for (int i = 0; i < perss.size(); i++) {
-        cv::Point2f normal;
+        Normal normal;
         pers2normal(perss[i], normal, inParaMat);
         normals.push_back(normal);
     }
 }
 
 void Transform::normal2pers
-(const std::vector<cv::Point2f> &normals,
- std::vector<cv::Point2f> &perss,
+(const std::vector<Normal> &normals, std::vector<Pers> &perss,
  const cv::Mat &inParaMat) const
 {
     perss.clear();
     
     for (int i = 0; i < normals.size(); i++) {
-        cv::Point2f pers;
+        Pers pers;
         normal2pers(normals[i], pers, inParaMat);
         perss.push_back(pers);
     }
 }
 
 template
-<class forTp, class latTp, void (Transform::*func)(const forTp&, latTp&) const>
+<class forTp, class latTp,
+void (Transform::*func)(const forTp&, latTp&) const>
 void Transform::points2points
 (const std::vector<forTp>& forPoints, std::vector<latTp>& latPoints) const
 {

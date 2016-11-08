@@ -36,18 +36,18 @@ void Perspective::getPersImg
     
     for (int u = 0; u < pfs.width; u++) {
         for (int v = 0; v < pfs.height; v++) {
-            cv::Point2f pers(u, v);
+            Pers pers(u, v);
             
             if (isInRange(pers, normalRad)) {
-                cv::Point2f normal;
+                Normal normal;
                 tf.pers2normal(pers, normal, inParaMat);
                 
-                cv::Point3f sphere, sphereRot;
+                Sphere sphere, sphereRot;
                 tf.normal2sphere(normal, sphere, isFront);
                 
                 tf.rotateSphere(sphere, sphereRot, froMatInv);
                 
-                cv::Point2f equirectRot;
+                Equirect equirectRot;
                 tf.sphere2equirect(sphereRot, equirectRot);
                 
                 cv::Vec3b pixel;

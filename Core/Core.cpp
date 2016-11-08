@@ -7,30 +7,3 @@
 //
 
 #include "Core.hpp"
-
-#include <opencv2/core.hpp>
-
-class Equirect : public cv::Point2f
-{
-    
-};
-
-class Polar : public cv::Point2f
-{
-    
-};
-
-class Sphere : public cv::Point3f
-{
-    
-};
-
-class Normal : public cv::Point2f
-{
-    
-};
-
-class Pers : public cv::Point2f
-{
-    
-};
