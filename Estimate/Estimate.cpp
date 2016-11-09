@@ -231,17 +231,17 @@ void Estimate::estRotMatWeightMax
 }
 
 void Estimate::estRotMatSpecDir
-(const std::vector<cv::Point3f> &forspheres,
- const std::vector<cv::Point3f> &latspheres,
+(const std::vector<Sphere> &forspheres,
+ const std::vector<Sphere> &latspheres,
  const cv::Mat& froMat, cv::Mat& estRotMat, float& weight) const
 {
     // カメラ正面を変更
-    std::vector<cv::Point3f> forspheresRot, latspheresRot;
+    std::vector<Sphere> forspheresRot, latspheresRot;
     tf.rotateSphere(forspheres, forspheresRot, froMat);
     tf.rotateSphere(latspheres, latspheresRot, froMat);
     
     // カメラの前後の特徴点を取り出す
-    std::vector<cv::Point3f> forspheresFront, latspheresFront;
+    std::vector<Sphere> forspheresFront, latspheresFront;
     rg.extFroSphere
     (forspheresRot, latspheresRot, forspheresFront, latspheresFront);
     /*
@@ -250,7 +250,7 @@ void Estimate::estRotMatSpecDir
     */
     
     // 正規化画像座標に変換
-    std::vector<cv::Point2f> fornormalsFront, latnormalsFront;
+    std::vector<Normal> fornormalsFront, latnormalsFront;
     tf.sphere2normal(forspheresFront, fornormalsFront);
     tf.sphere2normal(latspheresFront, latnormalsFront);
     

@@ -9,8 +9,8 @@
 #include "Epipolar.hpp"
 
 cv::Mat Epipolar::getRotMatEssMat
-(const std::vector<cv::Point2f> &forNormals,
- const std::vector<cv::Point2f> &latNormals, cv::Mat &mask) const
+(const std::vector<Normal> &forNormals,
+ const std::vector<Normal> &latNormals, cv::Mat &mask) const
 {
     // 閾値以下の数の特徴点
     if (forNormals.size() < numThre) {
@@ -27,6 +27,7 @@ cv::Mat Epipolar::getRotMatEssMat
     
     // 後フレーム->前フレームの基本行列
     //cv::Mat E = cv::findEssentialMat(latnormals, fornormals, focal, pp, method);
+    
     cv::Mat E =
     cv::findEssentialMat
     (latNormals, forNormals, focal, pp, method, prob, threshold, mask);

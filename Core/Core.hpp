@@ -18,6 +18,7 @@ class Equirect : public cv::Point2f
 public:
     Equirect(): cv::Point2f() {};
     Equirect(float u, float v): cv::Point2f(u, v){};
+    Equirect(const cv::Point2f& point2f): cv::Point2f(point2f){};
 };
 
 class Polar : public cv::Point2f
@@ -33,14 +34,11 @@ public:
     Sphere(): cv::Point3f() {};
     Sphere(float x, float y, float z): cv::Point3f(x, y, z){};
     
-    Sphere& operator =(const Sphere& sphere) {
-        cv::Point3f::operator=(sphere);
-        return *this;
-    }
-    
-    
-    Sphere& operator *(const Sphere& sphere) {
-        cv::Point3f::operator=(sphere); return *this;
+    template<class Tp>
+    const Sphere operator*(const Tp value) {
+        return Sphere(this->x * value,
+                      this->y * value,
+                      this->z * value);
     }
 };
 
@@ -56,6 +54,7 @@ class Pers : public cv::Point2f
 public:
     Pers(): cv::Point2f() {};
     Pers(float xp, float yp): cv::Point2f(xp, yp){};
+    Pers(const cv::Point2f point2f): cv::Point2f(point2f){};
 };
 
 #endif /* Core_hpp */

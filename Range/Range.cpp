@@ -15,10 +15,10 @@ fs(frameSize), tf(tf), rangeRadius(tanf(rangeAngle))
 }
 
 void Range::extFroSphere
-(const std::vector<cv::Point3f> &forspheres,
- const std::vector<cv::Point3f> &latspheres,
- std::vector<cv::Point3f> &forspheresFront,
- std::vector<cv::Point3f> &latspheresFront) const
+(const std::vector<Sphere> &forspheres,
+ const std::vector<Sphere> &latspheres,
+ std::vector<Sphere> &forspheresFront,
+ std::vector<Sphere> &latspheresFront) const
 {
     for (int i = 0; i < forspheres.size(); i++) {
         if (isValidSpherePair(forspheres[i], latspheres[i])) {

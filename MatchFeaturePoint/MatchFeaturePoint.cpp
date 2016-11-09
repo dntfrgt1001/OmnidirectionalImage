@@ -58,8 +58,7 @@ void MatchFeaturePoint::filterMatchDistance
 }
 
 void MatchFeaturePoint::filterCoordDistance
-(std::vector<cv::Point3f> &forSpheres,
- std::vector<cv::Point3f> &latSpheres) const
+(std::vector<Sphere> &forSpheres, std::vector<Sphere> &latSpheres) const
 {
     // .eraseに注意
     for (int i = 0; i < forSpheres.size(); ) {

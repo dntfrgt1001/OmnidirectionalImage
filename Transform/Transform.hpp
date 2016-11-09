@@ -154,11 +154,7 @@ public:
         sphere.y = normal.y / denomi;
         sphere.z = 1 / denomi;
         
-        Sphere sphere2;
-        sphere2 = sphere*1;
-        
-        
-        if (!isFront) sphere = -1 * sphere;
+        if (!isFront) sphere *= -1;
     }
     
     // 点群変換のテンプレート
@@ -198,13 +194,20 @@ public:
     }
     // 回転行列で球面座標を回転
     void rotateSphere
-    (const cv::Point3f& sphere, cv::Point3f& sphereRot,
-     const cv::Mat& rotMat) const {
-        sphereRot = (cv::Point3f) cv::Mat1f(rotMat * cv::Mat1f(sphere));
+    (const Sphere& sphere, Sphere& sphereRot, const cv::Mat& rotMat) const {
+        //sphereRot = (cv::Point3f) cv::Mat1f(rotMat * cv::Mat1f(sphere));
+        const float* row0 = rotMat.ptr<float>(0);
+        const float* row1 = rotMat.ptr<float>(1);
+        const float* row2 = rotMat.ptr<float>(2);
+        
+        sphereRot.x = row0[0]*sphere.x+row0[1]*sphere.y+row0[2]*sphere.z;
+        sphereRot.y = row1[0]*sphere.x+row1[1]*sphere.y+row1[2]*sphere.z;
+        sphereRot.z = row2[0]*sphere.x+row2[1]+sphere.y+row2[2]*sphere.z;
     }
+    
     void rotateSphere
-    (const std::vector<cv::Point3f>& spheres,
-     std::vector<cv::Point3f>& spheresRot, const cv::Mat& rotMat) const;
+    (const std::vector<Sphere>& spheres, std::vector<Sphere>& spheresRot,
+     const cv::Mat& rotMat) const;
     
     // 回転行列で画像を変換（逆向きの回転行列を使うことに注意）
     void rotateImg
@@ -243,9 +246,8 @@ public:
     (const float angle, const cv::Point2f& psphere,
      cv::Point2f& psphereRot) const;
     */
-    
-    // 片方のレンズ正面の画像を正規化画像座標に
-    void normalCoord(const cv::Mat& img, float trange, float prange);
+
+    static void point2normal()
     
 private:
     const cv::Size& frameSize;

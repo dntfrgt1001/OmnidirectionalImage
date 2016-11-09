@@ -28,14 +28,14 @@ public:
         return normal.x*normal.x + normal.y*normal.y <
                rangeRadius*rangeRadius;
     }
-    bool isInRangeSphere(const cv::Point3f& sphere) const {
-        cv::Point2f normal;
+    bool isInRangeSphere(const Sphere& sphere) const {
+        Normal normal;
         tf.sphere2normal(sphere, normal);
         return isInRangeNormal(normal);
     }
     bool isInRangeEquirect
-    (const cv::Point2f& equirect) const {
-        cv::Point3f sphere;
+    (const Equirect& equirect) const {
+        Sphere sphere;
         tf.equirect2sphere(equirect, sphere);
         return isInRangeSphere(sphere);
     }
@@ -46,28 +46,28 @@ public:
     }
     // 推定に使う特徴点か(カメラ前後にあり境界を跨がない)
     bool isValidSpherePair
-    (const cv::Point3f& forsphere, const cv::Point3f& latsphere) const {
+    (const Sphere& forsphere, const Sphere& latsphere) const {
         return isInRangeSphere(forsphere) && isInRangeSphere(latsphere) &&
                !isStrideBorder(forsphere, latsphere);
     }
     
     // 推定に使う特徴点の組を取り出す
     void extFroSphere
-    (const std::vector<cv::Point3f>& forspheres,
-     const std::vector<cv::Point3f>& latspheres,
-     std::vector<cv::Point3f>& forspheresFront,
-     std::vector<cv::Point3f>& latspheresFront) const;
+    (const std::vector<Sphere>& forspheres,
+     const std::vector<Sphere>& latspheres,
+     std::vector<Sphere>& forspheresFront,
+     std::vector<Sphere>& latspheresFront) const;
     
     // 回転後の特徴点がカメラの前後にあるか
     bool isInRange
-    (const cv::Point3f& sphere, const cv::Mat& froMat) const {
-        cv::Point3f sphereRot;
+    (const Sphere& sphere, const cv::Mat& froMat) const {
+        Sphere sphereRot;
         tf.rotateSphere(sphere, sphereRot, froMat);
         return isInRangeSphere(sphereRot);
     }
     bool isInRange
-    (const cv::Point2f& equirect, const cv::Mat& froMat) const {
-        cv::Point2f equirectRot;
+    (const Equirect& equirect, const cv::Mat& froMat) const {
+        Equirect equirectRot;
         tf.rotateEquirect(equirect, equirectRot, froMat);
         return isInRangeEquirect(equirectRot);
     }

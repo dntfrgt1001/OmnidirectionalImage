@@ -27,13 +27,12 @@ public:
     // オプティカルフローを求める
     void getOpticalFlow
     (const cv::Mat& forPersImg, const cv::Mat& latPersImg,
-     std::vector<cv::Point2f>& forPerss,
-     std::vector<cv::Point2f>& latPerss) const;
+     std::vector<Pers>& forPerss, std::vector<Pers>& latPerss) const;
     
     // 正規化画像座標で半径方向と直交しないものを取り除く
     void remOrthOutlier
-    (std::vector<cv::Point2f>& forNormals,
-     std::vector<cv::Point2f>& latNormals) const;
+    (std::vector<Normal>& forNormals,
+     std::vector<Normal>& latNormals) const;
     
     // オプティカルフローが半径方向のベクトルと直行するか
     bool isOrthCond
@@ -51,8 +50,8 @@ public:
     
     // 正規化画像座標で逆回転のものを取り除く
     void remRotOutlier
-    (std::vector<cv::Point2f>& forNormals,
-     std::vector<cv::Point2f>& latNormals) const;
+    (std::vector<Normal>& forNormals,
+     std::vector<Normal>& latNormals) const;
     
     // オプティカルフローの回転方向が正しいか
     bool isRotDirCond
@@ -70,8 +69,8 @@ public:
     
     // ノルムが大きいものを取り除く
     void remNormOutlier
-    (std::vector<cv::Point2f>& forNormals,
-     std::vector<cv::Point2f>& latNormals, const float rotAng) const;
+    (std::vector<Normal>& forNormals,
+     std::vector<Normal>& latNormals, const float rotAng) const;
     
     // オプティカルフローの長さが正しいか
     bool isNormCond
@@ -96,8 +95,8 @@ public:
     
     // オプティカルフロー描画
     void drawOpticalFlow
-    (const cv::Mat& persImg, const std::vector<cv::Point2f>& forPerss,
-     const std::vector<cv::Point2f>& latPerss, cv::Mat& drawImg) const;
+    (const cv::Mat& persImg, const std::vector<Pers>& forPerss,
+     const std::vector<Pers>& latPerss, cv::Mat& drawImg) const;
     
 
 private:

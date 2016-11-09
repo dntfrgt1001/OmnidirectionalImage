@@ -41,8 +41,8 @@ public:
     
     // 座標距離が大きく離れているものはフィルタリング
     void filterCoordDistance
-    (std::vector<cv::Point3f>& forSpheres,
-     std::vector<cv::Point3f>& latSpheres) const;
+    (std::vector<Sphere>& forSpheres,
+     std::vector<Sphere>& latSpheres) const;
     
     // マッチの描画
     static void drawMatchVert

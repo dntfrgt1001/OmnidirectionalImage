@@ -67,7 +67,7 @@ cv::Mat Perspective::getMask(const float margin) const
     
     for (int u = 0; u < pfs.width; u++) {
         for (int v = 0; v < pfs.height; v++) {
-            cv::Point2f pers(u, v);
+            Pers pers(u, v);
             
             if (isInRange(pers, normalRad - margin)) {
                 mask.at<uchar>(v, u) = 255;

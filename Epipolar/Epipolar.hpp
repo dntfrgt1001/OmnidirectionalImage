@@ -24,8 +24,8 @@ public:
     
     // 8点アルゴリズムで回転行列を推定する
     cv::Mat getRotMatEssMat
-    (const std::vector<cv::Point2f>& forNormals,
-     const std::vector<cv::Point2f>& latNormals, cv::Mat& mask) const;
+    (const std::vector<Normal>& forNormals,
+     const std::vector<Normal>& latNormals, cv::Mat& mask) const;
     
     // マスクから重みを計算する
     float getWeight(const cv::Mat& mask) const;

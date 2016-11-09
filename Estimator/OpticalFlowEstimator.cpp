@@ -33,11 +33,11 @@ cv::Mat OpticalFlowEstimator::getRotMat
     per.getPersImg(resLatImg, latPersImg, froChgMat, true);
     
     // 透視投影座標の特徴点
-    std::vector<cv::Point2f> forPerss, latPerss;
+    std::vector<Pers> forPerss, latPerss;
     cof.getOpticalFlow(forPersImg, latPersImg, forPerss, latPerss);
     
     // 正規化座標の特徴点
-    std::vector<cv::Point2f> forNormals, latNormals;
+    std::vector<Normal> forNormals, latNormals;
     tf.pers2normal(forPerss, forNormals, per.getInParaMat());
     tf.pers2normal(latPerss, latNormals, per.getInParaMat());
     
@@ -59,7 +59,7 @@ cv::Mat OpticalFlowEstimator::getRotMat
     cv::Mat rotMat = epi.getRotMatEssMat(forNormals, latNormals, mask);
     
     // オプティカルフロー描画
-    std::vector<cv::Point2f> forPerssLast, latPerssLast;
+    std::vector<Pers> forPerssLast, latPerssLast;
     tf.normal2pers(forNormals, forPerssLast, per.getInParaMat());
     tf.normal2pers(latNormals, latPerssLast, per.getInParaMat());
     

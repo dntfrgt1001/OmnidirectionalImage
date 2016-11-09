@@ -17,7 +17,6 @@
 		0220D4C51D3F68D100AB134C /* VideoWriter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 02C57BEE1D0FDED300F428F2 /* VideoWriter.cpp */; };
 		0221B5451DBDE83400E59B7E /* Perspective.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 02513F9B1D363C9800089959 /* Perspective.cpp */; };
 		0221B5461DBE004C00E59B7E /* Range.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 025ADB831DB4B09A00DCE366 /* Range.cpp */; };
-		0221B5471DBE005400E59B7E /* Estimate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 02D6D99B1D81404400862E8F /* Estimate.cpp */; };
 		0225C93D1D00071B00356EA6 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0225C93C1D00071B00356EA6 /* main.cpp */; };
 		0229F99A1D393CE20026000C /* ExtractFeaturePoint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 02E4371C1CF845D7007C3605 /* ExtractFeaturePoint.cpp */; };
 		022BA2671DD1ABD90015C380 /* Core.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 022BA2651DD1ABD90015C380 /* Core.cpp */; };
@@ -102,8 +101,6 @@
 		02C768891D17E7F40069E8C3 /* ExtractFeaturePoint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 02E4371C1CF845D7007C3605 /* ExtractFeaturePoint.cpp */; };
 		02CB50D01D98122A0000BCFD /* Rotation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 020D73071D2A62E800BC61BD /* Rotation.cpp */; };
 		02CB50D11D98123F0000BCFD /* Quaternion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 02D6D9A11D8189B900862E8F /* Quaternion.cpp */; };
-		02D6D99D1D81404400862E8F /* Estimate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 02D6D99B1D81404400862E8F /* Estimate.cpp */; };
-		02D6D99E1D81404400862E8F /* Estimate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 02D6D99B1D81404400862E8F /* Estimate.cpp */; };
 		02D6D9A31D8189B900862E8F /* Quaternion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 02D6D9A11D8189B900862E8F /* Quaternion.cpp */; };
 		02D6D9A41D8189B900862E8F /* Quaternion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 02D6D9A11D8189B900862E8F /* Quaternion.cpp */; };
 		02E437161CF84303007C3605 /* MatchFeaturePoint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 02E437131CF84303007C3605 /* MatchFeaturePoint.cpp */; };
@@ -1171,7 +1168,6 @@
 				02A9B6FD1DC232AA00D4A0E7 /* OpticalFlowEstimator.cpp in Sources */,
 				0221B5451DBDE83400E59B7E /* Perspective.cpp in Sources */,
 				02A9B6EF1DC1CBFA00D4A0E7 /* Estimator.cpp in Sources */,
-				02D6D99D1D81404400862E8F /* Estimate.cpp in Sources */,
 				02A9B6F71DC1EEB000D4A0E7 /* MainProcess.cpp in Sources */,
 				0220D4C01D3F674200AB134C /* ExtractFeaturePoint.cpp in Sources */,
 				0220D4C51D3F68D100AB134C /* VideoWriter.cpp in Sources */,
@@ -1192,7 +1188,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				026891711DC71E4900BAA626 /* OpticalFlowEstimator.cpp in Sources */,
-				02D6D99E1D81404400862E8F /* Estimate.cpp in Sources */,
 				02C768861D17E7DB0069E8C3 /* VideoWriter.cpp in Sources */,
 				0262BA061D782418009FE5F9 /* main.cpp in Sources */,
 				026891731DC71E4F00BAA626 /* Estimator.cpp in Sources */,
@@ -1216,7 +1211,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				02513FAB1D366BD100089959 /* Transform.cpp in Sources */,
-				0221B5471DBE005400E59B7E /* Estimate.cpp in Sources */,
 				025ADB871DB7621E00DCE366 /* Rotation.cpp in Sources */,
 				02513FAA1D366BCA00089959 /* Perspective.cpp in Sources */,
 				025ADB881DB7622700DCE366 /* Quaternion.cpp in Sources */,

@@ -57,10 +57,10 @@ void ExtractFeaturePoint::rotateKeyPointCoord
 (std::vector<cv::KeyPoint> &keyPoints, float angle) const
 {
     for (int i=0; i<keyPoints.size(); i++) {
-        cv::Point2f latequirect;
-        tf.rotateEquirectVert(angle, keyPoints[i].pt, latequirect);
+        Equirect forEquirect(keyPoints[i].pt), latEquirect;
+        tf.rotateEquirectVert(angle, forEquirect, latEquirect);
         
-        keyPoints[i].pt = latequirect;
+        keyPoints[i].pt = latEquirect;
     }
 }
 
@@ -110,10 +110,9 @@ void ExtractFeaturePoint::filterLowLatitue
 }
 
 
-bool ExtractFeaturePoint::isInLowLatitude
-(const cv::Point2f& equirect) const
+bool ExtractFeaturePoint::isInLowLatitude(const Equirect& equirect) const
 {
-    cv::Point2f polar;
+    Polar polar;
     tf.equirect2polar(equirect, polar);
     
     float theta = polar.x;

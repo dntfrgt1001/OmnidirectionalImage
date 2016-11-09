@@ -115,11 +115,11 @@ void Transform::points2points
 }
 
 void Transform::rotateSphere
-(const std::vector<cv::Point3f> &spheres,
- std::vector<cv::Point3f> &spheresRot, const cv::Mat &rotMat) const
+(const std::vector<Sphere> &spheres,
+ std::vector<Sphere> &spheresRot, const cv::Mat &rotMat) const
 {
     for (int i = 0; i < spheres.size(); i++) {
-        cv::Point3f sphereRot;
+        Sphere sphereRot;
         rotateSphere(spheres[i], sphereRot, rotMat);
         spheresRot.push_back(sphereRot);
     }
@@ -135,7 +135,7 @@ void Transform::rotateImg
     
     for (int ur = 0; ur < frameSize.width; ur++) {
         for (int vr = 0; vr < frameSize.height; vr++) {
-            cv::Point2f equirectRot(ur, vr), equirect;
+            Equirect equirectRot(ur, vr), equirect;
             rotateEquirect(equirectRot, equirect, invRotMat);
             
             cv::Vec3b pixel;
@@ -174,7 +174,7 @@ void Transform::rotateImgVertRect
     
     for (int ur = rect.x; ur < rect.x + rect.width; ur++) {
         for (int vr = rect.y; vr < rect.y + rect.height; vr++) {
-            cv::Point2f equirectRot(ur, vr), equirect;
+            Equirect equirectRot(ur, vr), equirect;
             rotateEquirectVert(-angle, equirectRot, equirect);
             
             uchar pixel;

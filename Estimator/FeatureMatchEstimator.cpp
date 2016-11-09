@@ -72,8 +72,8 @@ cv::Mat FeatureMatchEstimator::getRotMat
     (forKeyPointsSet, latKeyPointsSet, matchs, forKeyPoints, latKeyPoints);
     
     // 画像座標に変換
-    std::vector<cv::Point2f> forEquirects(forKeyPoints.size());
-    std::vector<cv::Point2f> latEquirects(latKeyPoints.size());
+    std::vector<Equirect> forEquirects(forKeyPoints.size());
+    std::vector<Equirect> latEquirects(latKeyPoints.size());
     for (int i = 0; i < forKeyPoints.size(); i++) {
         forEquirects[i] = forKeyPoints[i].pt;
         latEquirects[i] = latKeyPoints[i].pt;
@@ -81,7 +81,7 @@ cv::Mat FeatureMatchEstimator::getRotMat
     
     
     // 球面座標に変換
-    std::vector<cv::Point3f> forSpheres, latSpheres;
+    std::vector<Sphere> forSpheres, latSpheres;
     tf.equirect2sphere(forEquirects, forSpheres);
     tf.equirect2sphere(latEquirects, latSpheres);
     
@@ -103,22 +103,22 @@ cv::Mat FeatureMatchEstimator::getRotMat
 }
 
 cv::Mat FeatureMatchEstimator::getRotMatSpecDir
-(const std::vector<cv::Point3f> &forSpheres,
- const std::vector<cv::Point3f> &latSpheres,
+(const std::vector<Sphere> &forSpheres,
+ const std::vector<Sphere> &latSpheres,
  const cv::Mat &froChgMat, float &weight) const
 {
     // カメラ正面を変更
-    std::vector<cv::Point3f> forSpheresRot, latSpheresRot;
+    std::vector<Sphere> forSpheresRot, latSpheresRot;
     tf.rotateSphere(forSpheres, forSpheresRot, froChgMat);
     tf.rotateSphere(latSpheres, latSpheresRot, froChgMat);
     
     // 正面の特徴点を抽出
-    std::vector<cv::Point3f> forSpheresFro, latSpheresFro;
+    std::vector<Sphere> forSpheresFro, latSpheresFro;
     ran.extFroSphere
     (forSpheresRot, latSpheresRot, forSpheresFro, latSpheresFro);
     
     // 正規化画像座標に変換
-    std::vector<cv::Point2f> forNormals, latNormals;
+    std::vector<Normal> forNormals, latNormals;
     tf.sphere2normal(forSpheresFro, forNormals);
     tf.sphere2normal(latSpheresFro, latNormals);
     
@@ -143,8 +143,8 @@ cv::Mat FeatureMatchEstimator::getRotMatSpecDir
 }
 
 cv::Mat FeatureMatchEstimator::getRotMatWeightMax
-(const std::vector<cv::Point3f> &forSpheres,
- const std::vector<cv::Point3f> &latSpheres, int &maxIdx) const
+(const std::vector<Sphere> &forSpheres,
+ const std::vector<Sphere> &latSpheres, int &maxIdx) const
 {
     std::vector<cv::Mat> rotMats(froChgMats.size());
     std::vector<float> weights(froChgMats.size());

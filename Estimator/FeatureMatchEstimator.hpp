@@ -31,14 +31,14 @@ public:
     
     // 指定した方向の特徴点で回転行列を推定
     cv::Mat getRotMatSpecDir
-    (const std::vector<cv::Point3f>& forSpheres,
-     const std::vector<cv::Point3f>& latSpheres,
+    (const std::vector<Sphere>& forSpheres,
+     const std::vector<Sphere>& latSpheres,
      const cv::Mat& froChgMat, float &weight) const;
     
     // 最大重みの回転行列
     cv::Mat getRotMatWeightMax
-    (const std::vector<cv::Point3f>& forSpheres,
-     const std::vector<cv::Point3f>& latSpheres, int& maxIdx) const;
+    (const std::vector<Sphere>& forSpheres,
+     const std::vector<Sphere>& latSpheres, int& maxIdx) const;
     
 private:
     const ExtractFeaturePoint& efp;
