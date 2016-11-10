@@ -28,13 +28,18 @@ cv::Mat Epipolar::getRotMatEssMat
     // 後フレーム->前フレームの基本行列
     //cv::Mat E = cv::findEssentialMat(latnormals, fornormals, focal, pp, method);
     
+    std::vector<cv::Point2f> forPoints, latPoints;
+    Transform::normal2point(forNormals, forPoints);
+    Transform::normal2point(latNormals, latPoints);
+    
     cv::Mat E =
     cv::findEssentialMat
-    (latNormals, forNormals, focal, pp, method, prob, threshold, mask);
+    (latPoints, forPoints, focal, pp, method, prob, threshold, mask);
+    
     
     // 後フレーム->前フレームの回転行列
     cv::Mat R, t;
-    cv::recoverPose(E, latNormals, forNormals, R, t);
+    cv::recoverPose(E, latPoints, forPoints, R, t);
     
     cv::Mat rotMat;
     R.convertTo(rotMat, CV_32FC1);

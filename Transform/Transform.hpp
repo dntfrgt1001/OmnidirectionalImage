@@ -10,6 +10,7 @@
 #define Transform_hpp
 
 #include <stdio.h>
+#include <iostream>
 
 #include <opencv2/core.hpp>
 #include <opencv2/highgui.hpp>
@@ -49,7 +50,7 @@ public:
                     2.0*M_PI/frameSize.width;
         polar.y = - (equirect.y-frameSize.height/2.0) *
                     M_PI/frameSize.height;
-        correctpsphere(polar);
+        correctpolar(polar);
     }
     void equirect2polar
     (const std::vector<Equirect>& equirects,
@@ -84,7 +85,7 @@ public:
         float phi = sphere.y<-1.0? asinf(-1.0):
                     (1.0<sphere.y? asinf(1.0): asinf(-sphere.y));
         polar.x = theta; polar.y = phi;
-        correctpsphere(polar);
+        correctpolar(polar);
     }
     void sphere2polar
     (const std::vector<Sphere>& spheres,
@@ -173,7 +174,7 @@ public:
         correctDomain(equirect.x, 0.0, frameSize.width-1);
         correctDomain(equirect.y, 0.0, frameSize.height-1);
     }
-    static void correctpsphere(Polar& polar) {
+    static void correctpolar(Polar& polar) {
         correctDomain(polar.x, -M_PI, M_PI);
         correctDomain(polar.y, -M_PI/2.0, M_PI/2.0);
     }
@@ -195,14 +196,13 @@ public:
     // 回転行列で球面座標を回転
     void rotateSphere
     (const Sphere& sphere, Sphere& sphereRot, const cv::Mat& rotMat) const {
-        //sphereRot = (cv::Point3f) cv::Mat1f(rotMat * cv::Mat1f(sphere));
         const float* row0 = rotMat.ptr<float>(0);
         const float* row1 = rotMat.ptr<float>(1);
         const float* row2 = rotMat.ptr<float>(2);
-        
+
         sphereRot.x = row0[0]*sphere.x+row0[1]*sphere.y+row0[2]*sphere.z;
         sphereRot.y = row1[0]*sphere.x+row1[1]*sphere.y+row1[2]*sphere.z;
-        sphereRot.z = row2[0]*sphere.x+row2[1]+sphere.y+row2[2]*sphere.z;
+        sphereRot.z = row2[0]*sphere.x+row2[1]*sphere.y+row2[2]*sphere.z;
     }
     
     void rotateSphere
@@ -247,7 +247,11 @@ public:
      cv::Point2f& psphereRot) const;
     */
 
-    static void point2normal()
+    static void normal2point
+    (const std::vector<Normal>& normals, std::vector<cv::Point2f>& points);
+    static void point2normal
+    (const std::vector<cv::Point2f>& points, std::vector<Normal>& normals);
+    
     
 private:
     const cv::Size& frameSize;

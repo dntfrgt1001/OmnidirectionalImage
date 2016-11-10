@@ -29,8 +29,8 @@ cv::Mat OpticalFlowEstimator::getRotMat
     
     // 透視投影画像を取得
     cv::Mat forPersImg, latPersImg;
-    per.getPersImg(resForImg, forPersImg, froChgMat, true);
-    per.getPersImg(resLatImg, latPersImg, froChgMat, true);
+    per.getPersImg(resForImg, forPersImg, froChgMat, false);
+    per.getPersImg(resLatImg, latPersImg, froChgMat, false);
     
     // 透視投影座標の特徴点
     std::vector<Pers> forPerss, latPerss;

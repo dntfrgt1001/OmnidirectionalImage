@@ -72,8 +72,8 @@ void MatchFeaturePoint::filterCoordDistance
 }
 
 void MatchFeaturePoint::drawMatchVert
-(const cv::Mat &img1, const std::vector<cv::Point2f> &forEquirects,
- const cv::Mat &img2, const std::vector<cv::Point2f> &latEquirects,
+(const cv::Mat &img1, const std::vector<Equirect> &forEquirects,
+ const cv::Mat &img2, const std::vector<Equirect> &latEquirects,
  cv::Mat &outImg)
 {
     cv::vconcat(img1, img2, outImg);

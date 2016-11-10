@@ -103,13 +103,11 @@ void (Transform::*func)(const forTp&, latTp&) const>
 void Transform::points2points
 (const std::vector<forTp>& forPoints, std::vector<latTp>& latPoints) const
 {
-//latPoints.clear();
     latPoints = std::vector<latTp>(forPoints.size());
     
     for (int i = 0; i < forPoints.size(); i++) {
         latTp latPoint;
         (this->*func)(forPoints[i], latPoint);
-//latPoints.push_back(latPoint);
         latPoints[i] = latPoint;
     }
 }
@@ -205,6 +203,27 @@ void Transform::rotateImgVertRect
     }
     */
 }
+
+void Transform::normal2point
+(const std::vector<Normal> &normals, std::vector<cv::Point2f> &points)
+{
+    points = std::vector<cv::Point2f>(normals.size());
+    
+    for (int i = 0; i < normals.size(); i++) {
+        points[i] = normals[i];
+    }
+}
+
+void Transform::point2normal
+(const std::vector<cv::Point2f> &points, std::vector<Normal> &normals)
+{
+    normals = std::vector<Normal>(points.size());
+    
+    for (int i = 0; i < points.size(); i++) {
+        normals[i] = Normal(points[i]);
+    }
+}
+
 
 /*
 void Transform::rotateEquirectVert

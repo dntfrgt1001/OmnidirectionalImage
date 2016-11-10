@@ -47,6 +47,7 @@ class Normal : public cv::Point2f
 public:
     Normal(): cv::Point2f() {};
     Normal(float xn, float yn): cv::Point2f(xn, yn){};
+    Normal(const cv::Point2f point2f): cv::Point2f(point2f) {};
 };
 
 class Pers : public cv::Point2f

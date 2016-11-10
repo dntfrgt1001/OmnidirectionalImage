@@ -25,10 +25,11 @@ void MainProcess::modifyLatImgOpticalFlow
     
     setMatInfo(rotMat);
     
+    // 画像のテストに注意
     tf.rotateImg(latImg, modLatImg, accRotMat);
 }
 
-void MainProcess::setMatInfo(const cv::Mat rotMat)
+void MainProcess::setMatInfo(const cv::Mat& rotMat)
 {
     accRotMat = accRotMat * rotMat;
     

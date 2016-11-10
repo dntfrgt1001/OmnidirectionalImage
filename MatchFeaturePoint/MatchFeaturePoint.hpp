@@ -46,8 +46,8 @@ public:
     
     // マッチの描画
     static void drawMatchVert
-    (const cv::Mat& img1, const std::vector<cv::Point2f>& forEquirects,
-     const cv::Mat& img2, const std::vector<cv::Point2f>& latEquirects,
+    (const cv::Mat& img1, const std::vector<Equirect>& forEquirects,
+     const cv::Mat& img2, const std::vector<Equirect>& latEquirects,
      cv::Mat& outImg);
 
     // マッチした特徴点を返す
