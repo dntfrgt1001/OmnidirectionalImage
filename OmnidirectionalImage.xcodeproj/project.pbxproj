@@ -587,7 +587,6 @@
 		02648EA61CF804E300E4E948 /* class */ = {
 			isa = PBXGroup;
 			children = (
-				022BA2641DD1ABC00015C380 /* Core */,
 				02D6D9A01D8166CF00862E8F /* Video */,
 				02A9B6F41DC1EE8A00D4A0E7 /* MainProcess */,
 				02A9B6F31DC1E9BA00D4A0E7 /* Epipolar */,
@@ -599,6 +598,7 @@
 				022D08B31CF5915F0032A92F /* ExtractFeaturePoint */,
 				020D730A1D2A62F800BC61BD /* Rotation */,
 				0245CD8C1C4233B100FF5E33 /* Transform */,
+				022BA2641DD1ABC00015C380 /* Core */,
 				0298B4791D0A897700B68032 /* old */,
 			);
 			name = class;

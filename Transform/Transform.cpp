@@ -8,8 +8,7 @@
 
 #include "Transform.hpp"
 
-Transform::Transform(const cv::Size& frameSize):
-frameSize(frameSize)
+Transform::Transform(const cv::Size& fs): fs(fs)
 {
 }
 
@@ -131,8 +130,8 @@ void Transform::rotateImg
     // 逆行列を用意
     cv::Mat invRotMat = rotMat.inv();
     
-    for (int ur = 0; ur < frameSize.width; ur++) {
-        for (int vr = 0; vr < frameSize.height; vr++) {
+    for (int ur = 0; ur < fs.width; ur++) {
+        for (int vr = 0; vr < fs.height; vr++) {
             Equirect equirectRot(ur, vr), equirect;
             rotateEquirect(equirectRot, equirect, invRotMat);
             
@@ -156,8 +155,8 @@ void Transform::getBilinearPixel
     float ulow = u - uf, uup = uc - u;
     float vlow = v - vf, vup = vc - v;
     
-    if (uc == frameSize.width) uc = 0;
-    if (vc == frameSize.height) vc = 0;
+    if (uc == fs.width) uc = 0;
+    if (vc == fs.height) vc = 0;
     
     pixel =
         uup * vup * img.at<T>(vf, uf) + uup * vlow * img.at<T>(vc, uf) +

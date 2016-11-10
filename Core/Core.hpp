@@ -58,4 +58,5 @@ public:
     Pers(const cv::Point2f point2f): cv::Point2f(point2f){};
 };
 
+
 #endif /* Core_hpp */
