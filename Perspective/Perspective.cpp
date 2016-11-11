@@ -39,20 +39,14 @@ void Perspective::getPersImg
             Pers pers(u, v);
             
             if (isInRange(pers, normalRad)) {
-                Normal normal;
-                tf.pers2normal(pers, normal, inParaMat);
+                Normal normal = tf.pers2normal(pers, inParaMat);
+                Sphere sphere = tf.normal2sphere(normal, isFront);
+                Sphere sphereRot = tf.rotateSphere(sphere, froMatInv);
+                Equirect equirectRot = tf.sphere2equirect(sphereRot);
                 
-                Sphere sphere, sphereRot;
-                tf.normal2sphere(normal, sphere, isFront);
-                
-                tf.rotateSphere(sphere, sphereRot, froMatInv);
-                
-                Equirect equirectRot;
-                tf.sphere2equirect(sphereRot, equirectRot);
-                
-                cv::Vec3b pixel;
-                tf.getBilinearPixel<cv::Vec3b>(img, equirectRot, pixel);
-                persImg.at<cv::Vec3b>(v, u) = pixel;
+                persImg.at<cv::Vec3b>(v, u) =
+                    tf.getBiliPixel<cv::Vec3b>(img, equirectRot);
+
                 //uchar pixel;
                 //tf.getBilinearPixel<uchar>(img, equirectRot, pixel);
                 //persImg.at<uchar>(v, u) = pixel;

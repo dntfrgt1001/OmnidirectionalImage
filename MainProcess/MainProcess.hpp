@@ -33,7 +33,6 @@ public:
         setMatInfo(curRotMat);
     }
     
-    
     void modifyLatImgFeatureMatch
     (const cv::Mat& forImg, const cv::Mat& latImg, cv::Mat& modLatImg);
     

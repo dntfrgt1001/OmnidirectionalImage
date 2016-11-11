@@ -74,52 +74,51 @@ void Transform::pers2normal
 (const std::vector<Pers> &perss, std::vector<Normal> &normals,
  const cv::Mat& inParaMat) const
 {
-    normals.clear();
-    
-    for (int i = 0; i < perss.size(); i++) {
-        Normal normal;
-        pers2normal(perss[i], normal, inParaMat);
-        normals.push_back(normal);
-    }
+    points2points
+    <Pers, Normal, &Transform::pers2normal>(perss, normals, inParaMat);
 }
 
 void Transform::normal2pers
 (const std::vector<Normal> &normals, std::vector<Pers> &perss,
  const cv::Mat &inParaMat) const
 {
-    perss.clear();
-    
-    for (int i = 0; i < normals.size(); i++) {
-        Pers pers;
-        normal2pers(normals[i], pers, inParaMat);
-        perss.push_back(pers);
-    }
+    points2points
+    <Normal, Pers, &Transform::normal2pers>(normals, perss, inParaMat);
 }
 
 template
-<class forTp, class latTp,
-void (Transform::*func)(const forTp&, latTp&) const>
+<class forTp, class latTp, latTp (Transform::*func)(const forTp&) const>
 void Transform::points2points
 (const std::vector<forTp>& forPoints, std::vector<latTp>& latPoints) const
 {
     latPoints = std::vector<latTp>(forPoints.size());
     
     for (int i = 0; i < forPoints.size(); i++) {
-        latTp latPoint;
-        (this->*func)(forPoints[i], latPoint);
-        latPoints[i] = latPoint;
+        latPoints[i] = (this->*func)(forPoints[i]);
     }
 }
+
+template
+<class forTp, class latTp,
+latTp (Transform::*func)(const forTp&, const cv::Mat&) const>
+void Transform::points2points
+(const std::vector<forTp>& forPoints, std::vector<latTp>& latPoints,
+ const cv::Mat& mat) const
+{
+    latPoints = std::vector<latTp>(forPoints.size());
+    
+    for (int i = 0; i < forPoints.size(); i++) {
+        latPoints[i] = (this->*func)(forPoints[i], mat);
+    }
+}
+
 
 void Transform::rotateSphere
 (const std::vector<Sphere> &spheres,
  std::vector<Sphere> &spheresRot, const cv::Mat &rotMat) const
 {
-    for (int i = 0; i < spheres.size(); i++) {
-        Sphere sphereRot;
-        rotateSphere(spheres[i], sphereRot, rotMat);
-        spheresRot.push_back(sphereRot);
-    }
+    points2points
+    <Sphere, Sphere, &Transform::rotateSphere>(spheres, spheresRot, rotMat);
 }
 
 void Transform::rotateImg
@@ -127,24 +126,22 @@ void Transform::rotateImg
 {
     rotImg = cv::Mat(img.size(), img.type());
     
+    std::cout << rotMat << std::endl;
+    
     // 逆行列を用意
     cv::Mat invRotMat = rotMat.inv();
     
     for (int ur = 0; ur < fs.width; ur++) {
         for (int vr = 0; vr < fs.height; vr++) {
-            Equirect equirectRot(ur, vr), equirect;
-            rotateEquirect(equirectRot, equirect, invRotMat);
+            Equirect equirect = rotateEquirect(Equirect(ur, vr), invRotMat);
             
-            cv::Vec3b pixel;
-            getBilinearPixel<cv::Vec3b>(img, equirect, pixel);
-            rotImg.at<cv::Vec3b>(vr, ur) = pixel;
+            rotImg.at<cv::Vec3b>(vr, ur) = getBiliPixel<cv::Vec3b>(img, equirect);
         }
     }
 }
 
-template<class T>
-void Transform::getBilinearPixel
-(const cv::Mat &img, const cv::Point2f &equirect, T &pixel) const
+template<class Tp>
+Tp Transform::getBiliPixel(const cv::Mat &img, const Equirect &equirect) const
 {
     float u = equirect.x, v = equirect.y;
     
@@ -158,9 +155,8 @@ void Transform::getBilinearPixel
     if (uc == fs.width) uc = 0;
     if (vc == fs.height) vc = 0;
     
-    pixel =
-        uup * vup * img.at<T>(vf, uf) + uup * vlow * img.at<T>(vc, uf) +
-        ulow * vup * img.at<T>(vf, uc) + ulow * vlow * img.at<T>(vc, uc);
+    return uup * vup * img.at<Tp>(vf, uf) + uup * vlow * img.at<Tp>(vc, uf) +
+           ulow * vup * img.at<Tp>(vf, uc) + ulow * vlow * img.at<Tp>(vc, uc);
 }
  
 void Transform::rotateImgVertRect
@@ -171,12 +167,9 @@ void Transform::rotateImgVertRect
     
     for (int ur = rect.x; ur < rect.x + rect.width; ur++) {
         for (int vr = rect.y; vr < rect.y + rect.height; vr++) {
-            Equirect equirectRot(ur, vr), equirect;
-            rotateEquirectVert(-angle, equirectRot, equirect);
+            Equirect equirect = rotateEquirectVert(-angle, Equirect(ur,vr));
             
-            uchar pixel;
-            getBilinearPixel<uchar>(img, equirect, pixel);
-            rotImg.at<uchar>(vr, ur) = pixel;
+            rotImg.at<uchar>(vr, ur) = getBiliPixel<uchar>(img, equirect);
         }
     }
     

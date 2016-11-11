@@ -96,13 +96,11 @@ public:
         sphere.z = cosf(polar.x) * cosf(polar.y);
         correctsphere(sphere);
     }*/
-    Sphere polar2Sphere(const Polar& polar) const
+    Sphere polar2sphere(const Polar& polar) const
     {
-        float x = sinf(polar.x) * cosf(polar.y);
-        float y = - sinf(polar.y);
-        float z = cosf(polar.x) * cosf(polar.y);
-        // 補正の必要はあるか
-        return Sphere(x, y, z);
+        return Sphere(sinf(polar.x) * cosf(polar.y),
+                      - sinf(polar.y),
+                      cosf(polar.x) * cosf(polar.y));
     }
     void polar2sphere
     (const std::vector<Polar>& polars,
@@ -124,11 +122,10 @@ public:
     Polar sphere2polar(const Sphere& sphere) const
     {
         float theta = (sphere.z!=0)? atanf(sphere.x/sphere.z):
-                                     ((sphere.x>0)? M_PI_2:
-                                                    -M_PI_2);
+                                     ((sphere.x>0)? M_PI_2: -M_PI_2);
         if (sphere.z<0) { if (sphere.x < 0) theta -= M_PI;
                           else theta += M_PI; }
-        float phi = asinf(revValueDom(sphere.y, -1, 1));
+        float phi = asinf(revValueDom(-sphere.y, -1, 1));
         return Polar(revValueDom(theta, -M_PI, M_PI),
                      revValueDom(phi, -M_PI_2, M_PI_2));
     }
@@ -146,7 +143,7 @@ public:
     }*/
     Sphere equirect2sphere(const Equirect& equirect) const
     {
-        return polar2Sphere(equirect2polar(equirect));
+        return polar2sphere(equirect2polar(equirect));
     }
     void equirect2sphere
     (const std::vector<Equirect>& equirects,
@@ -245,49 +242,34 @@ public:
     
     // 点群変換のテンプレート
     template
-    <class forTp, class latTp,
-    void (Transform::*func)(const forTp&, latTp&) const>
+    <class forTp, class latTp, latTp (Transform::*func)(const forTp&) const>
     void points2points
     (const std::vector<forTp>& forPoints, std::vector<latTp>& latPoints) const;
     
-    // 計算誤差による定義域外の値を補正
-    static void correctDomain(float& rawValue, float dlimit, float ulimit) {
-        if (rawValue < dlimit) rawValue = dlimit;
-        else if (ulimit < rawValue) rawValue = ulimit;
-    }
-    void correctequirect(Equirect& equirect) const {
-        correctDomain(equirect.x, 0.0, fs.width-1);
-        correctDomain(equirect.y, 0.0, fs.height-1);
-    }
-    static void correctpolar(Polar& polar) {
-        correctDomain(polar.x, -M_PI, M_PI);
-        correctDomain(polar.y, -M_PI/2.0, M_PI/2.0);
-    }
-    static void correctsphere(Sphere& sphere) {
-        correctDomain(sphere.x, -1, 1);
-        correctDomain(sphere.y, -1, 1);
-        correctDomain(sphere.z, -1, 1);
-    }
+    template
+    <class forTp, class latTp,
+    latTp (Transform::*func)(const forTp&, const cv::Mat&) const>
+    void points2points
+    (const std::vector<forTp>& forPoints, std::vector<latTp>& latPoints,
+     const cv::Mat& mat) const;
     
     // 回転行列で画像座標を回転
-    void rotateEquirect
-    (const Equirect& equirect, Equirect& equirectRot,
-     const cv::Mat& rotMat) const {
-        Sphere sphere, sphereRot;
-        equirect2sphere(equirect, sphere);
-        rotateSphere(sphere, sphereRot, rotMat);
-        sphere2equirect(sphereRot, equirectRot);
+    Equirect rotateEquirect(const Equirect& equirect, const cv::Mat& rotMat) const
+    {
+        Sphere sphere = equirect2sphere(equirect);
+        Sphere sphereRot =  rotateSphere(sphere, rotMat);
+        return sphere2equirect(sphereRot);
     }
     // 回転行列で球面座標を回転
-    void rotateSphere
-    (const Sphere& sphere, Sphere& sphereRot, const cv::Mat& rotMat) const {
+    Sphere rotateSphere(const Sphere& sphere, const cv::Mat& rotMat) const
+    {
         const float* row0 = rotMat.ptr<float>(0);
         const float* row1 = rotMat.ptr<float>(1);
         const float* row2 = rotMat.ptr<float>(2);
-
-        sphereRot.x = row0[0]*sphere.x+row0[1]*sphere.y+row0[2]*sphere.z;
-        sphereRot.y = row1[0]*sphere.x+row1[1]*sphere.y+row1[2]*sphere.z;
-        sphereRot.z = row2[0]*sphere.x+row2[1]*sphere.y+row2[2]*sphere.z;
+        
+        return Sphere(row0[0]*sphere.x+row0[1]*sphere.y+row0[2]*sphere.z,
+                      row1[0]*sphere.x+row1[1]*sphere.y+row1[2]*sphere.z,
+                      row2[0]*sphere.x+row2[1]*sphere.y+row2[2]*sphere.z);
     }
     
     void rotateSphere
@@ -299,39 +281,31 @@ public:
     (const cv::Mat& img, cv::Mat& rotImg, const cv::Mat& rotMat) const;
     
     // バイリニア補間による画素値の決定
-    template<class T>
-    void getBilinearPixel
-    (const cv::Mat& img, const cv::Point2f& equirect, T& pixel) const;
+    template<class Tp>
+    Tp getBiliPixel(const cv::Mat& img, const Equirect& equirect) const;
     
     // 画像をX軸まわりに回転（グレースケール）
     void rotateImgVertRect
     (const float angle, const cv::Mat& img,
      const cv::Rect& rect, cv::Mat& rotImg)  const;
+    
     // 画像座標をX軸まわりに回転
-    void rotateEquirectVert
-    (const float angle, const Equirect& equirect,
-     Equirect& equirectRot) const {
-        Sphere sphere, sphereRot;
-        equirect2sphere(equirect, sphere);
-        rotateSphereVert(angle, sphere, sphereRot);
-        sphere2equirect(sphereRot, equirectRot);
+    Equirect rotateEquirectVert
+    (const float angle, const Equirect& equirect) const
+    {
+        Sphere sphere = equirect2sphere(equirect);
+        Sphere sphereRot = rotateSphereVert(angle, sphere);
+        return sphere2equirect(sphereRot);
     }
     // 球面座標をX軸まわりに回転
-    void rotateSphereVert
-    (const float angle, const cv::Point3f& sphere,
-     cv::Point3f& sphereRot) const {
+    Sphere rotateSphereVert(const float angle, const Sphere& sphere) const
+    {
         float cosa = cosf(angle), sina = sinf(angle);
-        sphereRot.x = sphere.x;
-        sphereRot.y = cosa*sphere.y - sina*sphere.z;
-        sphereRot.z = sina*sphere.y + cosa*sphere.z;
+        return Sphere(sphere.x,
+                      cosa*sphere.y - sina*sphere.z,
+                      sina*sphere.y + cosa*sphere.z);
     }
     
-    /*
-    void rotatePsphereVert
-    (const float angle, const cv::Point2f& psphere,
-     cv::Point2f& psphereRot) const;
-    */
-
     static void normal2point
     (const std::vector<Normal>& normals, std::vector<cv::Point2f>& points);
     static void point2normal

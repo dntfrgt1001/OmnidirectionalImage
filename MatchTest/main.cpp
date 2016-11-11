@@ -33,8 +33,8 @@
 int main(int argc, const char * argv[])
 {
     const std::string path = "/Users/masakazu/Desktop/";
-    const std::string inputName1 = path + "image0034.jpg";
-    const std::string inputName2 = path + "image0035.jpg";
+    const std::string inputName1 = path + "img1.jpg";
+    const std::string inputName2 = path + "img2.jpg";
 
     const cv::Size fso(960, 480);
     const cv::Size fs(960, 480);

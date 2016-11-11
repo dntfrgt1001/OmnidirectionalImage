@@ -24,20 +24,15 @@ public:
     
     
     // 特徴点がカメラの前後にあるか
-    bool isInRangeNormal(const cv::Point2f& normal) const {
+    bool isInRange(const cv::Point2f& normal) const {
         return normal.x*normal.x + normal.y*normal.y <
                rangeRadius*rangeRadius;
     }
-    bool isInRangeSphere(const Sphere& sphere) const {
-        Normal normal;
-        tf.sphere2normal(sphere, normal);
-        return isInRangeNormal(normal);
+    bool isInRange(const Sphere& sphere) const {
+        return isInRange(tf.sphere2normal(sphere));
     }
-    bool isInRangeEquirect
-    (const Equirect& equirect) const {
-        Sphere sphere;
-        tf.equirect2sphere(equirect, sphere);
-        return isInRangeSphere(sphere);
+    bool isInRange(const Equirect& equirect) const {
+        return isInRange(tf.equirect2sphere(equirect));
     }
     // マッチした特徴点の組が境界を跨いでいるか
     bool isStrideBorder
@@ -47,7 +42,7 @@ public:
     // 推定に使う特徴点か(カメラ前後にあり境界を跨がない)
     bool isValidSpherePair
     (const Sphere& forsphere, const Sphere& latsphere) const {
-        return isInRangeSphere(forsphere) && isInRangeSphere(latsphere) &&
+        return isInRange(forsphere) && isInRange(latsphere) &&
                !isStrideBorder(forsphere, latsphere);
     }
     
@@ -61,15 +56,11 @@ public:
     // 回転後の特徴点がカメラの前後にあるか
     bool isInRange
     (const Sphere& sphere, const cv::Mat& froMat) const {
-        Sphere sphereRot;
-        tf.rotateSphere(sphere, sphereRot, froMat);
-        return isInRangeSphere(sphereRot);
+        return isInRange(tf.rotateSphere(sphere, froMat));
     }
     bool isInRange
     (const Equirect& equirect, const cv::Mat& froMat) const {
-        Equirect equirectRot;
-        tf.rotateEquirect(equirect, equirectRot, froMat);
-        return isInRangeEquirect(equirectRot);
+        return isInRange(tf.rotateEquirect(equirect, froMat));
     }
  
     // 回転後にカメラの前後にある特徴点を取り出す

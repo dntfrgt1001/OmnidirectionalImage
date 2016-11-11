@@ -38,8 +38,7 @@ public:
     // 有効範囲内か
     bool isInRange
     (const Pers& pers, const float rad) const {
-        Normal normal;
-        tf.pers2normal(pers, normal, inParaMat);
+        Normal normal = tf.pers2normal(pers, inParaMat);
         return normal.x*normal.x + normal.y*normal.y < rad*rad;
     }
     
