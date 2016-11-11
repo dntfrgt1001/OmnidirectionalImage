@@ -13,8 +13,7 @@ InputGyro::InputGyro
  speed_t baudRate, size_t bufferSize, const std::string& pattern):
 pattern(pattern), bufferSize(bufferSize),
 resolution(0.06f), storeSize(10), deltaTime(0.008f),
-sensorValueSize(9)
-,inBuffer(""), outBuffer(""),searchBuffer("")
+sensorValueSize(9), inBuffer(""), outBuffer(""), searchBuffer("")
 {
     fd = open(portName.c_str(), O_RDONLY|O_NONBLOCK);
     if (fd < 0) {
@@ -56,8 +55,6 @@ sensorValueSize(9)
     for (int i=0; i<3; i++) {
         angle[i] = 0;
     }
-    
-    
 }
 
 InputGyro::~InputGyro()

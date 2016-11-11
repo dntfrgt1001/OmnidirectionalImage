@@ -48,10 +48,12 @@ public:
      */
     Equirect polar2equirect(const Polar& polar) const
     {
-        float u = polar.x*fs.width/(2.0*M_PI) + fs.width/2.0;
-        float v = -polar.y*fs.height/M_PI + fs.height/2.0;
-        return Equirect(revValueDom(u, 0.0, fs.width-1),
-                        revValueDom(v, 0.0, fs.height-1));
+        return Equirect(revValueDom
+                        (polar.x*fs.width/(2.0*M_PI) + fs.width/2.0,
+                        0.0, fs.width - 1),
+                        revValueDom
+                        (-polar.y*fs.height/M_PI + fs.height/2.0,
+                         0.0, fs.height - 1));
     }
     void polar2equirect
     (const std::vector<Polar>& polars,
@@ -70,10 +72,12 @@ public:
      */
     Polar equirect2polar(const Equirect& equirect) const
     {
-        float theta = (equirect.x-fs.width/2.0) * 2.0*M_PI/fs.width;
-        float phi = - (equirect.y-fs.height/2.0) * M_PI/fs.height;
-        return Polar(revValueDom(theta, -M_PI, M_PI),
-                     revValueDom(phi, -M_PI_2, M_PI_2));
+        return Polar(revValueDom
+                     ((equirect.x-fs.width/2.0) * 2.0*M_PI/fs.width,
+                      -M_PI, M_PI),
+                     revValueDom
+                     (- (equirect.y-fs.height/2.0) * M_PI/fs.height,
+                      -M_PI_2, M_PI_2));
     }
     void equirect2polar
     (const std::vector<Equirect>& equirects,
@@ -254,12 +258,13 @@ public:
      const cv::Mat& mat) const;
     
     // 回転行列で画像座標を回転
-    Equirect rotateEquirect(const Equirect& equirect, const cv::Mat& rotMat) const
+    Equirect rotateEquirect
+    (const Equirect& equirect, const cv::Mat& rotMat) const
     {
-        Sphere sphere = equirect2sphere(equirect);
-        Sphere sphereRot =  rotateSphere(sphere, rotMat);
-        return sphere2equirect(sphereRot);
+        return sphere2equirect(rotateSphere(equirect2sphere(equirect),
+                                            rotMat));
     }
+    
     // 回転行列で球面座標を回転
     Sphere rotateSphere(const Sphere& sphere, const cv::Mat& rotMat) const
     {
@@ -293,9 +298,8 @@ public:
     Equirect rotateEquirectVert
     (const float angle, const Equirect& equirect) const
     {
-        Sphere sphere = equirect2sphere(equirect);
-        Sphere sphereRot = rotateSphereVert(angle, sphere);
-        return sphere2equirect(sphereRot);
+        return sphere2equirect(rotateSphereVert(angle,
+                                                equirect2sphere(equirect)));
     }
     // 球面座標をX軸まわりに回転
     Sphere rotateSphereVert(const float angle, const Sphere& sphere) const
@@ -315,4 +319,24 @@ public:
 private:
     const cv::Size& fs;
 };
+
+template<class Tp>
+inline Tp Transform::getBiliPixel
+(const cv::Mat &img, const Equirect &equirect) const
+{
+    int uf = floor(equirect.x), uc = uf + 1;
+    int vf = floor(equirect.y), vc = vf + 1;
+    
+    float ulow = equirect.x - uf, uup = uc - equirect.x;
+    float vlow = equirect.y - vf, vup = vc - equirect.y;
+    
+    if (uc == fs.width) uc = 0;
+    if (vc == fs.height) vc = 0;
+    
+    return uup * vup * (img.ptr<Tp>(vf))[uf] +
+           uup * vlow * (img.ptr<Tp>(vc))[uf] +
+           ulow * vup * (img.ptr<Tp>(vf))[uc] +
+           ulow * vlow * (img.ptr<Tp>(vc))[uc];
+}
+
 #endif /* Transform_hpp */

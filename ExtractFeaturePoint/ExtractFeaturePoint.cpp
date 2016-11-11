@@ -29,13 +29,35 @@ void ExtractFeaturePoint::extractRectRoiFeaturePoint
     roiCoord2GlobalCoord(keyPoints);
 }
 
+void ExtractFeaturePoint::extractFeaturePoint
+(const cv::Mat& img, std::vector<cv::KeyPoint> &keyPoints,
+ cv::Mat& descriptors) const
+{
+    for (int i = 0; i < divNum; i++) {
+        std::vector<cv::KeyPoint> roiKeyPoints;
+        cv::Mat roiDescriptors;
+        
+        if (i == 0) {
+            extractRoiFeaturePoint(img, keyPoints, descriptors, i);
+            std::cout << keyPoints.size() << std::endl;
+        } else {
+            extractRoiFeaturePoint(img, roiKeyPoints, roiDescriptors, i);
+            
+            keyPointConcat(keyPoints, roiKeyPoints);
+            descriptorConcat(descriptors, roiDescriptors);
+            
+            std::cout << keyPoints.size() << std::endl;
+        }
+    }
+}
+
 void ExtractFeaturePoint::extractRoiFeaturePoint
 (const cv::Mat& img, std::vector<cv::KeyPoint>& roiKeyPoints,
  cv::Mat& roiDescriptors, int number) const
 {
     assert(number < divNum);
     
-    float rotAngle = -1 * M_PI /2 +  M_PI*((float)number / divNum);
+    float rotAngle = -1 * M_PI_2 +  M_PI*((float)number / divNum);
     
     cv::Mat rotImg;
     tf.rotateImgVertRect(rotAngle, img, roi, rotImg);
@@ -62,27 +84,6 @@ void ExtractFeaturePoint::rotateKeyPointCoord
     }
 }
 
-void ExtractFeaturePoint::extractFeaturePoint
-(const cv::Mat& img, std::vector<cv::KeyPoint> &keyPoints,
- cv::Mat& descriptors) const
-{
-    for (int i=0; i<divNum; i++) {
-        std::vector<cv::KeyPoint> roiKeyPoints;
-        cv::Mat roiDescriptors;
-
-        if (i == 0) {
-            extractRoiFeaturePoint(img, keyPoints, descriptors, i);
-            std::cout << keyPoints.size() << std::endl;
-        } else {
-            extractRoiFeaturePoint(img, roiKeyPoints, roiDescriptors, i);
-        
-            keyPointConcat(keyPoints, roiKeyPoints);
-            descriptorConcat(descriptors, roiDescriptors);
-            
-            std::cout << keyPoints.size() << std::endl;
-        }
-    }
-}
 
 void ExtractFeaturePoint::filterLowLatitue
 (std::vector<cv::KeyPoint> &keyPoints, cv::Mat &descriptors) const

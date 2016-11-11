@@ -33,8 +33,8 @@ public:
     void printCurrentAccel();
     void printCurrentSensorValue();
     
-    
     void split(const std::string& str, const std::string& pattern);
+    
     // センサー値を読み込みバッファに追加
     void changegSensorValueFromCharToString
     (const char* in, size_t size, std::string& out);
@@ -55,11 +55,8 @@ public:
     // センサー値を使って現在の角度を更新
     void renewCurrentAngle();
     
-    
-    
     short char2short(char upper, char lower);
     short char2short(short upper, short lower);
-    
     
 private:
     int fd;

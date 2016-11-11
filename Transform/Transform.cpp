@@ -131,15 +131,18 @@ void Transform::rotateImg
     // 逆行列を用意
     cv::Mat invRotMat = rotMat.inv();
     
-    for (int ur = 0; ur < fs.width; ur++) {
-        for (int vr = 0; vr < fs.height; vr++) {
+    for (int vr = 0; vr < fs.height; vr++) {
+        cv::Vec3b* row = rotImg.ptr<cv::Vec3b>(vr);
+        
+        for (int ur = 0; ur < fs.width; ur++) {
             Equirect equirect = rotateEquirect(Equirect(ur, vr), invRotMat);
             
-            rotImg.at<cv::Vec3b>(vr, ur) = getBiliPixel<cv::Vec3b>(img, equirect);
+            row[ur] = getBiliPixel<cv::Vec3b>(img, equirect);
         }
     }
 }
 
+/*
 template<class Tp>
 Tp Transform::getBiliPixel(const cv::Mat &img, const Equirect &equirect) const
 {
@@ -157,19 +160,32 @@ Tp Transform::getBiliPixel(const cv::Mat &img, const Equirect &equirect) const
     
     return uup * vup * img.at<Tp>(vf, uf) + uup * vlow * img.at<Tp>(vc, uf) +
            ulow * vup * img.at<Tp>(vf, uc) + ulow * vlow * img.at<Tp>(vc, uc);
-}
- 
+}*/
+
 void Transform::rotateImgVertRect
 (const float angle, const cv::Mat &img, const cv::Rect& rect,
  cv::Mat &rotImg) const
 {
     rotImg = cv::Mat(img.size(), img.type());
     
+    /*
     for (int ur = rect.x; ur < rect.x + rect.width; ur++) {
         for (int vr = rect.y; vr < rect.y + rect.height; vr++) {
             Equirect equirect = rotateEquirectVert(-angle, Equirect(ur,vr));
             
             rotImg.at<uchar>(vr, ur) = getBiliPixel<uchar>(img, equirect);
+        }
+    }*/
+
+    const float vheight = rect.y + rect.height;
+    const float vwidth = rect.x + rect.width;
+    
+    for (int vr = rect.y; vr < vheight ; vr++) {
+        uchar* row = rotImg.ptr<uchar>(vr);
+        
+        for (int ur = rect.x; ur < vwidth; ur++) {
+            Equirect equirect = rotateEquirectVert(-angle, Equirect(ur,vr));
+            row[ur] = getBiliPixel<uchar>(img, equirect);
         }
     }
     

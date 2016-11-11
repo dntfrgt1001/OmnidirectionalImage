@@ -27,9 +27,9 @@ public:
     (const Transform& tf, const FeatureMatchEstimator& fme,
      const OpticalFlowEstimator& ofe):
     tf(tf), fme(fme), ofe(ofe), accRotMat(cv::Mat::eye(3,3,CV_32F)) {
-        cv::Vec3f rotVec(0.30, 0.0, 0.0);
-        //Rotation::RotVec2RotMat(rotVec, curRotMat);
-        curRotMat = cv::Mat::eye(3, 3, CV_32F);
+        cv::Vec3f rotVec(0.10, 0.0, 0.0);
+        Rotation::RotVec2RotMat(rotVec, curRotMat);
+        //curRotMat = cv::Mat::eye(3, 3, CV_32F);
         setMatInfo(curRotMat);
     }
     

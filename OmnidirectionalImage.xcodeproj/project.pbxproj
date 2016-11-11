@@ -20,6 +20,7 @@
 		0225C93D1D00071B00356EA6 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0225C93C1D00071B00356EA6 /* main.cpp */; };
 		0229F99A1D393CE20026000C /* ExtractFeaturePoint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 02E4371C1CF845D7007C3605 /* ExtractFeaturePoint.cpp */; };
 		022BA2671DD1ABD90015C380 /* Core.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 022BA2651DD1ABD90015C380 /* Core.cpp */; };
+		022BA26B1DD5BC610015C380 /* IMU.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 022BA2691DD5BC610015C380 /* IMU.cpp */; };
 		024307101D7560300031EFAD /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0243070F1D7560300031EFAD /* main.cpp */; };
 		0245CD801C41382500FF5E33 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0245CD7F1C41382500FF5E33 /* main.cpp */; };
 		0245CD901C4235AA00FF5E33 /* Transform.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0245CD8D1C4233E000FF5E33 /* Transform.cpp */; };
@@ -239,6 +240,8 @@
 		022AE82F1D6C7AC000900F28 /* libiomp5.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libiomp5.dylib; path = ../../../../../../../usr/local/lib/libiomp5.dylib; sourceTree = "<group>"; };
 		022BA2651DD1ABD90015C380 /* Core.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Core.cpp; path = Core/Core.cpp; sourceTree = "<group>"; };
 		022BA2661DD1ABD90015C380 /* Core.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = Core.hpp; path = Core/Core.hpp; sourceTree = "<group>"; };
+		022BA2691DD5BC610015C380 /* IMU.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = IMU.cpp; path = IMU/IMU.cpp; sourceTree = "<group>"; };
+		022BA26A1DD5BC610015C380 /* IMU.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = IMU.hpp; path = IMU/IMU.hpp; sourceTree = "<group>"; };
 		02315B411D09937600CC22A0 /* Affine.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Affine.cpp; path = Affine/Affine.cpp; sourceTree = "<group>"; };
 		02315B421D09937600CC22A0 /* Affine.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = Affine.hpp; path = Affine/Affine.hpp; sourceTree = "<group>"; };
 		0243070D1D7560300031EFAD /* RangeValid */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = RangeValid; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -472,6 +475,15 @@
 			name = Core;
 			sourceTree = "<group>";
 		};
+		022BA2681DD5BB9D0015C380 /* IMU */ = {
+			isa = PBXGroup;
+			children = (
+				022BA2691DD5BC610015C380 /* IMU.cpp */,
+				022BA26A1DD5BC610015C380 /* IMU.hpp */,
+			);
+			name = IMU;
+			sourceTree = "<group>";
+		};
 		022D08B31CF5915F0032A92F /* ExtractFeaturePoint */ = {
 			isa = PBXGroup;
 			children = (
@@ -587,6 +599,8 @@
 		02648EA61CF804E300E4E948 /* class */ = {
 			isa = PBXGroup;
 			children = (
+				020FE6C61CA6D84100A650CE /* InputGyro */,
+				022BA2681DD5BB9D0015C380 /* IMU */,
 				02D6D9A01D8166CF00862E8F /* Video */,
 				02A9B6F41DC1EE8A00D4A0E7 /* MainProcess */,
 				02A9B6F31DC1E9BA00D4A0E7 /* Epipolar */,
@@ -705,7 +719,6 @@
 				02315B401D09935800CC22A0 /* Affine */,
 				0245CD921C43B46100FF5E33 /* Match */,
 				0245CD5A1C3F83DE00FF5E33 /* Rotate */,
-				020FE6C61CA6D84100A650CE /* InputGyro */,
 			);
 			name = old;
 			sourceTree = "<group>";
@@ -1256,6 +1269,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				022BA26B1DD5BC610015C380 /* IMU.cpp in Sources */,
 				026B3EB51CA1ABF4008B59CD /* main.cpp in Sources */,
 				02B8D5F51CA7D92F00A736DB /* InputGyro.cpp in Sources */,
 			);

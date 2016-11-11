@@ -51,15 +51,17 @@ cv::Mat FeatureMatchEstimator::getRotMat
     efp.extractFeaturePoint(forImgGray, forKeyPointsSet, forDescs);
     efp.extractFeaturePoint(latImgGray, latKeyPointsSet, latDescs);
     
+    /*
     cv::Mat imgKeyPoint1;
     cv::Mat imgKeyPoint2;
-    efp.drawKeyPoint(forImg, forKeyPointsSet, imgKeyPoint1);
-    efp.drawKeyPoint(latImg, latKeyPointsSet, imgKeyPoint2);
+    efp.drawKeyPoint(forImgRes, forKeyPointsSet, imgKeyPoint1);
+    efp.drawKeyPoint(latImgRes, latKeyPointsSet, imgKeyPoint2);
     cv::namedWindow("KeyPoint 1");
     cv::namedWindow("KeyPoint 2");
     cv::imshow("KeyPoint 1", imgKeyPoint1);
     cv::imshow("KeyPoint 2", imgKeyPoint2);
     cv::waitKey();
+    */
     
     // マッチング＆フィルタリング
     std::vector<cv::DMatch> matchs;
