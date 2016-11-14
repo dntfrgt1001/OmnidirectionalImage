@@ -18,6 +18,7 @@
 #include <vector>
 #include <iostream>
 #include <fstream>
+#include <iomanip>
 
 class InputGyro
 {
@@ -54,6 +55,14 @@ public:
     void estimateSensorValues();
     // センサー値を使って現在の角度を更新
     void renewCurrentAngle();
+    
+    void printData(const short* data) {
+        std::cout << "cur value = ";
+        for (int i = 0; i < 9; i++) {
+            std::cout << std::setw(4) << data[i] << " ";
+        }
+        std::cout << std::endl;
+    }
     
     short char2short(char upper, char lower);
     short char2short(short upper, short lower);

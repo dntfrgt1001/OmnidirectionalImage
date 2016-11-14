@@ -11,16 +11,21 @@
 
 #include <stdio.h>
 #include <iostream>
+#include <fstream>
+#include <vector>
+#include <iomanip>
 
 #include <termios.h>
 #include <fcntl.h>
+#include <unistd.h>
+#include <string.h>
 
 class  IMU
 {
 public:
-    IMU(const std::string& outPath, const std::string& port,
+    IMU(const std::string& outputFile, const std::string& port,
         const speed_t baudRate, const size_t bufSize,
-        const std::string& splPat);
+        const char* charSplPat, const int patSize);
     ~IMU();
     
     // termios構造体の初期化
@@ -30,15 +35,34 @@ public:
     void inputData();
     
     // char型のセンサデータをstring型に変換
-    void charInput2strInput
-    (const char* charIn, const size_t size, std::string& strIn);
+    void charInput2strInputBlank
+    (const char* charIn, const size_t size, std::string& strInBlank);
+
+    // 有効なセンサデータの組を文字列で切り出す
+    int extValidData
+    (const std::string& storedString, std::vector<std::string>& extStrings);
+    
+    // センサデータを文字列からshort型に変換
+    void getShortData
+    (const std::string& extString, std::vector<short>& data);
+    
+    // char型を連結してshort型にする
+    short getShortValue(const short upper, const short lower) {
+        return ((upper << 8) & 0xff00) | (lower & 0x00ff);
+    }
+    
+    // データを出力
+    void printData(const std::vector<short>& data);
     
 private:
     int fd;
-    const size_t bufSize;
     termios terNew;
     termios terOld;
-    const std::string splPat;
+    
+    std::ofstream ofs;
+    const size_t bufSize;
+    std::string splPat;
+    std::string storedString;
     
 };
 
