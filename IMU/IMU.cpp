@@ -50,17 +50,32 @@ void IMU::initTermios(const std::string& port, const speed_t baudRate)
     tcsetattr(fd, TCSANOW, &terNew);
 }
 
+int IMU::inputFromIMU(char *inputBuf)
+{
+    return (int) read(fd, inputBuf, bufSize);
+}
+
 void IMU::inputData()
 {
-    // ポートからデータを読むためのバッファ
-    char inputBuf[bufSize];
-    
     // データの読み込み
-    const int inputLen = (int) read(fd, inputBuf, bufSize);
+    char inputBuf[bufSize];
+    const int inputLen = inputFromIMU(inputBuf);
+    
+    std::cout << "input length = " << inputLen << std::endl;
+    if (inputLen < 0) {
+        return;
+    }
     
     // string型に変換，空白を挟む
     inputBuf[inputLen] = '\0';
     std::string inputBufString = inputBuf;
+    
+    printf("input = ");
+    for (int i = 0; i < inputLen; i++) {
+        printf("0x%02X ", inputBuf[i] );
+    }
+    printf("\n");
+    
 //    std::string inputBufString;
 //    charInput2strInputBlank(inputBuf, inputLen, inputBufString);
     
@@ -73,6 +88,8 @@ void IMU::inputData()
     
     // 残りデータの保存
     storedString = validStrings[validSize];
+    std::cout << "valid pair = " << validSize << std::endl;
+    std::cout << "store data = " << storedString.size() << std::endl;
     
     // 有効データのshort型への変換
     for (int i = 0; i < validSize; i++) {
@@ -111,6 +128,7 @@ int IMU::extValidData
     // 区切りパターンの文字列を検索し切り出す
     while ((findPos=storedString.find(splPat, curPos)) !=
            std::string::npos) {
+        // 文字列のcurPosの位置から(findPos - curPos)までコピー
         extStrings.push_back
         (std::string(storedString, curPos, findPos - curPos));
         
@@ -130,23 +148,23 @@ void IMU::getShortData
     // データは9*2=18個
     const char* extChar = extString.c_str();
     
-    /*
-    // 文字列から数値データに変換
-    sscanf(extString.c_str(),
-           "%c %c %c %c %c %c %c %c %c \
-           %c %c %c %c %c %c %c %c %c ",
-//           "%hd %hd %hd %hd %hd %hd %hd %hd %hd \
-//           %hd %hd %hd %hd %hd %hd %hd %hd %hd ",
-           &c[0],  &c[1],  &c[2],  &c[3],  &c[4],  &c[5],
-           &c[6],  &c[7],  &c[8],  &c[9], &c[10], &c[11],
-           &c[12], &c[13], &c[14], &c[15], &c[16], &c[17] );
-    */
-     
     // short型の数値データに格納
     data = std::vector<short>(9);
     for (int i = 0; i < 9; i++) {
         data[i] = getShortValue(extChar[i*2], extChar[i*2 + 1]);
     }
+   
+    /*
+    for (int i = 0; i < 18; i++) {
+        printf("0x%02X ", extChar[i]);
+    }
+    printf("\n");
+    
+    for (int i = 0; i < 9; i++) {
+        printf("0x%04X ", data[i]);
+    }
+    printf("\n");
+     */
 }
 
 void IMU::printData(const std::vector<short> &data)

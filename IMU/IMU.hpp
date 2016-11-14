@@ -31,6 +31,9 @@ public:
     // termios構造体の初期化
     void initTermios(const std::string& port, const speed_t baudRate);
     
+    // センサデータを読み込み
+    int inputFromIMU(char* inputBuf);
+    
     // センサからデータを入力
     void inputData();
     
