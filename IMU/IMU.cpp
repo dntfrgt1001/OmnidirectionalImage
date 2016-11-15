@@ -17,18 +17,20 @@ IMU::IMU
 {
     //charInput2strInputBlank(charSplPat, patSize, splPat);
  
-    //initTermios(port, baudRate);
+    // termiosの保存と初期化
+    initTermios(port, baudRate);
     
     // 保存用バッファのメモリ確保
+    inputBuffer = new char[bufferSize];
     storeBuffer = new char[bufferSize];
     
     // ボイヤームーア法のスキップテーブル
     skipTable = new int[UCHAR_MAX + 1];
-    for (int i = CHAR_MIN; i <= UCHAR_MAX; i++) {
+    for (int i = CHAR_MIN; i <= CHAR_MAX; i++) {
         setSkipValue(i, patternSize);
     }
     for (int i = 0; i < patternSize - 1; i++) {
-        setSkipValue(splitPattern[i], patternSize - i - 1);
+        setSkipValue(splitPattern[i], patternSize - 1 - i);
     }
 }
 
@@ -40,6 +42,7 @@ IMU::~IMU()
     // 出力ファイルストリームを閉じる
     ofs.close();
     
+    delete inputBuffer;
     delete storeBuffer;
     delete skipTable;
 }
@@ -66,22 +69,26 @@ void IMU::initTermios(const std::string& port, const speed_t baudRate)
     tcsetattr(fd, TCSANOW, &terNew);
 }
 
-void IMU::inputData(const char *input, const int inputSize)
+void IMU::inputData()
 {
     // IMUからデータ読み込み
-    //char inBuf[bufferSize];
-    //const int inLen = (int) read(fd, inBuf, bufferSize);
+    const int inLen = (int) read(fd, inputBuffer, bufferSize);
     
-    const char* inBuf = input;
-    const int inLen = inputSize;
+//    std::cout << "input size = " << inLen << std::endl;
+//    std::cout << "input = " << std::endl;
+//    printChar(inputBuffer, inLen);
     
     // 入力なしのとき
     if (inLen < 0) return;
     
     // 直前の残りデータと連結
     // strcatだとヌル文字に対処できない
-    memcpy(&storeBuffer[storeSize], inBuf, inLen);
-    storeSize += inLen;
+    memcpy(&storeBuffer[storeSize], inputBuffer, inLen);
+    storeSize = storeSize + inLen;
+    
+//    std::cout << "store size = " << storeSize << std::endl;
+//    std::cout << "store = " << std::endl;
+//    printChar(storeBuffer, storeSize);
     
     // IMUデータの切り出し
     const int pairSize = storeSize / (18 + patternSize) + 1;
@@ -100,40 +107,88 @@ void IMU::inputData(const char *input, const int inputSize)
 int IMU::extValidData(char validData[][18])
 {
     int findPos = 0, curPos = 0, dataIndex = 0;
-    while ((findPos =
-            BoyerMoore(&storeBuffer[curPos], storeSize-curPos,
-                       splitPattern, patternSize)) != -1) {
-        // データをコピー
-        memcpy(validData[dataIndex], &storeBuffer[findPos - 18], 18);
+    
+    while (true) {
+        findPos = BoyerMoore(&(storeBuffer[curPos]), storeSize-curPos);
+//        findPos = bruteForceMatch(&(storeBuffer[curPos]), storeSize-curPos);
+        
+        if (findPos == -1) break;
+        
+        // パターン検出絶対位置
+        int globalFindPos = curPos + findPos;
+        // 先頭の中途半端なデータを弾く
+        if (globalFindPos - 18 >= 0) {
+            // データをコピー
+            memcpy(validData[dataIndex],
+                   &(storeBuffer[globalFindPos - 18]), 18);
+
+            // データ組数を更新
+            dataIndex++;
+        }
+        
         // 現在位置をずらす
-        curPos = findPos + patternSize;
-        // データ数を更新
-        dataIndex++;
+        curPos = curPos + findPos + patternSize;
+        
+//        std::cout << "find pos = " << findPos << std::endl;
+//        std::cout << "global find pos = " << globalFindPos << std::endl;
+//        std::cout << "cur pos = " << curPos << std::endl;
+//        std::cout << "store size = " << storeSize << std::endl;
+        
     }
+
+    // ストアサイズの更新
+    storeSize = storeSize - curPos;
     
     // 残りのデータを保存
-    memmove(storeBuffer, &storeBuffer[curPos], storeSize - curPos);
-    storeSize = storeSize - curPos;
+    memmove(storeBuffer, &storeBuffer[curPos], storeSize);
+    
+//    std::cout << "cur pos = " << curPos << std::endl;
+//    std::cout << "rest size = " << storeSize << std::endl;
+//    std::cout << "rest = " << std::endl;
+//    printChar(storeBuffer, storeSize);
     
     return dataIndex;
 }
 
 int IMU::BoyerMoore
-(const char *target, const int targetSize,
- const char *pattern, const int patternSize)
+(const char *target, const int targetSize)
 {
+//    std::cout << "target size = " << targetSize << std::endl;
+//    std::cout << "target = " << std::endl;
+//    printChar(target, targetSize);
+    
     int tIdx, pIdx;
     tIdx = patternSize - 1;
     while (tIdx < targetSize) {
         pIdx = patternSize - 1;
         
-        while (target[tIdx] == pattern[pIdx]) {
+        while (target[tIdx] == splitPattern[pIdx]) {
             if (pIdx == 0) return tIdx;
             tIdx--;
             pIdx--;
         }
         
-        tIdx = tIdx + std::max(getSkipValue(target[tIdx]), patternSize-pIdx);
+        tIdx = tIdx +
+               std::max(getSkipValue(target[tIdx]), patternSize-pIdx);
+    }
+    
+    return -1;
+}
+
+int IMU::bruteForceMatch(const char *target, const int targetSize)
+{
+//    std::cout << "target size = " << targetSize << std::endl;
+//    std::cout << "target = " << std::endl;
+//    printChar(target, targetSize);
+    
+    for (int i = 0; i <= targetSize - patternSize; i++) {
+        for (int j = 0; j < patternSize; j++) {
+            if (target[j+i] != splitPattern[j]) break;
+            
+            if (j == patternSize - 1) {
+                return i;
+            }
+        }
     }
     
     return -1;

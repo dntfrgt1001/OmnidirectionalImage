@@ -19,6 +19,7 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include <string.h>
+#include <assert.h>
 
 typedef struct IMU_Data {
     int accel_x, accel_y, accel_z;
@@ -37,14 +38,14 @@ public:
     // termios構造体の初期化
     void initTermios(const std::string& port, const speed_t baudRate);
     
-    
-    void inputData(const char input[], const int inputSize);
+    //void inputData(const char input[], const int inputSize);
+    void inputData();
     
     int extValidData(char validData[][18]);
     
-    int BoyerMoore
-    (const char* target, const int targetSize,
-     const char* pattern, const int patternSize);
+    int bruteForceMatch(const char* target, const int targetSize);
+    
+    int BoyerMoore(const char* target, const int targetSize);
     
     void getShortData(const char charData[], short shortData[]);
     
@@ -68,6 +69,14 @@ public:
     
     // データを出力
     void printData(const short shortData[]);
+    
+    void printChar(const char* pointer, const int size) {
+        for (int i = 0; i < size; i++){
+            std::cout << std::hex << (int) (pointer[i] & 0x00ff) << " ";
+            if ((i+1) % 10 == 0) std::cout << std::endl;
+        }
+        std::cout << std::dec << std::endl;
+    }
     
     /*
     // センサデータを読み込み
@@ -104,8 +113,10 @@ private:
     
     std::ofstream ofs;
     const int bufferSize;
-    const char* splitPattern;
+    const char* const splitPattern;
     const int patternSize;
+    
+    char* inputBuffer;
     char* storeBuffer;
     int storeSize;
     

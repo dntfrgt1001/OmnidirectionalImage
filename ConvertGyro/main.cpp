@@ -28,22 +28,32 @@ int main(int argc, const char * argv[])
     const std::string negString = neg;
     
     int found = negString.find(pat);
+
+    
+    char* str1 = new char[10];
+    char* str2 = new char[10];
+    for (int i = 0; i < 10; i++) {
+        str1[i] = 0x41 + i;
+        str2[i] = 0x7f;
+    }
+    
+    memcpy(&str1[2], str2, 3);
 */
     
     const std::string path = "/Users/masakazu/Desktop/";
     const std::string outfile = path + "logtest.txt";
     const std::string port = "/dev/tty.usbmodem1412";
     
-    const int bufSize = 4 * 1024;
+    const long bufSize = 4 * 1024 * 1024;
     const speed_t baudRate = B57600;
     const char splitPat[] = {'E', 'B', 'S', 0x01};
 
-//    InputGyro gyro(outfile, port, baudRate, bufSize, std::string(""));
+    //InputGyro gyro(outfile, port, baudRate, bufSize, std::string(""));
     
     const int patSize = sizeof(splitPat)/sizeof(*splitPat);
     IMU imu(outfile, port, baudRate, bufSize, splitPat, patSize);
    
-    
+    /*
     char test1[bufSize] = {0x00,
                          -0x01, 0x02, 0x03, 0x04, 0x05, 0x06,
                          0x07, 0x08, 0x09, 0x10, 0x11, 0x12,
@@ -54,7 +64,6 @@ int main(int argc, const char * argv[])
                           0x27, 0x28, 0x29, 0x00,
                          'E', 'B', 'S', 0x01, 0x2b};
     
-    /*
     char test1[bufSize] = {0x41,
                            0x42, 0x43, 0x44, 0x45, 0x46, 0x47,
                            0x48, 0x49, 0x4a, 0x4b, 0x4c, 0x4d,
@@ -65,12 +74,12 @@ int main(int argc, const char * argv[])
                            0x62, 0x63, 0x64, 0x65,
                            'E', 'B', 'S', 0x01, 0x66, 0x67};
     */
-    std::string testString1 = test1;
-    std::string testString2 = test2;
+//    std::string testString1 = test1;
+//    std::string testString2 = test2;
     
-    imu.inputData(test1, 25);
+//    imu.inputData(test1, 25);
     
-    imu.inputData(test2, 21);
+//    imu.inputData(test2, 21);
     
     
     
@@ -78,12 +87,12 @@ int main(int argc, const char * argv[])
     
     time(&start);
     int count = 0;
-    int iterNum = 10000;
+    int iterNum = 1000;
 
     for (int i = 0; i < iterNum; i++) {
-      //  imu.inputData();
+        imu.inputData();
         
-       usleep(5000);
+        usleep(5000);
         
         /*
         if(gyro.inputFromGyro() > 0){
@@ -96,7 +105,7 @@ int main(int argc, const char * argv[])
             i++;
         }
         std::cout << "-----" << std::endl;
-        */
+    */
     }
     time(&end);
 
