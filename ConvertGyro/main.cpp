@@ -17,6 +17,8 @@
 #include "InputGyro.hpp"
 #include "IMU.hpp"
 
+
+
 int main(int argc, const char * argv[])
 {
     /*
@@ -34,28 +36,41 @@ int main(int argc, const char * argv[])
     
     const int bufSize = 4 * 1024;
     const speed_t baudRate = B57600;
-    const char splitPat[] = {'E', 'B', 'S', 0x01, '\0'};
-    
-    InputGyro gyro(outfile, port, baudRate, bufSize, std::string(""));
+    const char splitPat[] = {'E', 'B', 'S', 0x01};
+
+//    InputGyro gyro(outfile, port, baudRate, bufSize, std::string(""));
     
     const int patSize = sizeof(splitPat)/sizeof(*splitPat);
     IMU imu(outfile, port, baudRate, bufSize, splitPat, patSize);
    
-    const char test1[] = {0x00,
-                         0x01, 0x02, 0x03, 0x04, 0x05, 0x06,
+    
+    char test1[bufSize] = {0x00,
+                         -0x01, 0x02, 0x03, 0x04, 0x05, 0x06,
                          0x07, 0x08, 0x09, 0x10, 0x11, 0x12,
-                         0x13, 0x14, 0x15, 0x16, 0x17, 0x18,
-                         'E', 'B', 'S', 0x19, 0x20};
-    const char test2[] = {0x21, 0x22, 0x23, 0x24, 0x25, 0x26,
-                          0x27, 0x28, 0x29, 0x30, 0x31, 0x32,
-                          0x33, 0x34, 0x35, 0x36,
-                         'E', 'B', 'S', 0x01, 0x59};
-  
+                         0x13, 0x14, 0x15, 0x16, 0x17, 0x00,
+                         'E', 'B', 'S', 0x01, 0x7f, 0x1a};
+    char test2[bufSize] = {-0x1b, 0x1c, 0x1d, 0x1e, 0x1f, 0x20,
+                          0x21, 0x22, 0x23, 0x24, 0x25, 0x26,
+                          0x27, 0x28, 0x29, 0x00,
+                         'E', 'B', 'S', 0x01, 0x2b};
+    
+    /*
+    char test1[bufSize] = {0x41,
+                           0x42, 0x43, 0x44, 0x45, 0x46, 0x47,
+                           0x48, 0x49, 0x4a, 0x4b, 0x4c, 0x4d,
+                           0x4e, 0x4f, 0x50, 0x51, 0x52, 0x53,
+                           'E', 'B', 'S', 0x01, 0x54, 0x55};
+    char test2[bufSize] = {0x56, 0x57, 0x58, 0x59, 0x5a, 0x5b,
+                           0x5c, 0x5d, 0x5e, 0x5f, 0x60, 0x61,
+                           0x62, 0x63, 0x64, 0x65,
+                           'E', 'B', 'S', 0x01, 0x66, 0x67};
+    */
     std::string testString1 = test1;
     std::string testString2 = test2;
     
+    imu.inputData(test1, 25);
     
-    
+    imu.inputData(test2, 21);
     
     
     
@@ -66,7 +81,7 @@ int main(int argc, const char * argv[])
     int iterNum = 10000;
 
     for (int i = 0; i < iterNum; i++) {
-        imu.inputData();
+      //  imu.inputData();
         
        usleep(5000);
         

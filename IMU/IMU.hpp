@@ -20,22 +20,64 @@
 #include <unistd.h>
 #include <string.h>
 
+typedef struct IMU_Data {
+    int accel_x, accel_y, accel_z;
+    int gyro_x, gyro_y, gyro_z;
+    int mag_x, mag_y, mag_z;
+} IMU_Data;
+
 class  IMU
 {
 public:
     IMU(const std::string& outputFile, const std::string& port,
-        const speed_t baudRate, const size_t bufSize,
-        const char* charSplPat, const int patSize);
+        const speed_t baudRate, const int bufferSize,
+        const char* splitPattern, const int patternSize);
     ~IMU();
     
     // termios構造体の初期化
     void initTermios(const std::string& port, const speed_t baudRate);
     
+    
+    void inputData(const char input[], const int inputSize);
+    
+    int extValidData(char validData[][18]);
+    
+    int BoyerMoore
+    (const char* target, const int targetSize,
+     const char* pattern, const int patternSize);
+    
+    void getShortData(const char charData[], short shortData[]);
+    
+    // char型を連結してshort型にする
+    short getShortValue(const char upper, const char lower) {
+        return ((short) upper << 8) | ((short) lower & 0x00ff);
+    }
+    
+    // スキップテーブルの生成
+    void setSkipValue(const char charIndex, const int skipValue) {
+        skipTable[getSkipIndex(charIndex)] = skipValue;
+    }
+    // スキップテーブルの参照
+    int getSkipValue(const char charIndex) {
+        return skipTable[getSkipIndex(charIndex)];
+    }
+    // スキップテーブルのインデックス変換 (負にならないように)
+    int getSkipIndex(const char charIndex) {
+        return (int) charIndex - CHAR_MIN;
+    }
+    
+    // データを出力
+    void printData(const short shortData[]);
+    
+    /*
     // センサデータを読み込み
     int inputFromIMU(char* inputBuf);
     
     // センサからデータを入力
     void inputData();
+    
+    // テスト用
+    void inputData(char* inputBuf, const int inputLen);
     
     // char型のセンサデータをstring型に変換
     void charInput2strInputBlank
@@ -48,14 +90,12 @@ public:
     // センサデータを文字列からshort型に変換
     void getShortData
     (const std::string& extString, std::vector<short>& data);
+    */
     
-    // char型を連結してshort型にする
-    short getShortValue(const short upper, const short lower) {
-        return ((upper << 8) & 0xff00) | (lower & 0x00ff);
-    }
+
+//    void printData(const std::vector<short>& data);
     
-    // データを出力
-    void printData(const std::vector<short>& data);
+
     
 private:
     int fd;
@@ -63,10 +103,14 @@ private:
     termios terOld;
     
     std::ofstream ofs;
-    const size_t bufSize;
-    std::string splPat;
-    std::string storedString;
+    const int bufferSize;
+    const char* splitPattern;
+    const int patternSize;
+    char* storeBuffer;
+    int storeSize;
     
+    int* skipTable;
 };
+
 
 #endif /* IMU_hpp */
