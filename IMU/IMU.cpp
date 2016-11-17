@@ -13,7 +13,8 @@ IMU::IMU
  const speed_t baudRate, const int bufferSize,
  const char* splitPattern, const int patternSize):
  ofs(outputFile), bufferSize(bufferSize),
- splitPattern(splitPattern), patternSize(patternSize), storeSize(0)
+ splitPattern(splitPattern), patternSize(patternSize), storeSize(0),
+ beginFlag(false);
 {
     //charInput2strInputBlank(charSplPat, patSize, splPat);
  
@@ -73,10 +74,14 @@ void IMU::inputData()
 {
     // IMUからデータ読み込み
     const int inLen = (int) read(fd, inputBuffer, bufferSize);
-    
-//    std::cout << "input size = " << inLen << std::endl;
-//    std::cout << "input = " << std::endl;
-//    printChar(inputBuffer, inLen);
+
+    /*
+    std::cout << "------------------------------" << std::endl;
+    std::cout << "input size = " << inLen << std::endl;
+    std::cout << "input = " << std::endl;
+    printChar(inputBuffer, inLen);
+    std::cout << "------------------------------" << std::endl;
+    */
     
     // 入力なしのとき
     if (inLen < 0) return;
@@ -86,9 +91,13 @@ void IMU::inputData()
     memcpy(&storeBuffer[storeSize], inputBuffer, inLen);
     storeSize = storeSize + inLen;
     
-//    std::cout << "store size = " << storeSize << std::endl;
-//    std::cout << "store = " << std::endl;
-//    printChar(storeBuffer, storeSize);
+   /*
+    std::cout << "------------------------------" << std::endl;
+    std::cout << "store size = " << storeSize << std::endl;
+    std::cout << "store = " << std::endl;
+    printChar(storeBuffer, storeSize);
+    std::cout << "------------------------------" << std::endl;
+    */
     
     // IMUデータの切り出し
     const int pairSize = storeSize / (18 + patternSize) + 1;
@@ -111,8 +120,11 @@ int IMU::extValidData(char validData[][18])
     while (true) {
         findPos = BoyerMoore(&(storeBuffer[curPos]), storeSize-curPos);
 //        findPos = bruteForceMatch(&(storeBuffer[curPos]), storeSize-curPos);
-        
+
+        // パターンが見つからなかったらリターン
         if (findPos == -1) break;
+        
+        // 区切りパターンを見つけたら
         
         // パターン検出絶対位置
         int globalFindPos = curPos + findPos;
@@ -141,11 +153,15 @@ int IMU::extValidData(char validData[][18])
     
     // 残りのデータを保存
     memmove(storeBuffer, &storeBuffer[curPos], storeSize);
-    
+
+    /*
+    std::cout << "------------------------------" << std::endl;
 //    std::cout << "cur pos = " << curPos << std::endl;
-//    std::cout << "rest size = " << storeSize << std::endl;
-//    std::cout << "rest = " << std::endl;
-//    printChar(storeBuffer, storeSize);
+    std::cout << "rest size = " << storeSize << std::endl;
+    std::cout << "rest = " << std::endl;
+    printChar(storeBuffer, storeSize);
+    std::cout << "------------------------------" << std::endl;
+    */
     
     return dataIndex;
 }
@@ -203,11 +219,13 @@ void IMU::getShortData(const char *charData, short *shortData)
 
 void IMU::printData(const short *shortData)
 {
-    std::cout << "current data = ";
+    char fillSaved = std::cout.fill();
+    std::cout << "[ ";
     for (int i = 0; i < 9; i++) {
         std::cout << std::setw(6) << shortData[i] << " ";
     }
-    std::cout << std::endl;
+    std::cout << "]" << std::endl;
+    std::cout.fill(fillSaved);
 }
 
 /*

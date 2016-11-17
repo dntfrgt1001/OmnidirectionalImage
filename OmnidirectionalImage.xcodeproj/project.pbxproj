@@ -65,6 +65,11 @@
 		0268917E1DC71E8D00BAA626 /* libopencv_videoio.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 02A9B6E11DC0C64500D4A0E7 /* libopencv_videoio.dylib */; };
 		0268917F1DC71E9D00BAA626 /* libopencv_video.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 02A9B6DF1DC0C63200D4A0E7 /* libopencv_video.dylib */; };
 		026B3EB51CA1ABF4008B59CD /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 026B3EB41CA1ABF4008B59CD /* main.cpp */; };
+		027283DE1DDD722D00EA7D57 /* libopencv_core.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 02A9B6D11DC0C5BC00D4A0E7 /* libopencv_core.dylib */; };
+		027283DF1DDD723000EA7D57 /* libopencv_highgui.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 02A9B6D31DC0C5D300D4A0E7 /* libopencv_highgui.dylib */; };
+		027283E01DDD723400EA7D57 /* libopencv_imgcodecs.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 02A9B6D51DC0C5E000D4A0E7 /* libopencv_imgcodecs.dylib */; };
+		027283E11DDD723700EA7D57 /* libopencv_imgproc.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 02A9B6D71DC0C5EB00D4A0E7 /* libopencv_imgproc.dylib */; };
+		027283E31DDD724A00EA7D57 /* libopencv_calib3d.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 02A9B6DD1DC0C61C00D4A0E7 /* libopencv_calib3d.dylib */; };
 		027572861DB51D8800AC36A3 /* Range.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 025ADB831DB4B09A00DCE366 /* Range.cpp */; };
 		027572871DB51D8900AC36A3 /* Range.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 025ADB831DB4B09A00DCE366 /* Range.cpp */; };
 		0276EF461D016FB30013ADF4 /* Transform.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0245CD8D1C4233E000FF5E33 /* Transform.cpp */; };
@@ -418,6 +423,11 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				027283DE1DDD722D00EA7D57 /* libopencv_core.dylib in Frameworks */,
+				027283E31DDD724A00EA7D57 /* libopencv_calib3d.dylib in Frameworks */,
+				027283E01DDD723400EA7D57 /* libopencv_imgcodecs.dylib in Frameworks */,
+				027283DF1DDD723000EA7D57 /* libopencv_highgui.dylib in Frameworks */,
+				027283E11DDD723700EA7D57 /* libopencv_imgproc.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

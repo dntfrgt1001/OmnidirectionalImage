@@ -32,9 +32,7 @@ public:
     
     static float revValueDom
     (const float value, const float dlim, const float ulim) {
-        if (value < dlim) return dlim;
-        else if (ulim < value) return ulim;
-        else return value;
+        return (value < dlim) ? dlim : (ulim < value) ? ulim: value;
     }
 
     // 画像座標->球面極座標
@@ -125,10 +123,10 @@ public:
      */
     Polar sphere2polar(const Sphere& sphere) const
     {
-        float theta = (sphere.z!=0)? atanf(sphere.x/sphere.z):
-                                     ((sphere.x>0)? M_PI_2: -M_PI_2);
-        if (sphere.z<0) { if (sphere.x < 0) theta -= M_PI;
-                          else theta += M_PI; }
+        float den = sqrtf(sphere.x* sphere.x + sphere.z*sphere.z);
+        float theta = (den==0)? 0: acosf(revValueDom(sphere.z/den,-1,1)) *
+                                   (sphere.x > 0? 1: -1);
+
         float phi = asinf(revValueDom(-sphere.y, -1, 1));
         return Polar(revValueDom(theta, -M_PI, M_PI),
                      revValueDom(phi, -M_PI_2, M_PI_2));

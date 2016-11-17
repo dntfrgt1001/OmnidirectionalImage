@@ -41,12 +41,16 @@ public:
     //void inputData(const char input[], const int inputSize);
     void inputData();
     
+    // データをchar型で取り出す
     int extValidData(char validData[][18]);
     
+    // ブルートフォースでパターンマッチング
     int bruteForceMatch(const char* target, const int targetSize);
     
+    // ボイヤームーア法でパターンマッチング
     int BoyerMoore(const char* target, const int targetSize);
     
+    // char型のデータ組をshort型に変換
     void getShortData(const char charData[], short shortData[]);
     
     // char型を連結してshort型にする
@@ -71,11 +75,16 @@ public:
     void printData(const short shortData[]);
     
     void printChar(const char* pointer, const int size) {
+        std::ios::fmtflags flagsSaved = std::cout.flags();
+        char fillSaved = std::cout.fill();
+        std::cout << std::hex << std::uppercase;
         for (int i = 0; i < size; i++){
-            std::cout << std::hex << (int) (pointer[i] & 0x00ff) << " ";
+            std::cout << std::setw(2) << std::setfill('0') << (int) (pointer[i] & 0x00ff) << " ";
             if ((i+1) % 10 == 0) std::cout << std::endl;
         }
-        std::cout << std::dec << std::endl;
+        std::cout << std::endl;
+        std::cout.fill(fillSaved);
+        std::cout.flags(flagsSaved);
     }
     
     /*
@@ -119,6 +128,8 @@ private:
     char* inputBuffer;
     char* storeBuffer;
     int storeSize;
+    
+    bool beginFlag;
     
     int* skipTable;
 };

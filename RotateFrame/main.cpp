@@ -19,8 +19,8 @@
 
 int main(int argc, const char * argv[])
 {
-    const std::string path = "/Users/masakazu/Desktop/rotation/";
-    const std::string inputName = path + "img.jpg";
+    const std::string path = "/Users/masakazu/Desktop/";
+    const std::string inputName = path + "img1.jpg";
     const std::string outputName = path + "rotimg.jpg";
     
     const cv::Size frameSize(1280, 640);
@@ -33,13 +33,13 @@ int main(int argc, const char * argv[])
     
     cv::Mat rotImg;
     
-    float anglez = M_PI/8.0;
+    float anglez = 0 * M_PI/8.0;
     cv::Vec3f axisz(1.0, 1.0, 1.0);
     axisz = axisz / cv::norm(axisz);
     cv::Mat rotMatz;
     Rotation::RotVec2RotMat(anglez * axisz, rotMatz);
     
-    float anglex = 0 * M_PI / 6.0;
+    float anglex = 1 * M_PI / 6.0;
     cv::Vec3f axisx(1.0, 0.0, 0.0);
     cv::Mat rotMatx;
     Rotation::RotVec2RotMat(anglex * axisx, rotMatx);
@@ -49,7 +49,7 @@ int main(int argc, const char * argv[])
     cv::Mat rotMaty;
     Rotation::RotVec2RotMat(angley * axisy, rotMaty);
     
-    tf.rotateImgWithRotMat(img, rotImg, rotMaty * rotMatx * rotMatz);
+    tf.rotateImg(img, rotImg, rotMaty * rotMatx * rotMatz);
     
     cv::namedWindow("original");
     cv::namedWindow("rotated");
