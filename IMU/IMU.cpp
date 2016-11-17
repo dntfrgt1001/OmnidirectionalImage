@@ -14,7 +14,7 @@ IMU::IMU
  const char* splitPattern, const int patternSize):
  ofs(outputFile), bufferSize(bufferSize),
  splitPattern(splitPattern), patternSize(patternSize), storeSize(0),
- beginFlag(false);
+ imuBeginFlag(false)
 {
     //charInput2strInputBlank(charSplPat, patSize, splPat);
  
@@ -124,10 +124,31 @@ int IMU::extValidData(char validData[][18])
         // パターンが見つからなかったらリターン
         if (findPos == -1) break;
         
-        // 区切りパターンを見つけたら
-        
-        // パターン検出絶対位置
+        // パターン検出絶対位置を計算
         int globalFindPos = curPos + findPos;
+        
+        // IMUデータの終了を表すパターンならデータを取り出す
+        if (imuBeginFlag) {
+            // データを取り出す
+            memcpy(validData[dataIndex],
+                   &(storeBuffer[globalFindPos - 18]), 18);
+            
+            // データ組数をインクリメント
+            dataIndex++;
+            
+            // フラグをクリア
+            imuBeginFlag = false;
+        }
+        // IMUデータの開始を表すパターンか判定し，フラグを操作
+        else {
+            // データのタイプを確認 'E' 'B' '(Type)'
+            if (storeBuffer[globalFindPos + 2] == 'S') {
+                // フラグをセット
+                imuBeginFlag = true;
+            }
+        }
+        
+        /*
         // 先頭の中途半端なデータを弾く
         if (globalFindPos - 18 >= 0) {
             // データをコピー
@@ -136,10 +157,13 @@ int IMU::extValidData(char validData[][18])
 
             // データ組数を更新
             dataIndex++;
-        }
+        }*/
         
         // 現在位置をずらす
-        curPos = curPos + findPos + patternSize;
+//        curPos = globalFindPos + patternSize;
+        // パターンサイズ'E''B'とは異なるサイズでスキップ
+        
+        curPos = globalFindPos + std::min(4, storeSize - globalFindPos);
         
 //        std::cout << "find pos = " << findPos << std::endl;
 //        std::cout << "global find pos = " << globalFindPos << std::endl;

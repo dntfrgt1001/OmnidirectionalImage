@@ -129,7 +129,7 @@ private:
     char* storeBuffer;
     int storeSize;
     
-    bool beginFlag;
+    bool imuBeginFlag;
     
     int* skipTable;
 };

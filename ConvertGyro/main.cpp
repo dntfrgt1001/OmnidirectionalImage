@@ -46,12 +46,13 @@ int main(int argc, const char * argv[])
     
     const long bufSize = 4 * 1024 * 1024;
     const speed_t baudRate = B57600;
-    const char splitPat[] = {'E', 'B', 'S', 0x01};
-
+//    const char splitPattern[] = {'E', 'B', 'S', 0x01};
+    const char splitPattern[] = {'E', 'B'};
+    
     //InputGyro gyro(outfile, port, baudRate, bufSize, std::string(""));
     
-    const int patSize = sizeof(splitPat)/sizeof(*splitPat);
-    IMU imu(outfile, port, baudRate, bufSize, splitPat, patSize);
+    const int patSize = sizeof(splitPattern)/sizeof(*splitPattern);
+    IMU imu(outfile, port, baudRate, bufSize, splitPattern, patSize);
    
     /*
     char test1[bufSize] = {0x00,
@@ -87,7 +88,7 @@ int main(int argc, const char * argv[])
     
     time(&start);
     int count = 0;
-    int iterNum = 1000;
+    int iterNum = 10000;
 
     for (int i = 0; i < iterNum; i++) {
         imu.inputData();
