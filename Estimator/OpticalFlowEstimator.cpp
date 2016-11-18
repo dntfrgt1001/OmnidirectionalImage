@@ -19,8 +19,7 @@ cv::Mat OpticalFlowEstimator::getRotMat
  const cv::Mat &curRotMat) const
 {
     // 直前の回転行列から正面を変更
-    cv::Mat froChgMat;
-    Rotation::getFroChgMat(curRotMat, froChgMat);
+    cv::Mat froChgMat = Rotation::getFroChgMat(curRotMat);
     
     //画像を縮小
     cv::Mat resForImg, resLatImg;
@@ -47,8 +46,7 @@ cv::Mat OpticalFlowEstimator::getRotMat
     // 円周方向にないものを削除
     cof.remOrthOutlier(forNormals, latNormals);
     
-    cv::Vec3f curRotVec;
-    Rotation::RotMat2RotVec(curRotMat, curRotVec);
+    cv::Vec3f curRotVec = Rotation::RotMat2RotVec(curRotMat);
     const float rotAng = cv::norm(curRotVec);
     
     // ノルムがおかしいものを削除
@@ -69,8 +67,5 @@ cv::Mat OpticalFlowEstimator::getRotMat
     cv::imshow("optical flow", drawImg);
     
     // 回転行列の座標系を変更
-    cv::Mat rotMatChg;
-    Rotation::chgRotMatCoo(rotMat, froChgMat.inv(), rotMatChg);
-    
-    return rotMatChg;
+    return Rotation::chgRotMatCoo(rotMat, froChgMat.inv());
 }

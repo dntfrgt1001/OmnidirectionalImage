@@ -18,11 +18,18 @@ Quaternion::Quaternion()
 Quaternion::Quaternion(const float theta, const cv::Vec3f& axis)
 {
     float norm = cv::norm(axis);
-    
+
     t = cosf(theta/2.0);
     x = axis[0]/norm * sinf(theta/2.0);
     y = axis[1]/norm * sinf(theta/2.0);
     z = axis[2]/norm * sinf(theta/2.0);
+}
+
+Quaternion::Quaternion
+(const float t, const float x, const float y, const float z):
+t(t), x(x), y(y),z(z)
+{
+    
 }
 
 float Quaternion::norm(Quaternion &quat)

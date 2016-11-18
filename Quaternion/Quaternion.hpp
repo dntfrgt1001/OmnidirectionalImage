@@ -20,6 +20,7 @@ class Quaternion
 public:
     Quaternion();
     Quaternion(const float theta, const cv::Vec3f& axis);
+    Quaternion(const float t, const float x, const float y, const float z);
     friend std::ostream& operator<<(std::ostream& os, const Quaternion& quat);
     
     // ノルム

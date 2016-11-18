@@ -133,8 +133,7 @@ cv::Mat FeatureMatchEstimator::getRotMatSpecDir
     // 重みで推定できているか判定
     if (weight <= 0) { return cv::Mat::zeros(3, 3, CV_32FC1); }
     else {
-        cv::Mat rotMatChg;
-        Rotation::chgRotMatCoo(rotMat, froChgMat.inv(), rotMatChg);
+        cv::Mat rotMatChg = Rotation::chgRotMatCoo(rotMat, froChgMat.inv());
 
         std::cout << "--------------------------------------" << std::endl;
         std::cout << "weight = " << weight << std::endl;

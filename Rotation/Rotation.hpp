@@ -27,30 +27,21 @@ public:
     Rotation();
     ~Rotation();
     
-    static void getRotMat
-    (const float angle, const cv::Vec3f& axis, cv::Mat rotMat);
-    static void getRotVec
-    (const float angle, const cv::Vec3f& axis, cv::Vec3f& rotVec);
-    static void getQuaternion
-    (const float angle, const cv::Vec3f& axis, Quaternion& quat);
-    
     // 単位四元数->回転行列
-    static void Quat2RotMat(const Quaternion& quat, cv::Mat& rotMat);
+    static cv::Mat Quat2RotMat(const Quaternion& quat);
     // 回転行列->四元数
-    static void RotMat2Quat(const cv::Mat& rotMat, Quaternion& quat);
+    static Quaternion RotMat2Quat(const cv::Mat& rotMat);
     // 回転ベクトル->回転行列
-    static void RotVec2RotMat
-    (const cv::Vec3f& rotVec, cv::Mat& rotMat);
+    static cv::Mat RotVec2RotMat(const cv::Vec3f& rotVec);
     // 回転行列->回転ベクトル
-    static void RotMat2RotVec
-    (const cv::Mat& rotMat, cv::Vec3f& rotVec);
+    static cv::Vec3f RotMat2RotVec(const cv::Mat& rotMat);
     
     // ベクトルをz軸正の向きになるよう回転させる行列
-    static void getFroChgMat(const cv::Mat& rotMat, cv::Mat& froChgMat);
+    static cv::Mat getFroChgMat(const cv::Mat& rotMat);
     
     // 回転行列の座標系を変更
-    static void chgRotMatCoo
-    (const cv::Mat& rotMat, const cv::Mat& froChgMat, cv::Mat& rotMatChg);
+    static cv::Mat chgRotMatCoo
+    (const cv::Mat& rotMat, const cv::Mat& froChgMat);
 
     // 回転行列を正規化
     static void normalRotMat(cv::Mat& rotMat);
