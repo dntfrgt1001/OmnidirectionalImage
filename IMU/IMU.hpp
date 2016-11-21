@@ -21,12 +21,6 @@
 #include <string.h>
 #include <assert.h>
 
-typedef struct IMU_Data {
-    int accel_x, accel_y, accel_z;
-    int gyro_x, gyro_y, gyro_z;
-    int mag_x, mag_y, mag_z;
-} IMU_Data;
-
 class  IMU
 {
 public:
@@ -87,6 +81,13 @@ public:
         std::cout.flags(flagsSaved);
     }
     
+    void outputIMUData(const short shortData[]) {
+        for (int i = 0; i < 9; i++) {
+            ofs << shortData[i] << " ";
+        }
+        ofs << std::endl;
+    }
+    
     /*
     // センサデータを読み込み
     int inputFromIMU(char* inputBuf);
@@ -116,21 +117,27 @@ public:
 
     
 private:
+    // シリアル通信のための構造体
     int fd;
     termios terNew;
     termios terOld;
     
+    // ファイル出力用
     std::ofstream ofs;
-    const int bufferSize;
+    
+    // 区切りパターン
     const char* const splitPattern;
     const int patternSize;
+    // 区切りの開始か終了か
+    bool imuBeginFlag;
     
+    // バッファ容量
+    const int bufferSize;
     char* inputBuffer;
     char* storeBuffer;
     int storeSize;
     
-    bool imuBeginFlag;
-    
+    // ボイヤームーア方のスキップテーブル
     int* skipTable;
 };
 

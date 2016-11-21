@@ -70,6 +70,7 @@
 		027283E01DDD723400EA7D57 /* libopencv_imgcodecs.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 02A9B6D51DC0C5E000D4A0E7 /* libopencv_imgcodecs.dylib */; };
 		027283E11DDD723700EA7D57 /* libopencv_imgproc.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 02A9B6D71DC0C5EB00D4A0E7 /* libopencv_imgproc.dylib */; };
 		027283E31DDD724A00EA7D57 /* libopencv_calib3d.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 02A9B6DD1DC0C61C00D4A0E7 /* libopencv_calib3d.dylib */; };
+		027283E81DE2E22D00EA7D57 /* IMUFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 027283E51DE2DC4300EA7D57 /* IMUFile.cpp */; };
 		027572861DB51D8800AC36A3 /* Range.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 025ADB831DB4B09A00DCE366 /* Range.cpp */; };
 		027572871DB51D8900AC36A3 /* Range.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 025ADB831DB4B09A00DCE366 /* Range.cpp */; };
 		0276EF461D016FB30013ADF4 /* Transform.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0245CD8D1C4233E000FF5E33 /* Transform.cpp */; };
@@ -275,6 +276,8 @@
 		026516AA1D2F7FF4004C7838 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		026B3EB21CA1ABF4008B59CD /* ConvertGyro */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = ConvertGyro; sourceTree = BUILT_PRODUCTS_DIR; };
 		026B3EB41CA1ABF4008B59CD /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
+		027283E51DE2DC4300EA7D57 /* IMUFile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = IMUFile.cpp; path = IMUFile/IMUFile.cpp; sourceTree = "<group>"; };
+		027283E61DE2DC4300EA7D57 /* IMUFile.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = IMUFile.hpp; path = IMUFile/IMUFile.hpp; sourceTree = "<group>"; };
 		027F387F1D5B0EDB0012DA39 /* RotateVideo */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = RotateVideo; sourceTree = BUILT_PRODUCTS_DIR; };
 		027F38811D5B0EDB0012DA39 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		0287FC211D787B7200E4FE99 /* RotateFrame */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = RotateFrame; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -622,6 +625,7 @@
 				0245CD8C1C4233B100FF5E33 /* Transform */,
 				022BA2641DD1ABC00015C380 /* Core */,
 				020FE6C61CA6D84100A650CE /* InputGyro */,
+				027283E41DE2DC0400EA7D57 /* IMUFile */,
 				022BA2681DD5BB9D0015C380 /* IMU */,
 				0298B4791D0A897700B68032 /* old */,
 			);
@@ -650,6 +654,15 @@
 				026B3EB41CA1ABF4008B59CD /* main.cpp */,
 			);
 			path = ConvertGyro;
+			sourceTree = "<group>";
+		};
+		027283E41DE2DC0400EA7D57 /* IMUFile */ = {
+			isa = PBXGroup;
+			children = (
+				027283E51DE2DC4300EA7D57 /* IMUFile.cpp */,
+				027283E61DE2DC4300EA7D57 /* IMUFile.hpp */,
+			);
+			name = IMUFile;
 			sourceTree = "<group>";
 		};
 		027F38801D5B0EDB0012DA39 /* RotateVideo */ = {
@@ -1282,6 +1295,7 @@
 				022BA26B1DD5BC610015C380 /* IMU.cpp in Sources */,
 				026B3EB51CA1ABF4008B59CD /* main.cpp in Sources */,
 				02B8D5F51CA7D92F00A736DB /* InputGyro.cpp in Sources */,
+				027283E81DE2E22D00EA7D57 /* IMUFile.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

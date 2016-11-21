@@ -68,19 +68,20 @@ cv::Mat Rotation::RotVec2RotMat(const cv::Vec3f& rotVec)
 
 cv::Vec3f Rotation::RotMat2RotVec(const cv::Mat &rotMat)
 {
+
     const float trace = (cv::trace(rotMat))[0];
-    
-    cv::Mat omega = (rotMat - rotMat.t()) / (2*sinf(acosf((trace - 1) /2)));
+    const float angle = acosf((trace - 1) /2);
+    cv::Mat omega = (rotMat - rotMat.t()) / (2*sinf(angle));
     
     return cv::Vec3f(omega.at<float>(2, 1),
                      omega.at<float>(0, 2),
-                     omega.at<float>(1, 0));
-    
+                     omega.at<float>(1, 0)) * angle;
+
     /*
     cv::Vec3f rotVec;
     cv::Rodrigues(rotMat, rotVec);
     return rotVec;
-     */
+    */
 }
 
 cv::Mat Rotation::getFroChgMat(const cv::Mat &rotMat)

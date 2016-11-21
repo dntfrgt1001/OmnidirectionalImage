@@ -36,18 +36,15 @@ int main(int argc, const char * argv[])
     float anglez = 0 * M_PI/8.0;
     cv::Vec3f axisz(1.0, 1.0, 1.0);
     axisz = axisz / cv::norm(axisz);
-    cv::Mat rotMatz;
-    Rotation::RotVec2RotMat(anglez * axisz, rotMatz);
+    cv::Mat rotMatz = Rotation::RotVec2RotMat(anglez * axisz);
     
-    float anglex = 1 * M_PI / 6.0;
+    float anglex = 0 * M_PI / 6.0;
     cv::Vec3f axisx(1.0, 0.0, 0.0);
-    cv::Mat rotMatx;
-    Rotation::RotVec2RotMat(anglex * axisx, rotMatx);
+    cv::Mat rotMatx = Rotation::RotVec2RotMat(anglex * axisx);
     
-    float angley = 0 * M_PI / 4.0;
+    float angley = 1 * M_PI / 4.0;
     cv::Vec3f axisy(0.0, 1.0, 0.0);
-    cv::Mat rotMaty;
-    Rotation::RotVec2RotMat(angley * axisy, rotMaty);
+    cv::Mat rotMaty = Rotation::RotVec2RotMat(angley * axisy);
     
     tf.rotateImg(img, rotImg, rotMaty * rotMatx * rotMatz);
     

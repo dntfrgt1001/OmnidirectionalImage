@@ -41,7 +41,7 @@ int main(int argc, const char * argv[])
 */
     
     const std::string path = "/Users/masakazu/Desktop/";
-    const std::string outfile = path + "logtest.txt";
+    const std::string outfile = path + "log_w.txt";
     const std::string port = "/dev/tty.usbmodem1412";
     
     const long bufSize = 4 * 1024 * 1024;

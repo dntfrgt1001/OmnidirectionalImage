@@ -33,6 +33,12 @@ IMU::IMU
     for (int i = 0; i < patternSize - 1; i++) {
         setSkipValue(splitPattern[i], patternSize - 1 - i);
     }
+    
+    // 出力ファイルを開くことができたか
+    if (!ofs) {
+        std::cerr << "cannot open output file" << std::endl;
+        std::exit(1);
+    }
 }
 
 IMU::~IMU()
@@ -110,6 +116,7 @@ void IMU::inputData()
         getShortData(validData[i], shortData);
         
         printData(shortData);
+        outputIMUData(shortData);
     }
 }
 
