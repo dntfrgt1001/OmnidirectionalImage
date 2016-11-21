@@ -47,16 +47,40 @@ Quaternion Rotation::RotMat2Quat(const cv::Mat &rotMat)
 
 cv::Mat Rotation::RotVec2RotMat(const cv::Vec3f& rotVec)
 {
+    // 回転しないとき
+    const float angle = cv::norm(rotVec);
+    if (angle == 0.0) return cv::Mat::eye(3, 3, CV_32FC1);
+    
+    cv::Mat omega = (cv::Mat_<float>(3,3) << 0, -rotVec[2], rotVec[1],
+                                             rotVec[2], 0, -rotVec[0],
+                                             -rotVec[1], rotVec[0], 0);
+    
+    return cv::Mat::eye(3, 3, CV_32FC1) +
+           sinf(angle)/angle * omega +
+           (1 - cosf(angle))/(angle*angle) * omega*omega;
+    
+    /*
     cv::Mat rotMat = cv::Mat(3, 3, CV_32FC1);
     cv::Rodrigues(rotVec, rotMat);
     return rotMat;
+     */
 }
 
 cv::Vec3f Rotation::RotMat2RotVec(const cv::Mat &rotMat)
 {
+    const float trace = (cv::trace(rotMat))[0];
+    
+    cv::Mat omega = (rotMat - rotMat.t()) / (2*sinf(acosf((trace - 1) /2)));
+    
+    return cv::Vec3f(omega.at<float>(2, 1),
+                     omega.at<float>(0, 2),
+                     omega.at<float>(1, 0));
+    
+    /*
     cv::Vec3f rotVec;
     cv::Rodrigues(rotMat, rotVec);
     return rotVec;
+     */
 }
 
 cv::Mat Rotation::getFroChgMat(const cv::Mat &rotMat)
