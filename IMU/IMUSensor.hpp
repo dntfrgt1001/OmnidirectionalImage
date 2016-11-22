@@ -21,19 +21,21 @@
 #include <string.h>
 #include <assert.h>
 
-class  IMU
-{
+#include "IMU.hpp"
+
+class  IMUSensor: public IMU {
 public:
-    IMU(const std::string& outputFile, const std::string& port,
-        const speed_t baudRate, const int bufferSize,
-        const char* splitPattern, const int patternSize);
-    ~IMU();
+    IMUSensor(const std::string& port, const speed_t baudRate,
+              const int bufferSize, const char* splitPattern,
+              const int patternSize);
+    ~IMUSensor();
     
     // termios構造体の初期化
     void initTermios(const std::string& port, const speed_t baudRate);
     
-    //void inputData(const char input[], const int inputSize);
-    void inputData();
+    // IMUクラスのインタフェース
+    int inputDataSet(std::vector<IMUData>& datas);
+    
     
     // データをchar型で取り出す
     int extValidData(char validData[][18]);
@@ -43,6 +45,8 @@ public:
 
     // char型のデータ組をshort型に変換
     void getShortData(const char charData[], short shortData[]);
+    
+    IMUData getDataSet(const short shortData[]);
     
     // char型を連結してshort型にする
     short getShortValue(const char upper, const char lower) {
@@ -79,62 +83,24 @@ public:
         std::cout.fill(fillSaved);
         std::cout.flags(flagsSaved);
     }
-    
-    void outputIMUData(const short shortData[]) {
-        for (int i = 0; i < 9; i++) {
-            ofs << shortData[i] << " ";
-        }
-        ofs << std::endl;
-    }
-    
-    /*
-    // センサデータを読み込み
-    int inputFromIMU(char* inputBuf);
-    
-    // センサからデータを入力
-    void inputData();
-    
-    // テスト用
-    void inputData(char* inputBuf, const int inputLen);
-    
-    // char型のセンサデータをstring型に変換
-    void charInput2strInputBlank
-    (const char* charIn, const size_t size, std::string& strInBlank);
-
-    // 有効なセンサデータの組を文字列で切り出す
-    int extValidData
-    (const std::string& storedString, std::vector<std::string>& extStrings);
-    
-    // センサデータを文字列からshort型に変換
-    void getShortData
-    (const std::string& extString, std::vector<short>& data);
-    */
-    
-
-//    void printData(const std::vector<short>& data);
-    
-
-    
+        
 private:
     // シリアル通信のための構造体
     int fd;
     termios terNew;
     termios terOld;
     
-    // ファイル出力用
-    std::ofstream ofs;
+    // バッファメモリ
+    const int bufferSize;
+    char* inputBuffer;
+    char* storeBuffer;
+    int storeSize;
     
     // 区切りパターン
     const char* const splitPattern;
     const int patternSize;
     // 区切りの開始か終了か
     bool imuBeginFlag;
-    
-    // バッファ容量
-    const int bufferSize;
-    char* inputBuffer;
-    char* storeBuffer;
-    int storeSize;
     
     // ボイヤームーア方のスキップテーブル
     int* skipTable;

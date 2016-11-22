@@ -11,17 +11,16 @@
 
 #include <stdio.h>
 
-typedef struct IMU_Data {
-    int accel_x, accel_y, accel_z;
-    int gyro_x, gyro_y, gyro_z;
-    int mag_x, mag_y, mag_z;
-} IMU_Data;
+#include "IMU.hpp"
 
 class IMUProcess {
 public:
-    IMUProcess();
+    IMUProcess(IMU& imu);
     
+    bool filterMagZero(IMUData& data);
     
+private:
+    IMU& imu;
 };
 
 #endif /* IMUProcess_hpp */

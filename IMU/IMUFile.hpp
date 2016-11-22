@@ -2,7 +2,7 @@
 //  IMUFile.hpp
 //  OmnidirectionalImage
 //
-//  Created by masakazu nakazawa on 2016/11/21.
+//  Created by masakazu nakazawa on 2016/11/22.
 //  Copyright © 2016年 masakazu. All rights reserved.
 //
 
@@ -13,23 +13,22 @@
 #include <iostream>
 #include <fstream>
 
-typedef struct IMU_Data {
-    int accel_x, accel_y, accel_z;
-    int gyro_x, gyro_y, gyro_z;
-    int mag_x, mag_y, mag_z;
-} IMU_Data;
 
-class IMUFile {
+#include "IMU.hpp"
+
+class IMUFile: public IMU
+{
 public:
     IMUFile(const std::string& fileName);
-    ~IMUFile();
     
-    // データを一組取り出す
-    bool inputDataSet(IMU_Data& data);
+    int inputDataSet(std::vector<IMUData>& datas);
     
 private:
+    // 入力ファイルストリーム
     std::ifstream ifs;
     
+    // 一度に読み込みデータ組数
+    const int dataSize;
 };
 
 #endif /* IMUFile_hpp */
