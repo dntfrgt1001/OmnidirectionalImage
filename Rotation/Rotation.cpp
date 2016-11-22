@@ -51,13 +51,11 @@ cv::Mat Rotation::RotVec2RotMat(const cv::Vec3f& rotVec)
     const float angle = cv::norm(rotVec);
     if (angle == 0.0) return cv::Mat::eye(3, 3, CV_32FC1);
     
-    cv::Mat omega = (cv::Mat_<float>(3,3) << 0, -rotVec[2], rotVec[1],
-                                             rotVec[2], 0, -rotVec[0],
-                                             -rotVec[1], rotVec[0], 0);
+    cv::Mat infRot = getInfRot(rotVec);
     
     return cv::Mat::eye(3, 3, CV_32FC1) +
-           sinf(angle)/angle * omega +
-           (1 - cosf(angle))/(angle*angle) * omega*omega;
+           sinf(angle)/angle * infRot +
+           (1 - cosf(angle))/(angle*angle) * infRot*infRot;
     
     /*
     cv::Mat rotMat = cv::Mat(3, 3, CV_32FC1);
@@ -68,14 +66,12 @@ cv::Mat Rotation::RotVec2RotMat(const cv::Vec3f& rotVec)
 
 cv::Vec3f Rotation::RotMat2RotVec(const cv::Mat &rotMat)
 {
-
-    const float trace = (cv::trace(rotMat))[0];
-    const float angle = acosf((trace - 1) /2);
+    const float angle = acosf(((cv::trace(rotMat))[0] - 1) /2);
     cv::Mat omega = (rotMat - rotMat.t()) / (2*sinf(angle));
     
-    return cv::Vec3f(omega.at<float>(2, 1),
-                     omega.at<float>(0, 2),
-                     omega.at<float>(1, 0)) * angle;
+    return cv::Vec3f(omega.at<float>(2, 1) * angle,
+                     omega.at<float>(0, 2) * angle,
+                     omega.at<float>(1, 0) * angle);
 
     /*
     cv::Vec3f rotVec;
@@ -108,6 +104,20 @@ cv::Mat Rotation::chgRotMatCoo
     
     // 回転ベクトルを回転させ行列に変換
     return RotVec2RotMat(cv::Vec3f(cv::Mat1f(froChgMat*cv::Mat1f(rotVec))));
+}
+
+cv::Mat Rotation::getInfRot(const cv::Vec3f &angVel)
+{
+    return (cv::Mat_<float>(3,3) << 0, -angVel[2], angVel[1],
+                                    angVel[2], 0, -angVel[0],
+                                    -angVel[1], angVel[0], 0);
+}
+
+cv::Vec3f Rotation::getAngVel(const cv::Mat &infRot)
+{
+    return cv::Vec3f(infRot.at<float>(2, 1),
+                     infRot.at<float>(0, 2),
+                     infRot.at<float>(1, 0));
 }
 
 void Rotation::normalRotMat(cv::Mat &rotMat)

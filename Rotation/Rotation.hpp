@@ -43,6 +43,12 @@ public:
     static cv::Mat chgRotMatCoo
     (const cv::Mat& rotMat, const cv::Mat& froChgMat);
 
+    // 角速度->無限小回転
+    static cv::Mat getInfRot(const cv::Vec3f& angVel);
+    
+    // 無限小回転->角速度
+    static cv::Vec3f getAngVel(const cv::Mat& infRot);
+    
     // 回転行列を正規化
     static void normalRotMat(cv::Mat& rotMat);
 };
