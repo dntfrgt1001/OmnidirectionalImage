@@ -1,12 +1,12 @@
 //
-//  IMU.cpp
+//  IMUSensor.cpp
 //  OmnidirectionalImage
 //
 //  Created by masakazu nakazawa on 2016/11/11.
 //  Copyright © 2016年 masakazu. All rights reserved.
 //
 
-#include "IMU.hpp"
+#include "IMUSensor.cpp"
 
 IMU::IMU
 (const std::string& outputFile, const std::string& port,

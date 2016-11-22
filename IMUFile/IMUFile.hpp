@@ -27,11 +27,9 @@ public:
     // データを一組取り出す
     bool inputDataSet(IMU_Data& data);
     
-    
-    
-    
 private:
     std::ifstream ifs;
+    
 };
 
 #endif /* IMUFile_hpp */

@@ -28,16 +28,24 @@ bool IMUFile::inputDataSet(IMU_Data& data)
     std::string dataLine;
     std::getline(ifs, dataLine);
     
-    // int型でデータを読み込み
-    const int inNum =  sscanf(dataLine.c_str(),
+    while (true) {
+        // int型でデータを読み込み
+        const int inNum =  sscanf(dataLine.c_str(),
                               "%d %d %d %d %d %d %d %d %d",
                               &data.accel_x, &data.accel_y, &data.accel_z,
                               &data.gyro_x, &data.gyro_y, &data.gyro_z,
                               &data.mag_x, &data.mag_y, &data.mag_z);
-
-    // 読み込み失敗またはファイル末尾
-    if (inNum < 9) return false;
-    
+        
+        // 入力数が９で正しい値が読み込めたらbreak
+        if (inNum==9 &&
+            (data.mag_x==0 && data.mag_y==0 && data.mag_z==0)) {
+            break;
+        }
+        
+        // ファイル末尾ならfalse
+        if (inNum == EOF) return false;
+    }
+        
     return true;
 }
 

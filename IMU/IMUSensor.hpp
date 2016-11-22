@@ -1,13 +1,13 @@
 //
-//  IMU.hpp
+//  IMUSensor.hpp
 //  OmnidirectionalImage
 //
 //  Created by masakazu nakazawa on 2016/11/11.
 //  Copyright © 2016年 masakazu. All rights reserved.
 //
 
-#ifndef IMU_hpp
-#define IMU_hpp
+#ifndef IMUSensor_hpp
+#define IMUSensor_hpp
 
 #include <stdio.h>
 #include <iostream>
@@ -40,10 +40,7 @@ public:
     
     // ブルートフォースでパターンマッチング
     int bruteForceMatch(const char* target, const int targetSize);
-    
-    // ボイヤームーア法でパターンマッチング
-    int BoyerMoore(const char* target, const int targetSize);
-    
+
     // char型のデータ組をshort型に変換
     void getShortData(const char charData[], short shortData[]);
     
@@ -52,6 +49,8 @@ public:
         return ((short) upper << 8) | ((short) lower & 0x00ff);
     }
     
+    // ボイヤームーア法でパターンマッチング
+    int BoyerMoore(const char* target, const int targetSize);
     // スキップテーブルの生成
     void setSkipValue(const char charIndex, const int skipValue) {
         skipTable[getSkipIndex(charIndex)] = skipValue;
@@ -142,4 +141,4 @@ private:
 };
 
 
-#endif /* IMU_hpp */
+#endif /* IMUSensor_hpp */
