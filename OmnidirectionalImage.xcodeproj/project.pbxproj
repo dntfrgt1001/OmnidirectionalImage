@@ -73,6 +73,9 @@
 		027283ED1DE414DA00EA7D57 /* IMUProcess.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 027283EA1DE414B900EA7D57 /* IMUProcess.cpp */; };
 		027283F41DE4252100EA7D57 /* IMUFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 027283F11DE4230500EA7D57 /* IMUFile.cpp */; };
 		027283F51DE42FAC00EA7D57 /* IMU.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 027283EE1DE41ACD00EA7D57 /* IMU.cpp */; };
+		027283F61DEC19B400EA7D57 /* Quaternion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 02D6D9A11D8189B900862E8F /* Quaternion.cpp */; };
+		027283F71DEC19DC00EA7D57 /* Rotation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 020D73071D2A62E800BC61BD /* Rotation.cpp */; };
+		027283F81DEC19FC00EA7D57 /* libopencv_core.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 02A9B6D11DC0C5BC00D4A0E7 /* libopencv_core.dylib */; };
 		027572861DB51D8800AC36A3 /* Range.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 025ADB831DB4B09A00DCE366 /* Range.cpp */; };
 		027572871DB51D8900AC36A3 /* Range.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 025ADB831DB4B09A00DCE366 /* Range.cpp */; };
 		0276EF461D016FB30013ADF4 /* Transform.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0245CD8D1C4233E000FF5E33 /* Transform.cpp */; };
@@ -418,6 +421,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				027283F81DEC19FC00EA7D57 /* libopencv_core.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1299,6 +1303,8 @@
 				026B3EB51CA1ABF4008B59CD /* main.cpp in Sources */,
 				027283F51DE42FAC00EA7D57 /* IMU.cpp in Sources */,
 				027283F41DE4252100EA7D57 /* IMUFile.cpp in Sources */,
+				027283F71DEC19DC00EA7D57 /* Rotation.cpp in Sources */,
+				027283F61DEC19B400EA7D57 /* Quaternion.cpp in Sources */,
 				02B8D5F51CA7D92F00A736DB /* InputGyro.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

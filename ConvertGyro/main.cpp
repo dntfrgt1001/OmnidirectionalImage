@@ -56,9 +56,9 @@ int main(int argc, const char * argv[])
     
     // IMUデータの読み込み先
     IMUFile imuFile(outfile);
-    IMU& imu = imuFile;
-//    IMUSensor imuSensor(port, baudRate, bufSize, splitPattern, patSize);
-//    IMU& imu = imuSensor;
+//    IMU& imu = imuFile;
+    IMUSensor imuSensor(port, baudRate, bufSize, splitPattern, patSize);
+    IMU& imu = imuSensor;
 
     // IMUデータ処理
     IMUProcess imupro(imu);
@@ -80,8 +80,7 @@ int main(int argc, const char * argv[])
         }
         
         // 50ms/#data
-        usleep(50000);
-
+        usleep(10000);
     }
     
     time(&end);
