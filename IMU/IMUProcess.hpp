@@ -20,7 +20,7 @@ public:
     IMUProcess(IMU& imu);
     
     // コンパスが0でないデータをフィルタ
-    bool filterMagZero(IMUData& data);
+    bool isMagZero(const IMUData& data);
     
     
     // ジャイロが閾値以下のデータをフィルタ
@@ -40,11 +40,6 @@ private:
     // 現在の姿勢
     cv::Mat matCur;
     Quaternion quatCur;
-    
-    // 更新の時間間隔
-    const float dt;
-    // 感度
-    const float sens;
     
     // センサー
     IMU& imu;

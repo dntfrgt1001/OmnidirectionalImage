@@ -9,13 +9,12 @@
 #include "IMUProcess.hpp"
 
 IMUProcess::IMUProcess(IMU& imu):
-imu(imu), quatCur(1, 0, 0, 0), matCur(cv::Mat::eye(3, 3, CV_32FC1)),
-dt(0.008), sens(0.03)
+imu(imu), quatCur(1, 0, 0, 0), matCur(cv::Mat::eye(3, 3, CV_32FC1))
 {
     
 }
 
-bool IMUProcess::filterMagZero(const IMUData &data)
+bool IMUProcess::isMagZero(const IMUData &data)
 {
     if (data.mag_x==0 && data.mag_y==0 && data.mag_z==0) {
         return true;
@@ -26,12 +25,13 @@ bool IMUProcess::filterMagZero(const IMUData &data)
 
 void IMUProcess::renewPose(const IMUData &data)
 {
-    if (filterMagZero(data) && filterGyroDrift(data)) {
+    // コンパスが０でないならデータは正しくない
+    if (!isMagZero(data)) return;
     
     // 角速度ベクトル
-    cv::Vec3f angVel(data.gyro_x * sens * dt,
-                     data.gyro_y * sens * dt,
-                     data.gyro_z * sens * dt);
+    cv::Vec3f angVel(IMU::getGyroValue(filterGyroDrift(data.gyro_x)),
+                     IMU::getGyroValue(filterGyroDrift(data.gyro_y)),
+                     IMU::getGyroValue(filterGyroDrift(data.gyro_z)));
     
     // 単位行列 + 無限小回転行列
     cv::Mat infEyeMat = cv::Mat::eye(3, 3, CV_32FC1) +
@@ -39,10 +39,6 @@ void IMUProcess::renewPose(const IMUData &data)
     
     // 更新
     matCur = infEyeMat * matCur;
-    
-    } else {
-        return;
-    }
 }
 
 void IMUProcess::printCurPose()

@@ -14,13 +14,13 @@
 #include <iomanip>
 #include <vector>
 
-/*
+
 typedef struct IMUData {
     int accel_x, accel_y, accel_z;
     int gyro_x, gyro_y, gyro_z;
     int mag_x, mag_y, mag_z;
 } IMUData;
-*/
+
  
 class IMU {
 public:
@@ -29,39 +29,24 @@ public:
     virtual int inputDataSet(std::vector<IMUData>& datas) = 0;
     
     static void printIMUData(const IMUData& data);
-};
-
-
-class IMUData {
-public:
-    IMUData();
-    IMUData(const int accel_x, const int accel_y, const int accel_z,
-            const int gyro_x, const int gyro_y, const int gyro_z,
-            const int mag_x, const int mag_y, const int mag_z);
     
-    void 
-    
-    int accel_x, accel_y, accel_z;
-    int gyro_x, gyro_y, gyro_z;
-    int mag_x, mag_y, mag_z;
+    static float getAccelValue(const int sensorValue) {
+        return sensorValue * sensAccel * dt;
+    }
+    static float getGyroValue(const int sensorValue) {
+        return sensorValue * sensGyro * dt;
+    };
     
 private:
-    // 更新時間間隔
+    // データ更新時間感覚
     static const float dt;
-    // センサ感度
-    static const float senGyro;
+    // センサデータの感度
+    static const float sensAccel;
+    static const float sensGyro;
 };
 
-IMUData::IMUData():IMUData(0,0,0,0,0,0,0,0,0) {}
-
-IMUData::IMUData(const int accel_x, const int accel_y, const int accel_z,
-                 const int gyro_x, const int gyro_y, const int gyro_z,
-                 const int mag_x, const int mag_y, const int mag_z):
-accel_x(accel_x), accel_y(accel_y), accel_z(accel_z),
-gyro_x(gyro_x), gyro_y(gyro_y), gyro_z(gyro_z),
-mag_x(mag_x), mag_y(mag_y), mag_z(mag_z) {}
-
-const float IMUData::dt = 0.008;
-const float IMUData::senGyro = 0.03;
+const float IMU::dt = 0.008;
+const float IMU::sensAccel = 1;
+const float IMU::sensGyro = 0.03;
 
 #endif /* IMU_hpp */
