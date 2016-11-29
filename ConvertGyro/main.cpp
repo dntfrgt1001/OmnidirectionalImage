@@ -71,11 +71,12 @@ int main(int argc, const char * argv[])
     for (int i = 0; i < iterNum; i++) {
         std::vector<IMUData> datas;
         const int dataNum = imu.inputDataSet(datas);
-
         std::cout << "# data = " << dataNum << std::endl;
+        
         for (int j = 0; j < dataNum; j++) {
+            imu.printIMUData(datas[j]);
             imuPro.renewPose(datas[j]);
-            imuPro.printCurPose();
+            //imuPro.printCurPose();
         }
         
         // 50ms/#data

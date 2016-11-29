@@ -122,7 +122,14 @@ cv::Vec3f Rotation::getAngVel(const cv::Mat &infRot)
 
 void Rotation::normalRotMat(cv::Mat &rotMat)
 {
+    std::cout << "raw rotMat = " << rotMat << std::endl;
+    
     Quaternion quat = RotMat2Quat(rotMat);
+    
+    std::cout << "raw quat = " << quat << std::endl;
+    
     Quaternion::normalQuart(quat);
+    
+    std::cout << "normal quat = " << quat << std::endl;
     rotMat = Quat2RotMat(quat);
 }

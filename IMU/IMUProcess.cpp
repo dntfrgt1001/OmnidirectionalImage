@@ -34,8 +34,27 @@ void IMUProcess::renewPose(const IMUData &data)
                      IMU::getGyroValue(filterGyroDrift(data.gyro_z)));
     
     // (単位行列+無限小回転行列)をかけて姿勢を更新
-    matCur = (cv::Mat::eye(3, 3, CV_32FC1) + Rotation::getInfRot(angVel))
-             * matCur;    
+    cv::Mat infMat = cv::Mat::eye(3, 3, CV_32FC1)+Rotation::getInfRot(angVel);
+    
+    std::cout << "inf mat = " << std::endl << infMat << std::endl;
+    std::cout << "pre mat = " << std::endl << matCur << std::endl;
+    
+    cv::Mat tmpMat = infMat * matCur;
+    tmpMat.copyTo(matCur);
+    
+//    matCur = infMat * matCur;
+    
+    std::cout << "next mat = " << std::endl << matCur << std::endl;
+    
+//    matCur = (cv::Mat::eye(3, 3, CV_32FC1) + Rotation::getInfRot(angVel))
+//             * matCur;
+    
+    
+    assert(!isnan(matCur.at<float>(0,0)));
+    
+    Rotation::normalRotMat(matCur);
+    
+    std::cout << "normalized mat = " << std::endl << matCur << std::endl;
 }
 
 void IMUProcess::printCurPose()

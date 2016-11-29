@@ -32,7 +32,7 @@ t(t), x(x), y(y),z(z)
     
 }
 
-float Quaternion::norm(Quaternion &quat)
+float Quaternion::norm(const Quaternion &quat)
 {
     return sqrtf(quat.t*quat.t + quat.x*quat.x +
                  quat.y*quat.y + quat.z*quat.z);
