@@ -34,8 +34,6 @@ public:
     // 現在の姿勢を出力
     void printCurPose();
     
-    
-    
 private:
     // 現在の姿勢
     cv::Mat matCur;

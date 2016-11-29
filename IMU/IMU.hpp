@@ -45,8 +45,4 @@ private:
     static const float sensGyro;
 };
 
-const float IMU::dt = 0.008;
-const float IMU::sensAccel = 1;
-const float IMU::sensGyro = 0.03;
-
 #endif /* IMU_hpp */

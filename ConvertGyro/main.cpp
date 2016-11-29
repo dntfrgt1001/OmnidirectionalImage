@@ -55,13 +55,13 @@ int main(int argc, const char * argv[])
     const int patSize = sizeof(splitPattern)/sizeof(*splitPattern);
     
     // IMUデータの読み込み先
-    IMUFile imuFile(outfile);
+//    IMUFile imuFile(outfile);
 //    IMU& imu = imuFile;
     IMUSensor imuSensor(port, baudRate, bufSize, splitPattern, patSize);
     IMU& imu = imuSensor;
 
     // IMUデータ処理
-    IMUProcess imupro(imu);
+    IMUProcess imuPro(imu);
     
     time_t start, end;
     time(&start);
@@ -74,9 +74,8 @@ int main(int argc, const char * argv[])
 
         std::cout << "# data = " << dataNum << std::endl;
         for (int j = 0; j < dataNum; j++) {
-            if (imupro.filterMagZero(datas[j])) {
-                IMU::printIMUData(datas[j]);
-            }
+            imuPro.renewPose(datas[j]);
+            imuPro.printCurPose();
         }
         
         // 50ms/#data

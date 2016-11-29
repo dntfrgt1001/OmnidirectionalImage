@@ -8,6 +8,10 @@
 
 #include "IMU.hpp"
 
+const float IMU::dt = 0.008;
+const float IMU::sensAccel = 1;
+const float IMU::sensGyro = 0.03;
+
 void IMU::printIMUData(const IMUData &data)
 {
     std::ios::fmtflags flagsSaved = std::cout.flags();
