@@ -13,13 +13,13 @@ cv::Mat Rotation::Quat2RotMat
 {
     return cv::Mat_<float>(3, 3) <<
                 1 - 2*(quat.y*quat.y + quat.z*quat.z),
-                2*(quat.x*quat.y + quat.t*quat.z),
-                2*(quat.x*quat.z - quat.t*quat.y),
-                2*(quat.x*quat.y - quat.t*quat.z),
+                2*(quat.x*quat.y + quat.w*quat.z),
+                2*(quat.x*quat.z - quat.w*quat.y),
+                2*(quat.x*quat.y - quat.w*quat.z),
                 1 - 2*(quat.x*quat.x + quat.z*quat.z),
-                2*(quat.y*quat.z + quat.t*quat.x),
-                2*(quat.x*quat.z + quat.t*quat.y),
-                2*(quat.y*quat.z - quat.t*quat.x),
+                2*(quat.y*quat.z + quat.w*quat.x),
+                2*(quat.x*quat.z + quat.w*quat.y),
+                2*(quat.y*quat.z - quat.w*quat.x),
                 1 - 2*(quat.x*quat.x + quat.y*quat.y);
     
     /*
@@ -37,12 +37,59 @@ cv::Mat Rotation::Quat2RotMat
 
 Quaternion Rotation::RotMat2Quat(const cv::Mat &rotMat)
 {
+    /*
     float trace = (cv::trace(rotMat))(0);
     float t = sqrtf(trace + 1) / 2.0;
     return Quaternion(t,
                       (rotMat.at<float>(2,1)-rotMat.at<float>(1,2))/(4*t),
                       (rotMat.at<float>(0,2)-rotMat.at<float>(2,0))/(4*t),
                       (rotMat.at<float>(1,0)-rotMat.at<float>(0,1))/(4*t));
+    */
+    
+    // cv::traceの返り値はScalar型
+    //float trace = (cv::trace(rotMat))(0);
+    
+    std::vector<float> diag{rotMat.at<float>(0,0),
+                            rotMat.at<float>(1,1),
+                            rotMat.at<float>(2,2),
+                            1.0};
+
+    // 四元数の最大要素のインデックスを求める
+    int maxIndex = (int) std::distance(diag.begin(),
+                                       std::max_element(diag.begin(),
+                                                        diag.end()));
+    
+    // 最大要素に従いクォータニオンの要素を求める
+    float x, y, z, w;
+    switch (maxIndex) {
+        case 0: // xが最大
+            x = sqrtf(+ diag[0] - diag[1] - diag[2] + 1.0) / 2.0;
+            y = (rotMat.at<float>(0,1) - rotMat.at<float>(1,0)) / (4 * x);
+            z = (rotMat.at<float>(2,0) + rotMat.at<float>(0,2)) / (4 * x);
+            w = (rotMat.at<float>(1,2) - rotMat.at<float>(2,1)) / (4 * x);
+            break;
+        case 1: // yが最大
+            y = sqrtf(- diag[0] + diag[1] - diag[2] + 1.0) / 2.0;
+            x = (rotMat.at<float>(0,1) + rotMat.at<float>(1,0)) / (4 * y);
+            z = (rotMat.at<float>(1,2) + rotMat.at<float>(2,1)) / (4 * y);
+            w = (rotMat.at<float>(2,0) - rotMat.at<float>(0,2)) / (4 * y);
+            break;
+        case 2: // zが最大
+            z = sqrtf(- diag[0] - diag[1] + diag[2] + 1.0) / 2.0;
+            x = (rotMat.at<float>(2,0) + rotMat.at<float>(0,2)) / (4 * z);
+            y = (rotMat.at<float>(1,2) + rotMat.at<float>(2,1)) / (4 * z);
+            w = (rotMat.at<float>(0,1) - rotMat.at<float>(1,0)) / (4 * z);
+            break;
+        case 3: // wが最大
+            w = sqrtf(+ diag[0] + diag[1] + diag[2] + 1.0) / 2.0;
+            x = (rotMat.at<float>(1,2) - rotMat.at<float>(2,1)) / (4 * w);
+            y = (rotMat.at<float>(2,0) - rotMat.at<float>(0,2)) / (4 * w);
+            z = (rotMat.at<float>(0,1) - rotMat.at<float>(1,0)) / (4 * w);
+        default:
+            break;
+    }
+    
+    return Quaternion(w, x, y, z);
 }
 
 cv::Mat Rotation::RotVec2RotMat(const cv::Vec3f& rotVec)
@@ -67,6 +114,10 @@ cv::Mat Rotation::RotVec2RotMat(const cv::Vec3f& rotVec)
 cv::Vec3f Rotation::RotMat2RotVec(const cv::Mat &rotMat)
 {
     const float angle = acosf(((cv::trace(rotMat))[0] - 1) /2);
+
+    // 無回転ならゼロベクトル
+    if (angle == 0.0) return cv::Vec3f(0, 0, 0);
+    
     cv::Mat omega = (rotMat - rotMat.t()) / (2*sinf(angle));
     
     return cv::Vec3f(omega.at<float>(2, 1) * angle,
@@ -84,6 +135,13 @@ cv::Mat Rotation::getFroChgMat(const cv::Mat &rotMat)
 {
     // 単位回転ベクトルの計算
     cv::Vec3f rotVec = RotMat2RotVec(rotMat);
+    
+    // 回転ベクトルのノルム
+    float normRotVec = cv::norm(rotVec);
+    
+    // 無回転なら単位行列
+    if (normRotVec == 0.0) return cv::Mat::eye(3, 3, CV_32FC1);
+    
     cv::Vec3f rotVecUni = rotVec/cv::norm(rotVec);
     
     // 回転角

@@ -11,9 +11,9 @@
 void MainProcess::modifyLatImgFeatureMatch
 (const cv::Mat &forImg, const cv::Mat &latImg, cv::Mat &modLatImg)
 {
-    cv::Mat rotMat = fme.getRotMat(forImg, latImg);
+    curRotMat = fme.getRotMat(forImg, latImg);
     
-    setMatInfo(rotMat);
+    setMatInfo();
     
     tf.rotateImg(latImg, modLatImg, accRotMat);
 }
@@ -21,27 +21,29 @@ void MainProcess::modifyLatImgFeatureMatch
 void MainProcess::modifyLatImgOpticalFlow
 (const cv::Mat &forImg, const cv::Mat &latImg, cv::Mat &modLatImg)
 {
-    cv::Mat rotMat = ofe.getRotMat(forImg, latImg, curRotMat);
+    curRotMat = ofe.getRotMat(forImg, latImg, curRotMat);
     
-    setMatInfo(rotMat);
+    setMatInfo();
     
     // 画像のテストに注意
     tf.rotateImg(latImg, modLatImg, accRotMat);
 }
 
-void MainProcess::setMatInfo(const cv::Mat& rotMat)
+void MainProcess::setMatInfo()
 {
-    accRotMat = accRotMat * rotMat;
+    accRotMat = accRotMat * curRotMat;
     
-    cv::Mat froChgMat = Rotation::getFroChgMat(rotMat);
-    cv::Vec3f rotVec = Rotation::RotMat2RotVec(rotMat);
+    cv::Mat froChgMat = Rotation::getFroChgMat(curRotMat);
+    cv::Vec3f rotVec = Rotation::RotMat2RotVec(curRotMat);
     
     std::cout <<  "------------------------------------------------";
     std::cout << std::endl;
-    std::cout << "Rot Mat = " << std::endl << rotMat << std::endl;
+    std::cout << "Rot Mat = " << std::endl << curRotMat << std::endl;
     std::cout <<  "------------------------------------------------";
     std::cout << std::endl;
-    std::cout << "Rot Vec = " << rotVec << std::endl;
+    std::cout << "Rot Vec = " << rotVec;
+    std::cout << ", norm = " << cv::norm(rotVec) << std::endl;
+    
 //    std::cout << std::endl;
     std::cout <<  "------------------------------------------------";
     std::cout << std::endl;
@@ -74,8 +76,20 @@ void MainProcess::modVideo(VideoReader &vr, VideoWriter &vw)
         
         // 後画像を修正
         cv::Mat latImgMod;
-        //modifyLatImgFeatureMatch(forImg, latImg, latImgMod);
-        modifyLatImgOpticalFlow(forImg, latImg, latImgMod);
+        float normRotVec = cv::norm(Rotation::RotMat2RotVec(curRotMat));
+        std::cout << "norm = " << normRotVec << std::endl;
+        float normRotThre = M_PI / 15;
+        if (normRotThre < normRotVec) {
+            std::cout << "OpticalFlow Method" << std::endl;
+            modifyLatImgOpticalFlow(forImg, latImg, latImgMod);
+        } else {
+            std::cout << "Feature Matching Method" << std::endl;
+            modifyLatImgFeatureMatch(forImg, latImg, latImgMod);
+        }
+        
+        // modifyLatImgFeatureMatch(forImg, latImg, latImgMod);
+        // modifyLatImgOpticalFlow(forImg, latImg, latImgMod);
+        
         vw.writeImg(latImgMod);
         
         // 出力

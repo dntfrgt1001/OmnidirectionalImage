@@ -30,7 +30,7 @@
 #include "Epipolar.hpp"
 
 int main(int argc, const char * argv[])
-{
+{    
     const std::string path = "/Users/masakazu/Desktop/";
     const std::string inputName1 = path + "image1.jpg";
     const std::string inputName2 = path + "image2.jpg";
@@ -79,8 +79,8 @@ int main(int argc, const char * argv[])
     MainProcess mp(tfo, fme, ofe);
     
     cv::Mat modImg2;
-    //mp.modifyLatImgFeatureMatch(img1, img2, modImg2);
-    mp.modifyLatImgOpticalFlow(img1, img2, modImg2);
+    mp.modifyLatImgFeatureMatch(img1, img2, modImg2);
+    //mp.modifyLatImgOpticalFlow(img1, img2, modImg2);
     
     cv::namedWindow("img1");
     cv::namedWindow("img2");

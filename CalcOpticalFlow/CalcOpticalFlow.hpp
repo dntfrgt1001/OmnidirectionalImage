@@ -31,12 +31,11 @@ public:
     
     // 正規化画像座標で半径方向と直交しないものを取り除く
     void remOrthOutlier
-    (std::vector<Normal>& forNormals,
-     std::vector<Normal>& latNormals) const;
+    (std::vector<Normal>& forNormals, std::vector<Normal>& latNormals) const;
     
     // オプティカルフローが半径方向のベクトルと直行するか
     bool isOrthCond
-    (const cv::Point2f& forNormal, const cv::Point2f& latNormal) const {
+    (const Normal& forNormal, const Normal& latNormal) const {
         cv::Point2f rad = (forNormal + latNormal) / 2.0;
         cv::Point2f cir = latNormal - forNormal;
         
@@ -55,15 +54,15 @@ public:
     
     // オプティカルフローの回転方向が正しいか
     bool isRotDirCond
-    (const cv::Point2f& forNormal, const cv::Point2f& latNormal) const {
+    (const Normal& forNormal, const Normal& latNormal) const {
         cv::Point2f rad = (forNormal + latNormal) / 2.0;
         cv::Point2f cir = latNormal - forNormal;
         
         // 半径ベクトルと円周ベクトルの外積
         float croPro = rad.cross(cir);
         
-        // 正面で正方向，背面で負方向ならOK
-        if (croPro > 0) return true;
+        // 右手系負方向(時計回り)
+        if (croPro < 0) return true;
         else return false;
     }
     
@@ -74,7 +73,7 @@ public:
     
     // オプティカルフローの長さが正しいか
     bool isNormCond
-    (const cv::Point2f& forNormal, const cv::Point2f& latNormal,
+    (const Normal& forNormal, const Normal& latNormal,
      const float rotAng) const {
         cv::Point2f rad = (forNormal + latNormal) / 2.0;
         cv::Point2f cir = latNormal - forNormal;

@@ -41,6 +41,8 @@
 		</dict>
 		<key>PerspectiveProjection.xcscheme_^#shared#^_</key>
 		<dict>
+			<key>isShown</key>
+			<true/>
 			<key>orderHint</key>
 			<integer>11</integer>
 		</dict>
@@ -69,7 +71,7 @@
 			<key>orderHint</key>
 			<integer>8</integer>
 		</dict>
-		<key>Test.xcscheme</key>
+		<key>Test.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
 			<integer>12</integer>

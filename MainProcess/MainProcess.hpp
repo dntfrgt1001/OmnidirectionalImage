@@ -27,10 +27,10 @@ public:
     (const Transform& tf, const FeatureMatchEstimator& fme,
      const OpticalFlowEstimator& ofe):
     tf(tf), fme(fme), ofe(ofe), accRotMat(cv::Mat::eye(3,3,CV_32F)) {
-        cv::Vec3f rotVec(0.10, 0.0, 0.0);
-        curRotMat =  Rotation::RotVec2RotMat(rotVec);
-        //curRotMat = cv::Mat::eye(3, 3, CV_32F);
-        setMatInfo(curRotMat);
+        //cv::Vec3f rotVec(0.10, 0.0, 0.0);
+        //curRotMat =  Rotation::RotVec2RotMat(rotVec);
+        curRotMat = cv::Mat::eye(3, 3, CV_32F);
+        setMatInfo();
     }
     
     void modifyLatImgFeatureMatch
@@ -41,7 +41,7 @@ public:
     
     void modVideo(VideoReader& vr, VideoWriter& vw);
     
-    void setMatInfo(const cv::Mat& rotMat);
+    void setMatInfo();
     
 private:
     const Transform& tf; // 出力画像用

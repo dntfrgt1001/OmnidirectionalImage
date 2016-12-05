@@ -33,11 +33,11 @@ int main(int argc, const char * argv[])
     // ffmpeg -f image2 -r 30 -i image%4d.jpg -pix_fmt yuv420p video.mp4
     
     const std::string path = "/Users/masakazu/Desktop/";
-    const std::string inputVideoName = path + "rot.mp4";
-    const std::string outputVideoName = path + "rotation-test.mp4";
+    const std::string inputVideoName = path + "sample4.mp4";
+    const std::string outputVideoName = path + "sample4-1.mp4";
     
-    const cv::Size fso(720, 360);
-    const cv::Size fs(720, 360);
+    const cv::Size fso(960, 480);
+    const cv::Size fs(960, 480);
     
     int stride = 1;
     VideoReaderMov vr(fso, inputVideoName, stride);
@@ -46,7 +46,7 @@ int main(int argc, const char * argv[])
     const Transform tfo(fso);
     const Transform tf(fs);
     
-    const int numThre = 15;
+    const int numThre = 10;
     const Epipolar epi(numThre);
     // -----------------------------------------------------
     // 特徴点マッチ用
@@ -69,7 +69,8 @@ int main(int argc, const char * argv[])
     
     const float margin = 0.1;
     const float angRag = M_PI / 4.0;
-    const CalcOpticalFlow cof(margin, per, angRag);
+    const float normRat = 3.0;
+    const CalcOpticalFlow cof(margin, per, angRag, normRat);
     
     const OpticalFlowEstimator ofe(tf, cof, per, epi);
     // -----------------------------------------------------

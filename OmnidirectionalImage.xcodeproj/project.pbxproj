@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0202316F1DF30DB100D6B3B2 /* Rotation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 020D73071D2A62E800BC61BD /* Rotation.cpp */; };
+		020231701DF30DB500D6B3B2 /* Quaternion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 02D6D9A11D8189B900862E8F /* Quaternion.cpp */; };
+		020231711DF30F3200D6B3B2 /* libopencv_core.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 02A9B6D11DC0C5BC00D4A0E7 /* libopencv_core.dylib */; };
 		020D72FF1D2A4ADA00BC61BD /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 020D72FE1D2A4ADA00BC61BD /* main.cpp */; };
 		020D73031D2A4D3F00BC61BD /* VideoReader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 02C57BE91D0FB0D100F428F2 /* VideoReader.cpp */; };
 		020D730B1D2A642D00BC61BD /* Rotation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 020D73071D2A62E800BC61BD /* Rotation.cpp */; };
@@ -400,6 +403,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				020231711DF30F3200D6B3B2 /* libopencv_core.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -640,7 +644,6 @@
 				020D730A1D2A62F800BC61BD /* Rotation */,
 				0245CD8C1C4233B100FF5E33 /* Transform */,
 				022BA2641DD1ABC00015C380 /* Core */,
-				020FE6C61CA6D84100A650CE /* InputGyro */,
 				022BA2681DD5BB9D0015C380 /* IMU */,
 				0298B4791D0A897700B68032 /* old */,
 			);
@@ -742,6 +745,7 @@
 		0298B4791D0A897700B68032 /* old */ = {
 			isa = PBXGroup;
 			children = (
+				020FE6C61CA6D84100A650CE /* InputGyro */,
 				02C57C011D1055AC00F428F2 /* MatchMain */,
 				025ADB8B1DB8911E00DCE366 /* OpticalFlow */,
 				02D6D99F1D81405300862E8F /* Estimate */,
@@ -1266,7 +1270,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				025ADBA01DBA011800DCE366 /* Perspective.cpp in Sources */,
+				0202316F1DF30DB100D6B3B2 /* Rotation.cpp in Sources */,
 				025ADBA11DBA012200DCE366 /* Transform.cpp in Sources */,
+				020231701DF30DB500D6B3B2 /* Quaternion.cpp in Sources */,
 				025ADB9B1DB9FF7F00DCE366 /* main.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1461,8 +1467,11 @@
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_SUSPICIOUS_MOVES = YES;
 				HEADER_SEARCH_PATHS = "$(inherited)";
-				LIBRARY_SEARCH_PATHS = "$(inherited)";
-				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					/usr/local/Cellar/opencv3/3.1.0_4/lib,
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -1474,8 +1483,11 @@
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_SUSPICIOUS_MOVES = YES;
 				HEADER_SEARCH_PATHS = "$(inherited)";
-				LIBRARY_SEARCH_PATHS = "$(inherited)";
-				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					/usr/local/Cellar/opencv3/3.1.0_4/lib,
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;

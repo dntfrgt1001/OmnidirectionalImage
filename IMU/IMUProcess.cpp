@@ -33,9 +33,14 @@ void IMUProcess::renewPose(const IMUData &data)
                      IMU::getGyroValue(filterGyroDrift(data.gyro_y)),
                      IMU::getGyroValue(filterGyroDrift(data.gyro_z)));
     
+    // 回転ベクトルから回転行列へ
+    cv::Mat curRotMat = Rotation::RotVec2RotMat(angVel);
+    
     // (単位行列+無限小回転行列)をかけて姿勢を更新
-    matCur = (cv::Mat::eye(3, 3, CV_32FC1) + Rotation::getInfRot(angVel))
-             * matCur;    
+//    matCur = (cv::Mat::eye(3, 3, CV_32FC1) + Rotation::getInfRot(angVel))
+//             * matCur;
+    
+    matCur = curRotMat * matCur;
 }
 
 void IMUProcess::printCurPose()

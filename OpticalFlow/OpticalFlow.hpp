@@ -60,20 +60,18 @@ public:
     bool isOutlier
     (const cv::Point2f& forPers, const cv::Point2f& latPers) const {
         const cv::Mat& inParaMat = ps.getInParaMat();
-        cv::Point2f forNormal, latNormal;
-        tf.pers2normal(forPers, forNormal, inParaMat);
-        tf.pers2normal(latPers, latNormal, inParaMat);
-        return !isCosCond(forNormal, latNormal);
+        
+        return !isCosCond(tf.pers2normal(forPers, inParaMat),
+                          tf.pers2normal(latPers, inParaMat));
     };
 
     bool isCosCond
-    (const cv::Point2f& forNormal, const cv::Point2f& latNormal) const
+    (const Normal& forNormal, const Normal& latNormal) const
     {
         cv::Point2f radVec = (forNormal + latNormal) / 2.0;
         cv::Point2f cirVec = latNormal - forNormal;
         
-        float cosAng = radVec.dot(cirVec) /
-                       (cv::norm(radVec) * cv::norm(cirVec));
+        float cosAng = radVec.dot(cirVec) /(cv::norm(radVec)*cv::norm(cirVec));
         
         const float cosRange = 1.0 / 4.0;
         

@@ -26,14 +26,27 @@ cv::Mat OpticalFlowEstimator::getRotMat
     tf.resizeImg(forImg, resForImg);
     tf.resizeImg(latImg, resLatImg);
     
-    // 透視投影画像を取得
-    cv::Mat forPersImg, latPersImg;
-    per.getPersImg(resForImg, forPersImg, froChgMat, false);
-    per.getPersImg(resLatImg, latPersImg, froChgMat, false);
-    
-    // 透視投影座標の特徴点
+    // 透視投影画像を取得 正面
+    cv::Mat forPersImgFront, latPersImgFront;
+    per.getPersImg(resForImg, forPersImgFront, froChgMat, true);
+    per.getPersImg(resLatImg, latPersImgFront, froChgMat, true);
+    // 透視投影座標の特徴点 正面
     std::vector<Pers> forPerss, latPerss;
-    cof.getOpticalFlow(forPersImg, latPersImg, forPerss, latPerss);
+    cof.getOpticalFlow(forPersImgFront, latPersImgFront, forPerss, latPerss);
+    
+    // 透視投影画像を取得 背面
+    cv::Mat forPersImgBack, latPersImgBack;
+    per.getPersImg(resForImg, forPersImgBack, froChgMat, false);
+    per.getPersImg(resLatImg, latPersImgBack, froChgMat, false);
+    // 当地投影座標の特徴点 背面
+    std::vector<Pers> forPerssBack, latPerssBack;
+    cof.getOpticalFlow(forPersImgBack, latPersImgBack, forPerssBack, latPerssBack);
+    
+    // 結合
+    std::copy(forPerssBack.begin(), forPerssBack.end(),
+              std::back_inserter(forPerss));
+    std::copy(latPerssBack.begin(), latPerssBack.end(),
+              std::back_inserter(latPerss));
     
     // 正規化座標の特徴点
     std::vector<Normal> forNormals, latNormals;
@@ -62,7 +75,7 @@ cv::Mat OpticalFlowEstimator::getRotMat
     tf.normal2pers(latNormals, latPerssLast, per.getInParaMat());
     
     cv::Mat drawImg;
-    cof.drawOpticalFlow(forPersImg, forPerssLast, latPerssLast, drawImg);
+    cof.drawOpticalFlow(forPersImgFront, forPerssLast, latPerssLast, drawImg);
     cv::namedWindow("optical flow");
     cv::imshow("optical flow", drawImg);
     

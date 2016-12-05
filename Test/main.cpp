@@ -13,38 +13,20 @@
 #include "Transform.hpp"
 #include "Perspective.hpp"
 #include "OpticalFlow.hpp"
+#include "Quaternion.hpp"
+#include "Rotation.hpp"
 
 int main(int argc, const char * argv[])
 {
-    const cv::Size fs(1000, 500);
-
-    const Transform tf(fs);
+    float angle1 = M_PI / 2.0;
+    cv::Vec3f axis1(1.0, 0.0, 0.0);
+    Quaternion quat1(angle1, axis1);
     
-    const float halfWidth = 200;
-    const float halfHeight = 200;
+    float angle2 = M_PI / 2.0;
+    cv::Vec3f axis2(1.0, 0.0, 0.0);
+    Quaternion quat2(angle2, axis2);
     
-    const cv::Mat inParaMat = (cv::Mat_<float>(3, 3) <<
-                         halfWidth, 0, halfWidth,
-                         0, halfHeight, halfHeight,
-                         0, 0, 1);
-    
-    const float rangeAngle = M_PI/ 4.0;
-    Perspective ps(tf, inParaMat, rangeAngle);
-    
-    OpticalFlow opt(tf, ps);
-    
-    cv::Point2f forNormal(1.0, 0.4);
-    cv::Point2f latNormal(1.0, -0.5);
-    
-    std::cout << forNormal.dot(latNormal) << std::endl;
-    std::cout << forNormal.x*latNormal.x + forNormal.y*latNormal.y
-    << std::endl;
-    
-    float cosAngle = forNormal.dot(latNormal) / (cv::norm(forNormal)*cv::norm(latNormal));
-    
-    std::cout << cosAngle << std::endl;
-    
-    opt.isCosCond(forNormal, latNormal);
+    std::cout << quat2 * quat1 << std::endl;
 
     
     return 0;
