@@ -71,10 +71,10 @@ int main(int argc, const char * argv[])
     const float angRag = M_PI / 4.0;
     const float normRat = 3.0;
     const CalcOpticalFlow cof(margin, per, angRag, normRat);
-    
+
     const OpticalFlowEstimator ofe(tf, cof, per, epi);
     // -----------------------------------------------------
-    
+
     MainProcess mp(tfo, fme, ofe);
     
     mp.modVideo(vr, vw);

@@ -25,8 +25,7 @@ public:
     friend std::ostream& operator<<(std::ostream& os, const Quaternion& quat);
     
     // ノルム
-    static float norm(Quaternion& quat);
-    
+    static float norm(const Quaternion& quat);
     // 誤差を含む四元数を正規化
     static void normalQuart(Quaternion& quat);
     
