@@ -135,3 +135,21 @@ void ExtractFeaturePoint::drawKeyPoint
     cv::drawKeypoints(img, keyPoints, outImg);
 }
 
+void ExtractFeaturePoint::drawKeyPointClear
+(const cv::Mat &img, const std::vector<cv::KeyPoint> &keyPoints,
+ cv::Mat &outImg)
+{
+    // 画像をクローン
+    if (img.channels() == 1) tf.changeChannel(img, outImg);
+    else outImg = img.clone();
+    
+    // 円を描写
+    const int radius = 5.0;
+    const int thickness = -1;
+    const int lineType = CV_AA;
+    for (int i = 0; i < keyPoints.size(); i++) {
+        cv::circle(outImg, keyPoints[i].pt, radius,
+                   cv::Scalar(rand()%256, rand()%256, rand()%256),
+                   thickness, lineType);
+    }
+}

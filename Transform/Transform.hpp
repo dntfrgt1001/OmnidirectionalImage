@@ -314,6 +314,9 @@ public:
     (const std::vector<cv::Point2f>& points, std::vector<Normal>& normals);
     
     
+    // チャンネル数の変換
+    static void changeChannel(const cv::Mat& img, cv::Mat& outImg);
+    
 private:
     const cv::Size& fs;
 };

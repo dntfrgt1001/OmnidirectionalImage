@@ -232,6 +232,21 @@ void Transform::point2normal
     }
 }
 
+void Transform::changeChannel(const cv::Mat &img, cv::Mat &outImg)
+{
+    assert(img.channels() == 1);
+    
+    outImg = cv::Mat(img.size(), CV_8UC3);
+    
+    for (int v = 0; v < img.rows; v++) {
+        const uchar* inRow = img.ptr<uchar>(v);
+        cv::Vec3b* outRow = outImg.ptr<cv::Vec3b>(v);
+        
+        for (int u = 0; u < img.cols; u++) {
+            outRow[u] = cv::Vec3b(inRow[u], inRow[u], inRow[u]);
+        }
+    }
+}
 
 /*
 void Transform::rotateEquirectVert

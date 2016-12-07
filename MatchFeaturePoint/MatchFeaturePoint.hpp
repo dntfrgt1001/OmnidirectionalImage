@@ -49,7 +49,15 @@ public:
     (const cv::Mat& img1, const std::vector<Equirect>& forEquirects,
      const cv::Mat& img2, const std::vector<Equirect>& latEquirects,
      cv::Mat& outImg);
+    
+    static void drawMatchVert
+    (const cv::Mat& img1, const std::vector<cv::KeyPoint> keyPoints1,
+     const cv::Mat& img2, const std::vector<cv::KeyPoint> keyPoints2,
+     const std::vector<cv::DMatch> matchs, cv::Mat& outImg);
 
+    static void drawLineVert
+    (const cv::Point2f& point1, const cv::Point2f& point2, cv::Mat& outImg);
+    
     // マッチした特徴点を返す
     void getMatchKeyPoint
     (const std::vector<cv::KeyPoint>& forKeyPointsSet,

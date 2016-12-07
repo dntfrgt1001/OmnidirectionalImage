@@ -76,18 +76,42 @@ void MatchFeaturePoint::drawMatchVert
  const cv::Mat &img2, const std::vector<Equirect> &latEquirects,
  cv::Mat &outImg)
 {
-    cv::vconcat(img1, img2, outImg);
+    cv::Mat tmpOutImg;
+    cv::vconcat(img1, img2, tmpOutImg);
     
-    for (int i=0; i<forEquirects.size(); i++) {
-        cv::Point2f forEquirect = forEquirects[i];
-        cv::Point2f latEquirect = latEquirects[i];
-        
-        latEquirect.y = latEquirect.y + img1.rows;
-        
-        cv::line
-        (outImg, forEquirect, latEquirect,
-         cv::Scalar(rand()%256, rand()%256, rand()%256), 2, CV_AA);
+    if (outImg.channels() == 1) Transform::changeChannel(tmpOutImg, outImg);
+    
+    for (int i = 0; i < forEquirects.size(); i++) {
+        drawLineVert(forEquirects[i], latEquirects[i], outImg);
     }
+}
+
+void MatchFeaturePoint::drawMatchVert
+(const cv::Mat &img1, const std::vector<cv::KeyPoint> keyPoints1,
+ const cv::Mat &img2, const std::vector<cv::KeyPoint> keyPoints2,
+ const std::vector<cv::DMatch> matchs, cv::Mat &outImg)
+{
+    cv::Mat tmpOutImg;
+    cv::vconcat(img1, img2, tmpOutImg);
+    
+    if (outImg.channels() == 1) Transform::changeChannel(tmpOutImg, outImg);
+    
+    for (int i = 0; i < matchs.size(); i++) {
+        drawLineVert(keyPoints1[matchs[i].queryIdx].pt,
+                     keyPoints2[matchs[i].trainIdx].pt, outImg);
+    }
+}
+
+void MatchFeaturePoint::drawLineVert
+(const cv::Point2f &point1, const cv::Point2f &point2, cv::Mat &outImg)
+{
+    // 下側の特徴の座標を修正
+    cv::Point2f modPoint2 = point2 + cv::Point2f(0, outImg.rows / 2);
+    
+    // 線の描画
+    cv::line
+    (outImg, point1, modPoint2,
+     cv::Scalar(rand()%256, rand()%256, rand()%256), 2, CV_AA);
 }
 
 void MatchFeaturePoint::getMatchKeyPoint

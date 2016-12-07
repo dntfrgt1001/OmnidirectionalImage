@@ -19,20 +19,18 @@
 
 int main(int argc, const char * argv[])
 {
-    //const std::string path = "/Users/masakazu/Desktop/video/20160816/";
-    const std::string path = "/Users/masakazu/Desktop/PIXPRO/video5/";
-    //const cv::Size frameSize(1000, 500);
-    const cv::Size frameSize(1440, 720);
-    const std::string inputName = path + "sample2.mp4";
-    const std::string outputName = path + "sample2-30fps";
+    const std::string path = "/Users/masakazu/Desktop/high/";
+    const cv::Size frameSize(960, 480);
+    const std::string inputName = path + "sample1.mp4";
+    const std::string outputName = path + "sample1";
     
-    const int stride = 4;
-    VideoReaderMov vr(frameSize,inputName, stride);
+    const int stride = 1;
+    VideoReaderMov vr(frameSize, inputName, stride);
     VideoWriterPic vw(frameSize, outputName);
     
     cv::namedWindow("img");
     
-    int i=0;
+    int i = 0;
     while (vr.hasNext()) {
         cv::Mat img;
         
