@@ -124,9 +124,8 @@ void Transform::rotateSphere
 void Transform::rotateImg
 (const cv::Mat &img, cv::Mat &rotImg, const cv::Mat &rotMat) const
 {
+    // 出力画像を用意
     rotImg = cv::Mat(img.size(), img.type());
-    
-    std::cout << rotMat << std::endl;
     
     // 逆行列を用意
     cv::Mat invRotMat = rotMat.inv();
@@ -135,9 +134,10 @@ void Transform::rotateImg
         cv::Vec3b* row = rotImg.ptr<cv::Vec3b>(vr);
         
         for (int ur = 0; ur < fs.width; ur++) {
-            Equirect equirect = rotateEquirect(Equirect(ur, vr), invRotMat);
-            
-            row[ur] = getBiliPixel<cv::Vec3b>(img, equirect);
+            row[ur] =
+                getBiliPixel<cv::Vec3b>(img,
+                                        rotateEquirect(Equirect(ur, vr),
+                                                       invRotMat));
         }
     }
 }
@@ -163,7 +163,7 @@ Tp Transform::getBiliPixel(const cv::Mat &img, const Equirect &equirect) const
 }*/
 
 void Transform::rotateImgVertRect
-(const float angle, const cv::Mat &img, const cv::Rect& rect,
+(const cv::Mat &img, const float angle, const cv::Rect& rect,
  cv::Mat &rotImg) const
 {
     rotImg = cv::Mat(img.size(), img.type());
@@ -184,8 +184,10 @@ void Transform::rotateImgVertRect
         uchar* row = rotImg.ptr<uchar>(vr);
         
         for (int ur = rect.x; ur < vwidth; ur++) {
-            Equirect equirect = rotateEquirectVert(-angle, Equirect(ur,vr));
-            row[ur] = getBiliPixel<uchar>(img, equirect);
+            row[ur] =
+                getBiliPixel<uchar>(img,
+                                    rotateEquirectVert(Equirect(ur,vr),
+                                                       -angle));
         }
     }
     

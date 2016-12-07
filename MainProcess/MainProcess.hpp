@@ -24,14 +24,8 @@ class MainProcess
 {
 public:
     MainProcess
-    (const Transform& tf, const FeatureMatchEstimator& fme,
-     const OpticalFlowEstimator& ofe):
-    tf(tf), fme(fme), ofe(ofe), accRotMat(cv::Mat::eye(3,3,CV_32F)) {
-        //cv::Vec3f rotVec(0.10, 0.0, 0.0);
-        //curRotMat =  Rotation::RotVec2RotMat(rotVec);
-        curRotMat = cv::Mat::eye(3, 3, CV_32F);
-        setMatInfo();
-    }
+    (const Transform& tf, FeatureMatchEstimator& fme,
+     OpticalFlowEstimator& ofe);
     
     void modifyLatImgFeatureMatch
     (const cv::Mat& forImg, const cv::Mat& latImg, cv::Mat& modLatImg);
@@ -41,14 +35,15 @@ public:
     
     void modVideo(VideoReader& vr, VideoWriter& vw);
     
-    void setMatInfo();
+    void updateFrameInfo();
     
 private:
     const Transform& tf; // 出力画像用
-    const FeatureMatchEstimator& fme;
-    const OpticalFlowEstimator& ofe;
-    cv::Mat accRotMat;
-    cv::Mat curRotMat;
+    FeatureMatchEstimator& fme; // 特徴マッチベース
+    OpticalFlowEstimator& ofe; // オプティカルフローベース
+    int frameNum; // フレーム番号
+    cv::Mat accRotMat; // 初期フレームからの姿勢変化
+    cv::Mat curRotMat; // 現在フレームの姿勢変化
 };
 
 #endif /* MainProcess_hpp */

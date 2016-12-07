@@ -33,11 +33,11 @@ int main(int argc, const char * argv[])
     // ffmpeg -f image2 -r 30 -i image%4d.jpg -pix_fmt yuv420p video.mp4
     
     const std::string path = "/Users/masakazu/Desktop/";
-    const std::string inputVideoName = path + "sample4.mp4";
-    const std::string outputVideoName = path + "sample4-1.mp4";
+    const std::string inputVideoName = path + "02.mp4";
+    const std::string outputVideoName = path + "02-1.mp4";
     
-    const cv::Size fso(960, 480);
-    const cv::Size fs(960, 480);
+    const cv::Size fso(500, 250);
+    const cv::Size fs(500, 250);
     
     int stride = 1;
     VideoReaderMov vr(fso, inputVideoName, stride);
@@ -57,10 +57,10 @@ int main(int argc, const char * argv[])
     const float coordThre = 0.4;
     const MatchFeaturePoint mfp(tf, distThre, coordThre);
     
-    const float fieldAngle = M_PI / 4.0;
+    const float fieldAngle = M_PI / 3.0;
     const Range ran(fs, tf, fieldAngle);
     
-    const FeatureMatchEstimator fme(tf, efp, mfp, epi, ran);
+    FeatureMatchEstimator fme(tf, efp, mfp, epi, ran);
     // -----------------------------------------------------
     // オプティカルフロー用
     const int persRad = 150;
@@ -72,7 +72,7 @@ int main(int argc, const char * argv[])
     const float normRat = 3.0;
     const CalcOpticalFlow cof(margin, per, angRag, normRat);
 
-    const OpticalFlowEstimator ofe(tf, cof, per, epi);
+    OpticalFlowEstimator ofe(tf, cof, per, epi);
     // -----------------------------------------------------
 
     MainProcess mp(tfo, fme, ofe);

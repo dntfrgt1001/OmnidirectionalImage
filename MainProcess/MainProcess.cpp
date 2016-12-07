@@ -8,12 +8,22 @@
 
 #include "MainProcess.hpp"
 
+MainProcess::MainProcess
+(const Transform& tf, FeatureMatchEstimator& fme,
+ OpticalFlowEstimator& ofe):
+tf(tf), fme(fme), ofe(ofe), frameNum(0),
+accRotMat(cv::Mat::eye(3,3,CV_32F)), curRotMat(cv::Mat::eye(3,3,CV_32F))
+{
+    updateFrameInfo();
+}
+
+
 void MainProcess::modifyLatImgFeatureMatch
 (const cv::Mat &forImg, const cv::Mat &latImg, cv::Mat &modLatImg)
 {
-    curRotMat = fme.getRotMat(forImg, latImg);
+    curRotMat = fme.getRotMat(forImg, latImg, frameNum);
     
-    setMatInfo();
+    updateFrameInfo();
     
     tf.rotateImg(latImg, modLatImg, accRotMat);
 }
@@ -21,17 +31,20 @@ void MainProcess::modifyLatImgFeatureMatch
 void MainProcess::modifyLatImgOpticalFlow
 (const cv::Mat &forImg, const cv::Mat &latImg, cv::Mat &modLatImg)
 {
-    curRotMat = ofe.getRotMat(forImg, latImg, curRotMat);
+    curRotMat = ofe.getRotMat(forImg, latImg, frameNum, curRotMat);
     
-    setMatInfo();
+    updateFrameInfo();
     
-    // 画像のテストに注意
     tf.rotateImg(latImg, modLatImg, accRotMat);
 }
 
-void MainProcess::setMatInfo()
+void MainProcess::updateFrameInfo()
 {
+    // 回転行列を乗算
     accRotMat = accRotMat * curRotMat;
+ 
+    // フレーム番号を更新
+    frameNum++;
     
     cv::Mat froChgMat = Rotation::getFroChgMat(curRotMat);
     cv::Vec3f rotVec = Rotation::RotMat2RotVec(curRotMat);
@@ -39,8 +52,8 @@ void MainProcess::setMatInfo()
     std::cout <<  "------------------------------------------------";
     std::cout << std::endl;
     std::cout << "Rot Mat = " << std::endl << curRotMat << std::endl;
-    std::cout <<  "------------------------------------------------";
-    std::cout << std::endl;
+//    std::cout <<  "------------------------------------------------";
+//    std::cout << std::endl;
     std::cout << "Rot Vec = " << rotVec;
     std::cout << ", norm = " << cv::norm(rotVec) << std::endl;
     
@@ -77,8 +90,7 @@ void MainProcess::modVideo(VideoReader &vr, VideoWriter &vw)
         // 後画像を修正
         cv::Mat latImgMod;
         float normRotVec = cv::norm(Rotation::RotMat2RotVec(curRotMat));
-        std::cout << "norm = " << normRotVec << std::endl;
-        float normRotThre = M_PI / 15;
+        float normRotThre = 1.0;
         if (normRotThre < normRotVec) {
             std::cout << "OpticalFlow Method" << std::endl;
             modifyLatImgOpticalFlow(forImg, latImg, latImgMod);
@@ -96,8 +108,9 @@ void MainProcess::modVideo(VideoReader &vr, VideoWriter &vw)
         cv::imshow("former image", forImg);
         cv::imshow("latter image", latImg);
         cv::imshow("modified latter image", latImgMod);
+        
         std::cout << i << "-th frame finished" << std::endl;
         
-        cv::waitKey();
+        cv::waitKey(10);
     }
 }

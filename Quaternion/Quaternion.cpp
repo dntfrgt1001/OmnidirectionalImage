@@ -38,7 +38,7 @@ std::ostream& operator<<(std::ostream& os, const Quaternion& quat)
             << quat.y << ", " << quat.z << "]");
 }
 
-float Quaternion::norm(Quaternion &quat)
+float Quaternion::norm(const Quaternion &quat)
 {
     return sqrtf(quat.w*quat.w+quat.x*quat.x+quat.y*quat.y+quat.z*quat.z);
 }

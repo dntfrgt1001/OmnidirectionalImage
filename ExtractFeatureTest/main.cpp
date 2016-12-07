@@ -22,10 +22,11 @@
 
 int main(int argc, const char * argv[])
 {
-    const std::string path = "/Users/masakazu/Desktop/rotation/";
-    const std::string inputName = path + "rotimg.jpg";
-    const std::string outputName = path + "key2.jpg";
-    const cv::Size frameSize(600, 300);
+    const std::string path = "/Users/masakazu/Desktop/";
+    const std::string inputName = path + "img1.jpg";
+    const std::string outputName = path + "key.jpg";
+//    const cv::Size frameSize(960, 480);
+    const cv::Size frameSize(640, 320);
     
     cv::Mat input, img;
     input = cv::imread(inputName);
@@ -36,28 +37,26 @@ int main(int argc, const char * argv[])
     int divNum = 6;
     ExtractFeaturePoint efp(frameSize, tf, divNum);
     
+    /*
     float distThre = 250;
     float coordThre = 0.5;
-    MatchFeaturePoint(frameSize, tf, distThre, coordThre);
+    MatchFeaturePoint mfp(tf, distThre, coordThre);
+    */
     
     std::vector<cv::KeyPoint> keyPoints;
     cv::Mat descriptors;
     efp.extractFeaturePoint(img, keyPoints, descriptors);
-    
-    
 
-
-    cv::Mat imgKeyPoints;
-    cv::Mat grayImg;
-    cv::cvtColor(img, grayImg, CV_BGR2GRAY);
-    cv::drawKeypoints(grayImg, keyPoints, imgKeyPoints);
+    cv::Mat keyPointImg;
+    
+    cv::drawKeypoints(img, keyPoints, keyPointImg);
     
     cv::namedWindow("key point image");
-    cv::imshow("key point image", imgKeyPoints);
+    cv::imshow("key point image", keyPointImg);
 
     cv::waitKey(-1);
     
-    cv::imwrite(outputName, imgKeyPoints);
+    cv::imwrite(outputName, keyPointImg);
     
 
 

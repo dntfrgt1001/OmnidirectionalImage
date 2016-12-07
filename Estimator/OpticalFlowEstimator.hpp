@@ -27,10 +27,11 @@ public:
      const Perspective& per, const Epipolar& epi):
     Estimator(tf), cof(cof), per(per), epi(epi) {};
     
-    cv::Mat getRotMat(const cv::Mat& forImg, const cv::Mat& latImg) const;
+    cv::Mat getRotMat
+    (const cv::Mat& forImg, const cv::Mat& latImg, const int frameNum);
     
     cv::Mat getRotMat
-    (const cv::Mat& forImg, const cv::Mat& latImg,
+    (const cv::Mat& forImg, const cv::Mat& latImg, const int frameNum,
      const cv::Mat& curRotMat) const;
     
 private:

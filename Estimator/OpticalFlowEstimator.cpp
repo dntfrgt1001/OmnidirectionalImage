@@ -9,13 +9,14 @@
 #include "OpticalFlowEstimator.hpp"
 
 cv::Mat OpticalFlowEstimator::getRotMat
-(const cv::Mat &forImg, const cv::Mat &latImg) const
+(const cv::Mat &forImg, const cv::Mat &latImg, const int frameNum)
 {
-    return getRotMat(forImg, latImg, cv::Mat::eye(3, 3, CV_32FC1));
+    return getRotMat(forImg, latImg, frameNum,
+                     cv::Mat::eye(3, 3, CV_32FC1));
 }
 
 cv::Mat OpticalFlowEstimator::getRotMat
-(const cv::Mat &forImg, const cv::Mat &latImg,
+(const cv::Mat &forImg, const cv::Mat &latImg, const int frameNum,
  const cv::Mat &curRotMat) const
 {
     // 直前の回転行列から正面を変更
@@ -63,7 +64,7 @@ cv::Mat OpticalFlowEstimator::getRotMat
     const float rotAng = cv::norm(curRotVec);
     
     // ノルムがおかしいものを削除
-    //cof.remNormOutlier(forNormals, latNormals, rotAng);
+    cof.remNormOutlier(forNormals, latNormals, rotAng);
     
     // 回転行列を推定
     cv::Mat mask;

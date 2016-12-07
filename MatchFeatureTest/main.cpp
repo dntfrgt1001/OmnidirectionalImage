@@ -19,11 +19,11 @@
 
 int main(int argc, const char * argv[])
 {
-    const std::string path = "/Users/masakazu/Desktop/";
-    const std::string inputName1 = path + "image0020.jpg";
-    const std::string inputName2 = path + "image0022.jpg";
+    const std::string path = "/Users/masakazu/Desktop/01";
+    const std::string inputName1 = path + "image0007.jpg";
+    const std::string inputName2 = path + "image0008.jpg";
     
-    const cv::Size fs(640, 320);
+    const cv::Size fs(960, 480);
 
     cv::Mat input1, img1, input2, img2;
     input1 = cv::imread(inputName1);

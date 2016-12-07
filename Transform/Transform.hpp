@@ -289,18 +289,18 @@ public:
     
     // 画像をX軸まわりに回転（グレースケール）
     void rotateImgVertRect
-    (const float angle, const cv::Mat& img,
-     const cv::Rect& rect, cv::Mat& rotImg)  const;
+    (const cv::Mat& img, const float angle,
+     const cv::Rect& rect, cv::Mat& rotImg) const;
     
     // 画像座標をX軸まわりに回転
     Equirect rotateEquirectVert
-    (const float angle, const Equirect& equirect) const
+    (const Equirect& equirect, const float angle) const
     {
-        return sphere2equirect(rotateSphereVert(angle,
-                                                equirect2sphere(equirect)));
+        return sphere2equirect(rotateSphereVert
+                               (equirect2sphere(equirect), angle));
     }
     // 球面座標をX軸まわりに回転
-    Sphere rotateSphereVert(const float angle, const Sphere& sphere) const
+    Sphere rotateSphereVert(const Sphere& sphere, const float angle) const
     {
         float cosa = cosf(angle), sina = sinf(angle);
         return Sphere(sphere.x,
@@ -312,7 +312,6 @@ public:
     (const std::vector<Normal>& normals, std::vector<cv::Point2f>& points);
     static void point2normal
     (const std::vector<cv::Point2f>& points, std::vector<Normal>& normals);
-    
     
     // チャンネル数の変換
     static void changeChannel(const cv::Mat& img, cv::Mat& outImg);

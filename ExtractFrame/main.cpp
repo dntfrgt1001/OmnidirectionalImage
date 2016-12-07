@@ -17,9 +17,9 @@
 int main(int argc, const char * argv[])
 {
     const std::string path = "/Users/masakazu/Desktop/";
-    const cv::Size frameSize(1920, 960);
     const std::string inputName = "R0010012_er.MP4";
-    
+
+    const cv::Size frameSize(1920, 960);
     const std::string outputName1 = "frame1.jpg";
     const std::string outputName2 = "frame2.jpg";
     

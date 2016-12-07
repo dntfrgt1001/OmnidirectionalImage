@@ -27,11 +27,13 @@ public:
     ExtractFeaturePoint
     (const cv::Size& fs, const Transform& transform, const int divNum);
     
+    /*
     // 低緯度の矩形部分の特徴点を抽出
     void extractRectRoiFeaturePoint
     (const cv::Mat& img, std::vector<cv::KeyPoint>& keyPoints,
      cv::Mat& descriptors) const;
-
+     */
+     
     // 基準画像を回転させながらすべての領域の特徴点を抽出
     void extractFeaturePoint
     (const cv::Mat& img, std::vector<cv::KeyPoint>& keyPoints,
@@ -43,10 +45,12 @@ public:
      cv::Mat& roiDescriptors, int number) const;
     
     // 回転前の座標の特徴点から回転後の座標の特徴点に変換
-    void rotateKeyPointCoord
+    void rotKeyPointCrd
     (std::vector<cv::KeyPoint>& keyPoints, float angle) const;
+    
+    
     // ROIの座標から大域の座標に変換
-    void roiCoord2GlobalCoord(std::vector<cv::KeyPoint>& keyPoints) const {
+    void getGlobalCrd(std::vector<cv::KeyPoint>& keyPoints) const {
         for (int i = 0; i < keyPoints.size(); i++)
             keyPoints[i].pt.y += roi.y;
     };
@@ -59,16 +63,29 @@ public:
     };
     
     // 特徴点記述子を連結させる
-    static void descriptorConcat(cv::Mat& dest, const cv::Mat& src) {
+    static void descConcat(cv::Mat& dest, const cv::Mat& src) {
         cv::vconcat(dest, src, dest);
     };
     
     // 有効範囲にある特徴点のみを取り出す
-    void filterLowLatitue
+    void filterLowLat
     (std::vector<cv::KeyPoint>& keyPoints, cv::Mat& descriptors) const;
     
     // 特徴点が有効範囲にあるか
-    bool isInLowLatitude(const Equirect& equirect) const;
+    bool isInLowLat(const Equirect& equirect) const {
+        Polar polar = tf.equirect2polar(equirect);
+        
+        float theta = polar.x;
+        float phi = polar.y;
+        
+        if (cosf(theta) == 0.0) return false;
+        float latitude = atanf(-tanf(phi)/cosf(theta));
+        
+        float latThre = M_PI / (divNum*2.0);
+        
+        if (std::abs(latitude) < latThre) return true;
+        else return false;
+    }
     
     // 特徴点の描写
     void drawKeyPoint
@@ -80,6 +97,8 @@ public:
     (const cv::Mat& img, const std::vector<cv::KeyPoint>& keyPoints,
      cv::Mat& outImg);
     
+    void setLowLatMask();
+
 private:
     const cv::Size& fs;
     const Transform& tf;
@@ -91,6 +110,8 @@ private:
 
     const int divNum;
     const cv::Rect roi;
+    
+    cv::Mat mask;
 };
 
 #endif /* ExtractFeaturePoint_hpp */

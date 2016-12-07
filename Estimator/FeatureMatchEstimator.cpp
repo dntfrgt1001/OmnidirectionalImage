@@ -11,7 +11,7 @@
 FeatureMatchEstimator::FeatureMatchEstimator
 (const Transform& tf, const ExtractFeaturePoint& efp,
  const MatchFeaturePoint& mfp, const Epipolar& epi, const Range& ran):
-Estimator(tf), efp(efp), mfp(mfp), epi(epi), ran(ran)
+Estimator(tf), efp(efp), mfp(mfp), epi(epi), ran(ran), prevFrameNum(-1)
 {
     // カメラの正面を変える回転行列
     froChgMats.push_back((cv::Mat_<float>(3,3) << 1,0,0,0,1,0,0,0,1));
@@ -33,7 +33,7 @@ Estimator(tf), efp(efp), mfp(mfp), epi(epi), ran(ran)
 
 
 cv::Mat FeatureMatchEstimator::getRotMat
-(const cv::Mat &forImg, const cv::Mat &latImg) const
+(const cv::Mat &forImg, const cv::Mat &latImg, const int frameNum)
 {
     // 画像サイズを縮小
     cv::Mat forImgRes, latImgRes;
@@ -46,10 +46,21 @@ cv::Mat FeatureMatchEstimator::getRotMat
     cv::cvtColor(latImgRes, latImgGray, CV_BGR2GRAY);
     
     // 特徴抽出
-    std::vector<cv::KeyPoint> forKeyPointsSet, latKeyPointsSet;
-    cv::Mat forDescs, latDescs;
-    efp.extractFeaturePoint(forImgGray, forKeyPointsSet, forDescs);
-    efp.extractFeaturePoint(latImgGray, latKeyPointsSet, latDescs);
+    std::vector<cv::KeyPoint> forKeyPointSet, latKeyPointSet;
+    cv::Mat forDescSet, latDescSet;
+
+    // 直前も特徴マッチ法なら直前フレームの特徴を使いまわし
+    if (frameNum - prevFrameNum == 1) {
+        forKeyPointSet = curKeyPointSet;
+        forDescSet = curDescSet;
+    } else {
+        efp.extractFeaturePoint(forImgGray, forKeyPointSet, forDescSet);
+    }
+    
+    // 後フレームの特徴抽出
+    efp.extractFeaturePoint(latImgGray, latKeyPointSet, latDescSet);
+    
+    
     
     /*
     cv::Mat imgKeyPoint1;
@@ -65,13 +76,15 @@ cv::Mat FeatureMatchEstimator::getRotMat
     
     // マッチング＆フィルタリング
     std::vector<cv::DMatch> matchs;
-    mfp.match(forDescs, latDescs, matchs);
+    mfp.match(forDescSet, latDescSet, matchs);
     mfp.filterMatchDistance(matchs);
     
     // マッチした特徴点を得る
     std::vector<cv::KeyPoint> forKeyPoints, latKeyPoints;
+    
+    // マッチの距離でフィルタ
     mfp.getMatchKeyPoint
-    (forKeyPointsSet, latKeyPointsSet, matchs, forKeyPoints, latKeyPoints);
+    (forKeyPointSet, latKeyPointSet, matchs, forKeyPoints, latKeyPoints);
     
     // 画像座標に変換
     std::vector<Equirect> forEquirects(forKeyPoints.size());
@@ -87,6 +100,7 @@ cv::Mat FeatureMatchEstimator::getRotMat
     tf.equirect2sphere(forEquirects, forSpheres);
     tf.equirect2sphere(latEquirects, latSpheres);
     
+    // ３次元空間上の距離でフィルタ
     mfp.filterCoordDistance(forSpheres, latSpheres);
     
     /*
@@ -100,6 +114,15 @@ cv::Mat FeatureMatchEstimator::getRotMat
     cv::imshow("match", imgMatch);
     cv::waitKey();
     */
+    
+    // 現在フレーム番号の保存
+    prevFrameNum = frameNum;
+    // 現在フレームの特徴を保存
+    //curKeyPointSet.clear();
+    //std::copy(latKeyPointSet.begin(), latKeyPointSet.end(),
+    //          std::back_inserter(curKeyPointSet));
+    curKeyPointSet = latKeyPointSet;
+    latDescSet.copyTo(curDescSet);
     
     int maxIdx;
     return getRotMatWeightMax(forSpheres, latSpheres, maxIdx);

@@ -95,6 +95,12 @@
 		027283F61DEC19B400EA7D57 /* Quaternion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 02D6D9A11D8189B900862E8F /* Quaternion.cpp */; };
 		027283F71DEC19DC00EA7D57 /* Rotation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 020D73071D2A62E800BC61BD /* Rotation.cpp */; };
 		027283F81DEC19FC00EA7D57 /* libopencv_core.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 02A9B6D11DC0C5BC00D4A0E7 /* libopencv_core.dylib */; };
+		027284041DF7EC7400EA7D57 /* libopencv_core.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 02A9B6D11DC0C5BC00D4A0E7 /* libopencv_core.dylib */; };
+		027284051DF7EC7700EA7D57 /* libopencv_highgui.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 02A9B6D31DC0C5D300D4A0E7 /* libopencv_highgui.dylib */; };
+		027284061DF7EC7A00EA7D57 /* libopencv_imgcodecs.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 02A9B6D51DC0C5E000D4A0E7 /* libopencv_imgcodecs.dylib */; };
+		027284071DF7EC7D00EA7D57 /* libopencv_imgproc.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 02A9B6D71DC0C5EB00D4A0E7 /* libopencv_imgproc.dylib */; };
+		027284081DF7EC8400EA7D57 /* libopencv_features2d.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 02A9B6D91DC0C5F800D4A0E7 /* libopencv_features2d.dylib */; };
+		027284091DF7EC8700EA7D57 /* libopencv_xfeatures2d.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 02A9B6DB1DC0C60D00D4A0E7 /* libopencv_xfeatures2d.dylib */; };
 		027572861DB51D8800AC36A3 /* Range.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 025ADB831DB4B09A00DCE366 /* Range.cpp */; };
 		027572871DB51D8900AC36A3 /* Range.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 025ADB831DB4B09A00DCE366 /* Range.cpp */; };
 		0276EF461D016FB30013ADF4 /* Transform.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0245CD8D1C4233E000FF5E33 /* Transform.cpp */; };
@@ -451,6 +457,12 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				027284081DF7EC8400EA7D57 /* libopencv_features2d.dylib in Frameworks */,
+				027284041DF7EC7400EA7D57 /* libopencv_core.dylib in Frameworks */,
+				027284061DF7EC7A00EA7D57 /* libopencv_imgcodecs.dylib in Frameworks */,
+				027284051DF7EC7700EA7D57 /* libopencv_highgui.dylib in Frameworks */,
+				027284071DF7EC7D00EA7D57 /* libopencv_imgproc.dylib in Frameworks */,
+				027284091DF7EC8700EA7D57 /* libopencv_xfeatures2d.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1814,6 +1826,7 @@
 				0202317C1DF562EF00D6B3B2 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		020D73001D2A4ADA00BC61BD /* Build configuration list for PBXNativeTarget "ExtractFrame" */ = {
 			isa = XCConfigurationList;

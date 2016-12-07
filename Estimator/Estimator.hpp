@@ -19,7 +19,8 @@ class Estimator {
 public:
     Estimator(const Transform& tf): tf(tf) {};
     
-    virtual cv::Mat getRotMat(const cv::Mat& forImg, const cv::Mat& latImg) const = 0;
+    virtual cv::Mat getRotMat
+    (const cv::Mat& forImg, const cv::Mat& latImg, const int frameNum) = 0;
     
 protected:
     const Transform& tf;

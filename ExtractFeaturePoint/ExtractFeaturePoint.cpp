@@ -17,8 +17,10 @@ feature(cv::xfeatures2d::SIFT::create())
 //feature(cv::AKAZE::create())
 //feature(cv::xfeatures2d::SURF::create())
 {
+    setLowLatMask();
 }
 
+/*
 void ExtractFeaturePoint::extractRectRoiFeaturePoint
 (const cv::Mat& img, std::vector<cv::KeyPoint> &keyPoints,
  cv::Mat &descriptors) const
@@ -28,6 +30,7 @@ void ExtractFeaturePoint::extractRectRoiFeaturePoint
     
     roiCoord2GlobalCoord(keyPoints);
 }
+*/
 
 void ExtractFeaturePoint::extractFeaturePoint
 (const cv::Mat& img, std::vector<cv::KeyPoint> &keyPoints,
@@ -35,16 +38,16 @@ void ExtractFeaturePoint::extractFeaturePoint
 {
     for (int i = 0; i < divNum; i++) {
         std::vector<cv::KeyPoint> roiKeyPoints;
-        cv::Mat roiDescriptors;
+        cv::Mat roiDescs;
         
         if (i == 0) {
             extractRoiFeaturePoint(img, keyPoints, descriptors, i);
             std::cout << keyPoints.size() << std::endl;
         } else {
-            extractRoiFeaturePoint(img, roiKeyPoints, roiDescriptors, i);
+            extractRoiFeaturePoint(img, roiKeyPoints, roiDescs, i);
             
             keyPointConcat(keyPoints, roiKeyPoints);
-            descriptorConcat(descriptors, roiDescriptors);
+            descConcat(descriptors, roiDescs);
             
             std::cout << keyPoints.size() << std::endl;
         }
@@ -55,76 +58,96 @@ void ExtractFeaturePoint::extractRoiFeaturePoint
 (const cv::Mat& img, std::vector<cv::KeyPoint>& roiKeyPoints,
  cv::Mat& roiDescriptors, int number) const
 {
-    assert(number < divNum);
+    const float angle = -1 * M_PI_2 + M_PI*((float) number / divNum);
     
-    float rotAngle = -1 * M_PI_2 +  M_PI*((float)number / divNum);
+    //cv::Mat grayImg;
+    //cv::cvtColor(img, grayImg, CV_BGR2GRAY);
     
     cv::Mat rotImg;
-    tf.rotateImgVertRect(rotAngle, img, roi, rotImg);
+    tf.rotateImgVertRect(img, angle, roi, rotImg);
+    //tf.rotateImgVertRect(rotAngle, grayImg, roi, rotImg);
+    
+    //feature->detect(rotImg, roiKeyPoints, mask);
+    //feature->compute(rotImg, roiKeyPoints, roiDescriptors);
+    //feature->detectAndCompute(rotImg, mask, roiKeyPoints, roiDescriptors);
     
     // 低緯度領域で特徴点を抽出
     feature->detect(rotImg(roi), roiKeyPoints);
     feature->compute(rotImg(roi), roiKeyPoints, roiDescriptors);
- 
-    // ROIの座標から(回転後の)大域の座標に変換
-    roiCoord2GlobalCoord(roiKeyPoints);
+    getGlobalCrd(roiKeyPoints);
+    filterLowLat(roiKeyPoints, roiDescriptors);
     
-    // 重なりがでないようにtanの制約条件を適用
-    filterLowLatitue(roiKeyPoints, roiDescriptors);
+    /*
+    cv::namedWindow("img");
+    cv::imshow("img", img);
+    cv::namedWindow("rotImg");
+    cv::imshow("rotImg", rotImg);
     
-    rotateKeyPointCoord(roiKeyPoints, -1 * rotAngle);
+    cv::Mat keyImgRot;
+    drawKeyPoint(rotImg, roiKeyPoints, keyImgRot);
+    cv::namedWindow("keyrot");
+    cv::imshow("keyrot", keyImgRot);
+    */
+    
+    // 特徴点座標を逆回転
+    rotKeyPointCrd(roiKeyPoints, -1 * angle);
+    
+    /*
+    cv::namedWindow("mask");
+    cv::imshow("mask", mask);
+    
+    cv::Mat keyImg;
+    drawKeyPoint(img, roiKeyPoints, keyImg);
+    cv::namedWindow("key");
+    cv::imshow("key", keyImg);
+//    cv::waitKey();
+     */
 }
 
-void ExtractFeaturePoint::rotateKeyPointCoord
+void ExtractFeaturePoint::rotKeyPointCrd
 (std::vector<cv::KeyPoint> &keyPoints, float angle) const
 {
-    for (int i=0; i<keyPoints.size(); i++) {
-        Equirect forEquirect(keyPoints[i].pt);
-        keyPoints[i].pt = tf.rotateEquirectVert(angle, forEquirect);
+    for (int i = 0; i < keyPoints.size(); i++) {
+        keyPoints[i].pt =
+            tf.rotateEquirectVert(Equirect(keyPoints[i].pt), angle);
     }
 }
 
 
-void ExtractFeaturePoint::filterLowLatitue
+void ExtractFeaturePoint::filterLowLat
 (std::vector<cv::KeyPoint> &keyPoints, cv::Mat &descriptors) const
 {
-    //cv::Mat destDescriptors(cv::Size(128, descriptors.rows), CV_32FC1);
-    cv::Mat destDescriptors(cv::Size(descriptors.cols, descriptors.rows),
-                            descriptors.type());
-
-    for (int i=0, j=0; i<keyPoints.size(); j++) {
+    cv::Mat destDescriptors(descriptors.size(), descriptors.type());
+    
+    for (int i = 0, j = 0; i < keyPoints.size(); j++) {
         // 有効範囲内の記述子をコピーする
-        if (isInLowLatitude(keyPoints[i].pt)) {
+        if (isInLowLat(keyPoints[i].pt)) {
             descriptors.row(j).copyTo(destDescriptors.row(i));
             i++;
+        }
         // 有効範囲外のキーポイントを削除する
-        } else {
+        else {
             keyPoints.erase(keyPoints.begin() + i);
         }
     }
 
     // 空白行をなくす
     destDescriptors.resize(keyPoints.size());
-    descriptors = destDescriptors.clone();
+    destDescriptors.copyTo(descriptors);
 }
-
-
-bool ExtractFeaturePoint::isInLowLatitude(const Equirect& equirect) const
+ 
+void ExtractFeaturePoint::setLowLatMask()
 {
-    Polar polar = tf.equirect2polar(equirect);
+    // マスクは8bitの整数型
+    mask = cv::Mat(fs, CV_8UC1);
     
-    float theta = polar.x;
-    float phi = polar.y;
-    
-    if (cosf(theta) == 0.0) return false;
-    float latitude = atanf(-tanf(phi)/cosf(theta));
-    
-    float validPhi = M_PI / divNum;
-    
-    if (-1.0 * validPhi/2.0 <= latitude && latitude <= validPhi/2.0) {
-        return true;
-    } else {
-        return false;
+    for (int v = 0; v < mask.rows; v++) {
+        uchar* row = mask.ptr<uchar>(v);
+        
+        for (int u = 0; u < mask.cols; u++) {
+            // 画像座標が低緯度ならセット
+            row[u] = isInLowLat(Equirect(u,v))? 255: 0;
+        }
     }
 }
 
