@@ -14,6 +14,7 @@
 #include <opencv2/imgcodecs.hpp>
 
 #include <math.h>
+#include "Core.hpp"
 #include "Transform.hpp"
 #include "ExtractFeaturePoint.hpp"
 #include "Quaternion.hpp"
@@ -21,12 +22,13 @@
 
 int main(int argc, const char * argv[])
 {
-    const std::string path = "/Users/masakazu/Desktop/rotation/";
-    const std::string inputName = path + "img.jpg";
-    const std::string rotColorName = path + "rotcolor5.jpg";
-    const std::string oriColorName = path + "oricolor5.jpg";
+    const std::string path = "/Users/masakazu/Desktop/rot/";
+    const std::string inputName = path + "hall4.jpg";
+    const std::string rotColorName = path + "hall5rot.jpg";
+    const std::string oriColorName = path + "hall5.jpg";
 
-    const cv::Size frameSize(1280, 640);
+    const cv::Size frameSize(5376, 2688);
+//    const cv::Size frameSize(960, 480);
     cv::Mat input = cv::imread(inputName);
     cv::Mat img;
     cv::resize(input, img, frameSize);
@@ -35,19 +37,24 @@ int main(int argc, const char * argv[])
     
     float angle =  - M_PI/2.0 + M_PI / 6 * 5;
     cv::Vec3f axis(1, 0, 0);
-    cv::Mat rotMat;
-    Rotation::RotVec2RotMat(angle * axis, rotMat);
+    cv::Mat rotMat = Rotation::RotVec2RotMat(angle * axis);
     
     const int divNum = 6;
     
     ExtractFeaturePoint efp(frameSize, transform, divNum);
     
     cv::Mat rotImg;
-    transform.rotateImgWithRotMat(img, rotImg, rotMat);
+    transform.rotateImg(img, rotImg, rotMat);
     
-    for (int u=0; u<frameSize.width; u++) {
-        for (int v=0; v<frameSize.height; v++) {
-            
+//    for (int u = 0; u < frameSize.width; u++) {
+        
+  //      for (int v = 0; v < frameSize.height; v++) {
+    for (int v = 0; v < frameSize.height; v++) {
+        cv::Vec3b* row = rotImg.ptr<cv::Vec3b>(v);
+        
+        for (int u = 0; u < frameSize.width; u++) {
+
+                /*
                 cv::Vec3b tmpVec = rotImg.at<cv::Vec3b>(v, u);
                 uchar R = tmpVec[0];
                 uchar G = tmpVec[1];
@@ -62,14 +69,16 @@ int main(int argc, const char * argv[])
                 rotImg.at<cv::Vec3b>(v, u) = cv::Vec3b(gray, gray, gray);
             //} else {
             //    img.at<cv::Vec3b>(v, u) = cv::Vec3b(0, 0, 0);
-            if (efp.isInLowLatitude(cv::Point2f(u, v))) {
-                rotImg.at<cv::Vec3b>(v, u) += cv::Vec3b(100, 100, 0);
+                 */
+            
+            if (efp.isInLowLat(Equirect(u, v))) {
+                row[u] += cv::Vec3b(100, 100, 0);
             }
         }
     }
     
     cv::Mat rotInvImg;
-    transform.rotateImgWithRotMat(rotImg, rotInvImg, rotMat.inv());
+    transform.rotateImg(rotImg, rotInvImg, rotMat.inv());
     
     //cv::Mat resizeImg;
     //cv::resize(img, resizeImg, frameSizeRe);

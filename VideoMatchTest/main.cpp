@@ -33,15 +33,15 @@ int main(int argc, const char * argv[])
     // ffmpeg -f image2 -r 30 -i image%4d.jpg -pix_fmt yuv420p video.mp4
     
     const std::string path = "/Users/masakazu/Desktop/";
-    const std::string inputVideoName = path + "02.mp4";
-    const std::string outputVideoName = path + "02-1.mp4";
+    const std::string inputVideoName = path + "sample1.mp4";
+    const std::string outputVideoName = path + "sample1-1.mp4";
     
-    const cv::Size fso(500, 250);
-    const cv::Size fs(500, 250);
+    const cv::Size fso(1920, 960);
+    const cv::Size fs(800, 400);
     
     int stride = 1;
     VideoReaderMov vr(fso, inputVideoName, stride);
-    VideoWriterMov vw(fso, outputVideoName);
+    VideoWriterPic vw(fso, outputVideoName);
     
     const Transform tfo(fso);
     const Transform tf(fs);

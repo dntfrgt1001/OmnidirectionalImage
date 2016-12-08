@@ -20,16 +20,19 @@
 int main(int argc, const char * argv[])
 {
     const std::string path = "/Users/masakazu/Desktop/";
-    const std::string inputName = path + "img1.jpg";
-    const std::string outputName = path + "rotimg.jpg";
+    const std::string inputName = path + "hall1.jpg";
+    const std::string outputName = path + "rothall.jpg";
     
-    const cv::Size frameSize(1280, 640);
+//    const cv::Size frameSize(1280, 640);
+    const cv::Size frameSize(5376, 2688);
     
     const Transform tf(frameSize);
     
     cv::Mat input, img;
     input = cv::imread(inputName);
     cv::resize(input, img, frameSize);
+    
+    cv::Mat grayImg
     
     cv::Mat rotImg;
     
