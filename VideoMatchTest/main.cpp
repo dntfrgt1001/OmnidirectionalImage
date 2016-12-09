@@ -32,12 +32,12 @@ int main(int argc, const char * argv[])
 {
     // ffmpeg -f image2 -r 30 -i image%4d.jpg -pix_fmt yuv420p video.mp4
     
-    const std::string path = "/Users/masakazu/Desktop/";
+    const std::string path = "/Users/masakazu/Desktop/casio/slope/";
     const std::string inputVideoName = path + "sample1.mp4";
-    const std::string outputVideoName = path + "sample1-1.mp4";
+    const std::string outputVideoName = path + "sample1-1";
     
-    const cv::Size fso(1920, 960);
-    const cv::Size fs(800, 400);
+    const cv::Size fso(640, 320);
+    const cv::Size fs(640, 320);
     
     int stride = 1;
     VideoReaderMov vr(fso, inputVideoName, stride);
@@ -53,8 +53,8 @@ int main(int argc, const char * argv[])
     const int divNum = 6;
     const ExtractFeaturePoint efp(fs, tf, divNum);
     
-    const float distThre = 200;
-    const float coordThre = 0.4;
+    const float distThre = 180;
+    const float coordThre = 0.5;
     const MatchFeaturePoint mfp(tf, distThre, coordThre);
     
     const float fieldAngle = M_PI / 3.0;
