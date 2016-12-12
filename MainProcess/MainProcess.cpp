@@ -89,6 +89,8 @@ void MainProcess::modVideo(VideoReader &vr, VideoWriter &vw)
         
         // 後画像を修正
         cv::Mat latImgMod;
+        modifyLatImgFeatureMatch(forImg, latImg, latImgMod);
+        /*
         float normRotVec = cv::norm(Rotation::RotMat2RotVec(curRotMat));
         float normRotThre = 1.0;
         if (normRotThre < normRotVec) {
@@ -97,7 +99,7 @@ void MainProcess::modVideo(VideoReader &vr, VideoWriter &vw)
         } else {
             std::cout << "Feature Matching Method" << std::endl;
             modifyLatImgFeatureMatch(forImg, latImg, latImgMod);
-        }
+        }*/
         
         // modifyLatImgFeatureMatch(forImg, latImg, latImgMod);
         // modifyLatImgOpticalFlow(forImg, latImg, latImgMod);

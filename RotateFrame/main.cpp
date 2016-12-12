@@ -32,8 +32,6 @@ int main(int argc, const char * argv[])
     input = cv::imread(inputName);
     cv::resize(input, img, frameSize);
     
-    cv::Mat grayImg
-    
     cv::Mat rotImg;
     
     float anglez = 0 * M_PI/8.0;
