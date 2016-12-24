@@ -141,6 +141,12 @@
 		02A9B6FD1DC232AA00D4A0E7 /* OpticalFlowEstimator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 02A9B6FB1DC232AA00D4A0E7 /* OpticalFlowEstimator.cpp */; };
 		02A9B7011DC23E8200D4A0E7 /* CalcOpticalFlow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 02A9B6FF1DC23E8200D4A0E7 /* CalcOpticalFlow.cpp */; };
 		02B8D5F51CA7D92F00A736DB /* InputGyro.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 020FE6C71CA6DA6E00A650CE /* InputGyro.cpp */; };
+		02C4C3581E06C8BB0098ACFA /* libopencv_calib3d.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 02A9B6DD1DC0C61C00D4A0E7 /* libopencv_calib3d.dylib */; };
+		02C4C3591E0A5EFD0098ACFA /* libopencv_highgui.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 02A9B6D31DC0C5D300D4A0E7 /* libopencv_highgui.dylib */; };
+		02C4C35A1E0A5F0B0098ACFA /* libopencv_imgproc.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 02A9B6D71DC0C5EB00D4A0E7 /* libopencv_imgproc.dylib */; };
+		02C4C35C1E0A5F2F0098ACFA /* libopencv_video.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 02A9B6DF1DC0C63200D4A0E7 /* libopencv_video.dylib */; };
+		02C4C35F1E0A6B860098ACFA /* IMUEstimator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 02C4C35D1E0A6B860098ACFA /* IMUEstimator.cpp */; };
+		02C4C3601E0A84DC0098ACFA /* IMUEstimator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 02C4C35D1E0A6B860098ACFA /* IMUEstimator.cpp */; };
 		02C57BEC1D0FB9A300F428F2 /* VideoReader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 02C57BE91D0FB0D100F428F2 /* VideoReader.cpp */; };
 		02C57BF11D10402A00F428F2 /* VideoWriter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 02C57BEE1D0FDED300F428F2 /* VideoWriter.cpp */; };
 		02C768851D17E7D80069E8C3 /* VideoReader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 02C57BE91D0FB0D100F428F2 /* VideoReader.cpp */; };
@@ -366,6 +372,8 @@
 		02A9B6FC1DC232AA00D4A0E7 /* OpticalFlowEstimator.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = OpticalFlowEstimator.hpp; path = Estimator/OpticalFlowEstimator.hpp; sourceTree = "<group>"; };
 		02A9B6FF1DC23E8200D4A0E7 /* CalcOpticalFlow.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CalcOpticalFlow.cpp; path = CalcOpticalFlow/CalcOpticalFlow.cpp; sourceTree = "<group>"; };
 		02A9B7001DC23E8200D4A0E7 /* CalcOpticalFlow.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = CalcOpticalFlow.hpp; path = CalcOpticalFlow/CalcOpticalFlow.hpp; sourceTree = "<group>"; };
+		02C4C35D1E0A6B860098ACFA /* IMUEstimator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = IMUEstimator.cpp; path = Estimator/IMUEstimator.cpp; sourceTree = "<group>"; };
+		02C4C35E1E0A6B860098ACFA /* IMUEstimator.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = IMUEstimator.hpp; path = Estimator/IMUEstimator.hpp; sourceTree = "<group>"; };
 		02C57BE91D0FB0D100F428F2 /* VideoReader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = VideoReader.cpp; path = VideoReader/VideoReader.cpp; sourceTree = "<group>"; };
 		02C57BEA1D0FB0D100F428F2 /* VideoReader.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = VideoReader.hpp; path = VideoReader/VideoReader.hpp; sourceTree = "<group>"; };
 		02C57BEE1D0FDED300F428F2 /* VideoWriter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = VideoWriter.cpp; path = VideoWriter/VideoWriter.cpp; sourceTree = "<group>"; };
@@ -460,7 +468,11 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				02C4C3581E06C8BB0098ACFA /* libopencv_calib3d.dylib in Frameworks */,
 				020231711DF30F3200D6B3B2 /* libopencv_core.dylib in Frameworks */,
+				02C4C3591E0A5EFD0098ACFA /* libopencv_highgui.dylib in Frameworks */,
+				02C4C35C1E0A5F2F0098ACFA /* libopencv_video.dylib in Frameworks */,
+				02C4C35A1E0A5F0B0098ACFA /* libopencv_imgproc.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -872,6 +884,8 @@
 				02A9B6F11DC1CCBE00D4A0E7 /* FeatureMatchEstimator.hpp */,
 				02A9B6FB1DC232AA00D4A0E7 /* OpticalFlowEstimator.cpp */,
 				02A9B6FC1DC232AA00D4A0E7 /* OpticalFlowEstimator.hpp */,
+				02C4C35D1E0A6B860098ACFA /* IMUEstimator.cpp */,
+				02C4C35E1E0A6B860098ACFA /* IMUEstimator.hpp */,
 			);
 			name = Estimator;
 			sourceTree = "<group>";
@@ -1343,6 +1357,7 @@
 				0220D4C41D3F68CE00AB134C /* VideoReader.cpp in Sources */,
 				0220D4C11D3F674500AB134C /* MatchFeaturePoint.cpp in Sources */,
 				02A9B6F21DC1CCBE00D4A0E7 /* FeatureMatchEstimator.cpp in Sources */,
+				02C4C35F1E0A6B860098ACFA /* IMUEstimator.cpp in Sources */,
 				02D6D9A31D8189B900862E8F /* Quaternion.cpp in Sources */,
 				02A9B7011DC23E8200D4A0E7 /* CalcOpticalFlow.cpp in Sources */,
 				027572861DB51D8800AC36A3 /* Range.cpp in Sources */,
@@ -1391,6 +1406,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				02C4C3601E0A84DC0098ACFA /* IMUEstimator.cpp in Sources */,
 				025ADBA01DBA011800DCE366 /* Perspective.cpp in Sources */,
 				0202316F1DF30DB100D6B3B2 /* Rotation.cpp in Sources */,
 				025ADBA11DBA012200DCE366 /* Transform.cpp in Sources */,

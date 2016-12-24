@@ -33,16 +33,22 @@ public:
     (const cv::Mat& img, std::vector<cv::KeyPoint>& keyPoints,
      cv::Mat& descriptors) const;
      */
-     
-    // 基準画像を回転させながらすべての領域の特徴点を抽出
-    void extractFeaturePoint
+    
+    // 全天球画像全体から特徴を抽出（比較用）
+    void extFeatSimp
     (const cv::Mat& img, std::vector<cv::KeyPoint>& keyPoints,
-     cv::Mat& descriptors) const;
+     cv::Mat& descs) const;
+    
+    
+    // 基準画像を回転させながらすべての領域の特徴を抽出
+    void extFeat
+    (const cv::Mat& img, std::vector<cv::KeyPoint>& keyPoints,
+     cv::Mat& descs) const;
     
     // numberで指定された部分の特徴点を抽出（基準画像における座標）
-    void extractRoiFeaturePoint
-    (const cv::Mat& img, std::vector<cv::KeyPoint>& roiKeyPoints,
-     cv::Mat& roiDescriptors, int number) const;
+    void extFeatRoi
+    (const cv::Mat& img, const int number,
+     std::vector<cv::KeyPoint>& roiKeyPoints, cv::Mat& roiDescriptors) const;
     
     // 回転前の座標の特徴点から回転後の座標の特徴点に変換
     void rotKeyPointCrd

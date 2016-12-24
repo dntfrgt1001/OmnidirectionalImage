@@ -15,7 +15,8 @@ mergin(10), roi(cv::Rect(0, (fs.height - validHeight)/2 - mergin,
                          fs.width, validHeight + mergin*2)),
 //feature(cv::xfeatures2d::SIFT::create())
 //feature(cv::AKAZE::create())
-feature(cv::xfeatures2d::SURF::create())
+//feature(cv::xfeatures2d::SURF::create())
+feature(cv::ORB::create())
 {
     setLowLatMask();
 }
@@ -32,33 +33,42 @@ void ExtractFeaturePoint::extractRectRoiFeaturePoint
 }
 */
 
-void ExtractFeaturePoint::extractFeaturePoint
+void ExtractFeaturePoint::extFeatSimp
+(const cv::Mat &img, std::vector<cv::KeyPoint> &keyPoints,
+ cv::Mat &descs) const
+{
+    feature->detect(img, keyPoints);
+    feature->compute(img, keyPoints, descs);
+}
+
+void ExtractFeaturePoint::extFeat
 (const cv::Mat& img, std::vector<cv::KeyPoint> &keyPoints,
- cv::Mat& descriptors) const
+ cv::Mat& descs) const
 {
     for (int i = 0; i < divNum; i++) {
         std::vector<cv::KeyPoint> roiKeyPoints;
         cv::Mat roiDescs;
         
         if (i == 0) {
-            extractRoiFeaturePoint(img, keyPoints, descriptors, i);
+            extFeatRoi(img, i, keyPoints, descs);
+            
             std::cout << keyPoints.size() << std::endl;
         } else {
-            extractRoiFeaturePoint(img, roiKeyPoints, roiDescs, i);
+            extFeatRoi(img, i, roiKeyPoints, roiDescs);
             
             keyPointConcat(keyPoints, roiKeyPoints);
-            descConcat(descriptors, roiDescs);
+            descConcat(descs, roiDescs);
             
             std::cout << keyPoints.size() << std::endl;
         }
     }
 }
 
-void ExtractFeaturePoint::extractRoiFeaturePoint
-(const cv::Mat& img, std::vector<cv::KeyPoint>& roiKeyPoints,
- cv::Mat& roiDescriptors, int number) const
+void ExtractFeaturePoint::extFeatRoi
+(const cv::Mat& img, const int number,
+ std::vector<cv::KeyPoint>& roiKeyPoints, cv::Mat& roiDescriptors) const
 {
-    const float angle = -1 * M_PI_2 + M_PI*((float) number / divNum);
+    const float angle = - M_PI_2 + M_PI * ((float) number / divNum);
     
     //cv::Mat grayImg;
     //cv::cvtColor(img, grayImg, CV_BGR2GRAY);
@@ -74,6 +84,7 @@ void ExtractFeaturePoint::extractRoiFeaturePoint
     // 低緯度領域で特徴点を抽出
     feature->detect(rotImg(roi), roiKeyPoints);
     feature->compute(rotImg(roi), roiKeyPoints, roiDescriptors);
+    
     getGlobalCrd(roiKeyPoints);
     filterLowLat(roiKeyPoints, roiDescriptors);
     

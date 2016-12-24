@@ -23,7 +23,7 @@ cv::Mat Epipolar::getRotMatEssMat
     const int method = cv::RANSAC;
     //int method = cv::LMEDS;
     double prob = 0.999;
-    double threshold = 0.01;
+    double threshold = 0.005;
     
     // 後フレーム->前フレームの基本行列
     //cv::Mat E = cv::findEssentialMat(latnormals, fornormals, focal, pp, method);

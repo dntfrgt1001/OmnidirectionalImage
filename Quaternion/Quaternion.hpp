@@ -26,6 +26,7 @@ public:
     
     // ノルム
     static float norm(const Quaternion& quat);
+    
     // 誤差を含む四元数を正規化
     static void normalQuart(Quaternion& quat);
     
@@ -42,6 +43,15 @@ public:
             this->x*quat.w + this->w*quat.x - this->z*quat.y + this->y*quat.z,
             this->y*quat.w + this->z*quat.x + this->w*quat.y - this->x*quat.z,
             this->z*quat.w - this->y*quat.x + this->x*quat.y + this->w*quat.z);
+    }
+    
+    // 四元数の行列形式？を返す
+    static cv::Mat getQuatMat(const Quaternion& quat) {
+        return (cv::Mat_<float>(4,4) <<
+                    quat.w, -quat.x, -quat.y, -quat.z,
+                    quat.x,  quat.w, -quat.z,  quat.y,
+                    quat.y,  quat.z,  quat.w, -quat.x,
+                    quat.z, -quat.y,  quat.x,  quat.w);
     }
     
     float w;

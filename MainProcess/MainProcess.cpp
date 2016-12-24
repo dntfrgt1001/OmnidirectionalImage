@@ -113,6 +113,6 @@ void MainProcess::modVideo(VideoReader &vr, VideoWriter &vw)
         
         std::cout << i << "-th frame finished" << std::endl;
         
-        cv::waitKey(10);
+        cv::waitKey();
     }
 }

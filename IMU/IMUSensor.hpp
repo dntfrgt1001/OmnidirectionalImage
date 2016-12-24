@@ -36,7 +36,6 @@ public:
     // IMUクラスのインタフェース
     int inputDataSet(std::vector<IMUData>& datas);
     
-    
     // データをchar型で取り出す
     int extValidData(char validData[][18]);
     

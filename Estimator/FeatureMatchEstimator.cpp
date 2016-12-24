@@ -54,11 +54,11 @@ cv::Mat FeatureMatchEstimator::getRotMat
         forKeyPointSet = curKeyPointSet;
         forDescSet = curDescSet;
     } else {
-        efp.extractFeaturePoint(forImgGray, forKeyPointSet, forDescSet);
+        efp.extFeat(forImgGray, forKeyPointSet, forDescSet);
     }
     
     // 後フレームの特徴抽出
-    efp.extractFeaturePoint(latImgGray, latKeyPointSet, latDescSet);
+    efp.extFeat(latImgGray, latKeyPointSet, latDescSet);
     
     
     
