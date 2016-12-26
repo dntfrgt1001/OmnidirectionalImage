@@ -11,7 +11,7 @@
 IMUSensor::IMUSensor
 (const std::string& port, const speed_t baudRate,
  const int bufferSize, const char* splitPattern, const int patternSize,
- const std::string& output = std::string("")):
+ const std::string& output):
  IMU(), bufferSize(bufferSize),
  splitPattern(splitPattern), patternSize(patternSize), storeSize(0),
  imuBeginFlag(false)
@@ -280,7 +280,7 @@ void IMUSensor::outputData(const IMUData& data)
     std::ios::fmtflags flagsSaved = std::cout.flags();
     char fillSaved = std::cout.fill();
     
-    std::cout
+    ofs
         << std::setw(6) << data.accel_x << " "
         << std::setw(6) << data.accel_y << " "
         << std::setw(6) << data.accel_z << " "

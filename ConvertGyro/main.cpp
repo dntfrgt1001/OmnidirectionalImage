@@ -58,9 +58,9 @@ int main(int argc, const char * argv[])
 //    IMUFile imuFile(outfile);
 //    IMU& imu = imuFile;
     // ファイル出力
-    const std::string outputfile = "logtest.txt"
-    IMUSensor imuSensor(port, baudRate, bufSize, splitPattern, patSize,
-                        outputfile);
+    const std::string outputfile = path + "logtest.txt";
+    IMUSensor imuSensor(port, baudRate, bufSize, splitPattern, patSize,outputfile);
+//    IMUSensor imuSensor(port, baudRate, bufSize, splitPattern, patSize);
     IMU& imu = imuSensor;
 
     // IMUデータ処理
