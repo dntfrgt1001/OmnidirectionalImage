@@ -27,7 +27,9 @@ class  IMUSensor: public IMU {
 public:
     IMUSensor(const std::string& port, const speed_t baudRate,
               const int bufferSize, const char* splitPattern,
-              const int patternSize);
+              const int patternSize,
+              const std::string& output = std::string(""));
+    
     ~IMUSensor();
     
     // termios構造体の初期化
@@ -35,6 +37,8 @@ public:
     
     // IMUクラスのインタフェース
     int inputDataSet(std::vector<IMUData>& datas);
+    
+    void outputData(const IMUData& data);
     
     // データをchar型で取り出す
     int extValidData(char validData[][18]);
@@ -100,6 +104,9 @@ private:
     const int patternSize;
     // 区切りの開始か終了か
     bool imuBeginFlag;
+    
+    // センサデータのファイル出力
+    std::ofstream ofs;
     
     // ボイヤームーア方のスキップテーブル
     int* skipTable;

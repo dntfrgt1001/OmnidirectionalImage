@@ -10,13 +10,23 @@
 
 IMUSensor::IMUSensor
 (const std::string& port, const speed_t baudRate,
- const int bufferSize, const char* splitPattern, const int patternSize):
+ const int bufferSize, const char* splitPattern, const int patternSize,
+ const std::string& output = std::string("")):
  IMU(), bufferSize(bufferSize),
  splitPattern(splitPattern), patternSize(patternSize), storeSize(0),
  imuBeginFlag(false)
 {
     //charInput2strInputBlank(charSplPat, patSize, splPat);
  
+    if (output != "") {
+        ofs.open(output);
+        
+        if (!ofs) {
+            std::cerr << "output file cannnot open file" << std::endl;
+            exit(1);
+        }
+    }
+    
     // termiosの保存と初期化
     initTermios(port, baudRate);
     
@@ -263,6 +273,27 @@ void IMUSensor::printData(const short *shortData)
     }
     std::cout << "]" << std::endl;
     std::cout.fill(fillSaved);
+}
+
+void IMUSensor::outputData(const IMUData& data)
+{
+    std::ios::fmtflags flagsSaved = std::cout.flags();
+    char fillSaved = std::cout.fill();
+    
+    std::cout
+        << std::setw(6) << data.accel_x << " "
+        << std::setw(6) << data.accel_y << " "
+        << std::setw(6) << data.accel_z << " "
+        << std::setw(6) << data.gyro_x << " "
+        << std::setw(6) << data.gyro_y << " "
+        << std::setw(6) << data.gyro_z << " "
+        << std::setw(6) << data.mag_x << " "
+        << std::setw(6) << data.mag_y << " "
+        << std::setw(6) << data.mag_z << " "
+    << std::endl;
+    
+    std::cout.fill(fillSaved);
+    std::cout.flags(flagsSaved);
 }
 
 

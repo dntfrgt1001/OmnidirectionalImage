@@ -41,7 +41,7 @@ int main(int argc, const char * argv[])
 */
     
     const std::string path = "/Users/masakazu/Desktop/";
-    const std::string outfile = path + "log.txt";
+    const std::string inputfile = path + "log.txt";
     
     // シリアルポート設定
     const std::string port = "/dev/tty.usbmodem1412";
@@ -57,7 +57,10 @@ int main(int argc, const char * argv[])
     // IMUデータの読み込み先
 //    IMUFile imuFile(outfile);
 //    IMU& imu = imuFile;
-    IMUSensor imuSensor(port, baudRate, bufSize, splitPattern, patSize);
+    // ファイル出力
+    const std::string outputfile = "logtest.txt"
+    IMUSensor imuSensor(port, baudRate, bufSize, splitPattern, patSize,
+                        outputfile);
     IMU& imu = imuSensor;
 
     // IMUデータ処理
@@ -75,7 +78,8 @@ int main(int argc, const char * argv[])
         
         for (int j = 0; j < dataNum; j++) {
             imu.printIMUData(datas[j]);
-            imuPro.renewPose(datas[j]);
+            imuSensor.outputData(datas[j]);
+//            imuPro.renewPose(datas[j]);
             //imuPro.printCurPose();
         }
         

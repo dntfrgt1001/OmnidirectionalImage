@@ -147,6 +147,16 @@
 		02C4C35C1E0A5F2F0098ACFA /* libopencv_video.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 02A9B6DF1DC0C63200D4A0E7 /* libopencv_video.dylib */; };
 		02C4C35F1E0A6B860098ACFA /* IMUEstimator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 02C4C35D1E0A6B860098ACFA /* IMUEstimator.cpp */; };
 		02C4C3601E0A84DC0098ACFA /* IMUEstimator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 02C4C35D1E0A6B860098ACFA /* IMUEstimator.cpp */; };
+		02C4C3681E10CA580098ACFA /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 02C4C3671E10CA580098ACFA /* main.cpp */; };
+		02C4C36C1E10EF620098ACFA /* IMUEstimator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 02C4C35D1E0A6B860098ACFA /* IMUEstimator.cpp */; };
+		02C4C36D1E10EF710098ACFA /* Rotation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 020D73071D2A62E800BC61BD /* Rotation.cpp */; };
+		02C4C36E1E10EF740098ACFA /* Quaternion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 02D6D9A11D8189B900862E8F /* Quaternion.cpp */; };
+		02C4C36F1E10EF7A0098ACFA /* libopencv_core.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 02A9B6D11DC0C5BC00D4A0E7 /* libopencv_core.dylib */; };
+		02C4C3701E10EF8A0098ACFA /* IMUFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 027283F11DE4230500EA7D57 /* IMUFile.cpp */; };
+		02C4C3711E10EF960098ACFA /* IMU.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 027283EE1DE41ACD00EA7D57 /* IMU.cpp */; };
+		02C4C3721E10EFB20098ACFA /* libopencv_video.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 02A9B6DF1DC0C63200D4A0E7 /* libopencv_video.dylib */; };
+		02C4C3731E10EFC00098ACFA /* libopencv_calib3d.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 02A9B6DD1DC0C61C00D4A0E7 /* libopencv_calib3d.dylib */; };
+		02C4C3741E10EFCB0098ACFA /* Transform.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0245CD8D1C4233E000FF5E33 /* Transform.cpp */; };
 		02C57BEC1D0FB9A300F428F2 /* VideoReader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 02C57BE91D0FB0D100F428F2 /* VideoReader.cpp */; };
 		02C57BF11D10402A00F428F2 /* VideoWriter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 02C57BEE1D0FDED300F428F2 /* VideoWriter.cpp */; };
 		02C768851D17E7D80069E8C3 /* VideoReader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 02C57BE91D0FB0D100F428F2 /* VideoReader.cpp */; };
@@ -288,6 +298,15 @@
 			);
 			runOnlyForDeploymentPostprocessing = 1;
 		};
+		02C4C3631E10CA580098ACFA /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
@@ -374,6 +393,8 @@
 		02A9B7001DC23E8200D4A0E7 /* CalcOpticalFlow.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = CalcOpticalFlow.hpp; path = CalcOpticalFlow/CalcOpticalFlow.hpp; sourceTree = "<group>"; };
 		02C4C35D1E0A6B860098ACFA /* IMUEstimator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = IMUEstimator.cpp; path = Estimator/IMUEstimator.cpp; sourceTree = "<group>"; };
 		02C4C35E1E0A6B860098ACFA /* IMUEstimator.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = IMUEstimator.hpp; path = Estimator/IMUEstimator.hpp; sourceTree = "<group>"; };
+		02C4C3651E10CA580098ACFA /* KalmanTest */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = KalmanTest; sourceTree = BUILT_PRODUCTS_DIR; };
+		02C4C3671E10CA580098ACFA /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		02C57BE91D0FB0D100F428F2 /* VideoReader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = VideoReader.cpp; path = VideoReader/VideoReader.cpp; sourceTree = "<group>"; };
 		02C57BEA1D0FB0D100F428F2 /* VideoReader.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = VideoReader.hpp; path = VideoReader/VideoReader.hpp; sourceTree = "<group>"; };
 		02C57BEE1D0FDED300F428F2 /* VideoWriter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = VideoWriter.cpp; path = VideoWriter/VideoWriter.cpp; sourceTree = "<group>"; };
@@ -544,6 +565,16 @@
 				0202318B1DF5B7FD00D6B3B2 /* libopencv_video.dylib in Frameworks */,
 				020231891DF5B7C400D6B3B2 /* libopencv_imgproc.dylib in Frameworks */,
 				0202318C1DF5B80400D6B3B2 /* libopencv_videoio.dylib in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		02C4C3621E10CA580098ACFA /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				02C4C36F1E10EF7A0098ACFA /* libopencv_core.dylib in Frameworks */,
+				02C4C3731E10EFC00098ACFA /* libopencv_calib3d.dylib in Frameworks */,
+				02C4C3721E10EFB20098ACFA /* libopencv_video.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -819,6 +850,7 @@
 				027F38801D5B0EDB0012DA39 /* RotateVideo */,
 				0287FC221D787B7200E4FE99 /* RotateFrame */,
 				025ADB991DB9FF7F00DCE366 /* Test */,
+				02C4C3661E10CA580098ACFA /* KalmanTest */,
 				028D79F81C30130B00790A10 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -840,6 +872,7 @@
 				0287FC211D787B7200E4FE99 /* RotateFrame */,
 				025ADB981DB9FF7F00DCE366 /* Test */,
 				020231761DF562EF00D6B3B2 /* MatchFeatureTest */,
+				02C4C3651E10CA580098ACFA /* KalmanTest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -915,6 +948,14 @@
 				02A9B7001DC23E8200D4A0E7 /* CalcOpticalFlow.hpp */,
 			);
 			name = CalcOpticalFlow;
+			sourceTree = "<group>";
+		};
+		02C4C3661E10CA580098ACFA /* KalmanTest */ = {
+			isa = PBXGroup;
+			children = (
+				02C4C3671E10CA580098ACFA /* main.cpp */,
+			);
+			path = KalmanTest;
 			sourceTree = "<group>";
 		};
 		02C57BE81D0FB0B200F428F2 /* VideoReader */ = {
@@ -1212,6 +1253,23 @@
 			productReference = 029994121C72A9CB00792144 /* PlayVideo */;
 			productType = "com.apple.product-type.tool";
 		};
+		02C4C3641E10CA580098ACFA /* KalmanTest */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 02C4C3691E10CA580098ACFA /* Build configuration list for PBXNativeTarget "KalmanTest" */;
+			buildPhases = (
+				02C4C3611E10CA580098ACFA /* Sources */,
+				02C4C3621E10CA580098ACFA /* Frameworks */,
+				02C4C3631E10CA580098ACFA /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = KalmanTest;
+			productName = KalmanTest;
+			productReference = 02C4C3651E10CA580098ACFA /* KalmanTest */;
+			productType = "com.apple.product-type.tool";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -1264,6 +1322,9 @@
 					029994111C72A9CB00792144 = {
 						CreatedOnToolsVersion = 7.2.1;
 					};
+					02C4C3641E10CA580098ACFA = {
+						CreatedOnToolsVersion = 7.2.1;
+					};
 				};
 			};
 			buildConfigurationList = 028D79F21C30130B00790A10 /* Build configuration list for PBXProject "OmnidirectionalImage" */;
@@ -1292,6 +1353,7 @@
 				0287FC201D787B7200E4FE99 /* RotateFrame */,
 				025ADB971DB9FF7F00DCE366 /* Test */,
 				020231751DF562EF00D6B3B2 /* MatchFeatureTest */,
+				02C4C3641E10CA580098ACFA /* KalmanTest */,
 			);
 		};
 /* End PBXProject section */
@@ -1484,6 +1546,20 @@
 				02C57BEC1D0FB9A300F428F2 /* VideoReader.cpp in Sources */,
 				029994151C72A9CB00792144 /* main.cpp in Sources */,
 				02C57BF11D10402A00F428F2 /* VideoWriter.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		02C4C3611E10CA580098ACFA /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				02C4C3741E10EFCB0098ACFA /* Transform.cpp in Sources */,
+				02C4C36C1E10EF620098ACFA /* IMUEstimator.cpp in Sources */,
+				02C4C36E1E10EF740098ACFA /* Quaternion.cpp in Sources */,
+				02C4C3681E10CA580098ACFA /* main.cpp in Sources */,
+				02C4C3711E10EF960098ACFA /* IMU.cpp in Sources */,
+				02C4C3701E10EF8A0098ACFA /* IMUFile.cpp in Sources */,
+				02C4C36D1E10EF710098ACFA /* Rotation.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1854,6 +1930,28 @@
 			};
 			name = Release;
 		};
+		02C4C36A1E10CA580098ACFA /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					/usr/local/Cellar/opencv3/3.1.0_4/lib,
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		02C4C36B1E10CA580098ACFA /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					/usr/local/Cellar/opencv3/3.1.0_4/lib,
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -1991,6 +2089,14 @@
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
+		};
+		02C4C3691E10CA580098ACFA /* Build configuration list for PBXNativeTarget "KalmanTest" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				02C4C36A1E10CA580098ACFA /* Debug */,
+				02C4C36B1E10CA580098ACFA /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
 		};
 /* End XCConfigurationList section */
 	};

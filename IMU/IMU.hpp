@@ -10,10 +10,10 @@
 #define IMU_hpp
 
 #include <stdio.h>
+#include <math.h>
 #include <iostream>
 #include <iomanip>
 #include <vector>
-
 
 typedef struct IMUData {
     int accel_x, accel_y, accel_z;
@@ -31,7 +31,7 @@ public:
     static void printIMUData(const IMUData& data);
     
     static float getAccelValue(const int sensorValue) {
-        return sensorValue * sensAccel * dt;
+        return sensorValue * sensAccel;
     }
     static float getGyroValue(const int sensorValue) {
         return sensorValue * sensGyro * dt;

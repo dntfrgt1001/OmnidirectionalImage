@@ -17,10 +17,11 @@
 #include "IMU.hpp"
 #include "Transform.hpp"
 #include "Quaternion.hpp"
+#include "Rotation.hpp"
 
 class IMUEstimator: public Estimator {
 public:
-    IMUEstimator(const Transform& tf, IMU& imu, const float dt);
+    IMUEstimator(const Transform& tf, IMU& imu);
 
     // 画像入力はダミー
     cv::Mat getRotMat
@@ -30,13 +31,20 @@ public:
     cv::Mat getTransMat(const cv::Vec3f& angVel);
     
     // 観測行列を生成(非線形)
-    cv::Mat getObserMat();
+    cv::Mat getMeasureMat();
+
+    // 姿勢更新
+    void updatePose(const IMUData& data);
     
+    // 行列の確認
+    void printMatrix();
+    
+    // 四元数を正規化
+    void normalQuat();
     
 private:
     IMU& imu;
-    
-    const float dt;
+
     cv::KalmanFilter kalman;
 };
 
