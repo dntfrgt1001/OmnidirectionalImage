@@ -94,11 +94,11 @@ cv::Mat FeatureMatchEstimator::getRotMat
         latEquirects[i] = latKeyPoints[i].pt;
     }
     
-    
     // 球面座標に変換
     std::vector<Sphere> forSpheres, latSpheres;
     tf.equirect2sphere(forEquirects, forSpheres);
     tf.equirect2sphere(latEquirects, latSpheres);
+    
     
     // ３次元空間上の距離でフィルタ
     mfp.filterCoordDistance(forSpheres, latSpheres);
@@ -123,9 +123,14 @@ cv::Mat FeatureMatchEstimator::getRotMat
     //          std::back_inserter(curKeyPointSet));
     curKeyPointSet = latKeyPointSet;
     latDescSet.copyTo(curDescSet);
+
+    
+//    float weight;
+//    return getRotMatSpecDir(forSpheres, latSpheres, froChgMats[1], weight);
     
     int maxIdx;
     return getRotMatWeightMax(forSpheres, latSpheres, maxIdx);
+    
 }
 
 cv::Mat FeatureMatchEstimator::getRotMatSpecDir

@@ -152,6 +152,11 @@ cv::Mat Rotation::getFroChgMat(const cv::Mat &rotMat)
     return RotVec2RotMat(angle * axis);
 }
 
+cv::Mat Rotation::getFroChgMat(const cv::Vec3f &rotVec)
+{
+    return getFroChgMat(RotVec2RotMat(rotVec));
+}
+
 cv::Mat Rotation::chgRotMatCoo
 (const cv::Mat &rotMat, const cv::Mat &froChgMat)
 {

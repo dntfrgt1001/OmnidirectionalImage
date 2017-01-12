@@ -31,9 +31,9 @@
 
 int main(int argc, const char * argv[])
 {    
-    const std::string path = "/Users/masakazu/Desktop/01/";
-    const std::string inputName1 = path + "image0008.jpg";
-    const std::string inputName2 = path + "image0009.jpg";
+    const std::string path = "/Users/masakazu/Desktop/TestImage/";
+    const std::string inputName1 = path + "hall1.jpg";
+    const std::string inputName2 = path + "hall2.jpg";
 
     const cv::Size fso(960, 480);
     const cv::Size fs(960, 480);
@@ -55,13 +55,13 @@ int main(int argc, const char * argv[])
     ExtractFeaturePoint efp(fs, tf, divNum);
     
     const float distThre = 200;
-    const float coordThre = 0.4;
+    const float coordThre = 0.5;
     MatchFeaturePoint mfp(tf, distThre, coordThre);
     
     const float fieldAngle = M_PI / 4.0;
     const Range ran(fs, tf, fieldAngle);
     
-    const FeatureMatchEstimator fme(tf, efp, mfp, epi, ran);
+    FeatureMatchEstimator fme(tf, efp, mfp, epi, ran);
     // -----------------------------------------------------
     // オプティカルフロー用
     const int persRad = 150;
@@ -73,7 +73,7 @@ int main(int argc, const char * argv[])
     const float normRat = 3.0;
     const CalcOpticalFlow cof(margin, per, angRag, normRat);
     
-    const OpticalFlowEstimator ofe(tf, cof, per, epi);
+    OpticalFlowEstimator ofe(tf, cof, per, epi);
     // -----------------------------------------------------
     
     MainProcess mp(tfo, fme, ofe);

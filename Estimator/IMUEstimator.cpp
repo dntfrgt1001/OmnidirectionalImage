@@ -30,8 +30,8 @@ Estimator(tf), imu(imu), kalman(cv::KalmanFilter(7, 3, 0, CV_32FC1))
     cv::setIdentity(kalman.errorCovPost, cv::Scalar::all(0.5));
     
     // 状態の初期化 q = [1: 0, 0, 0], b = [0, 0, 0]
-//    kalman.statePost = (cv::Mat_<float>(7,1) << 1, 0, 0, 0, 0, 0, 0);
-    kalman.statePost = (cv::Mat_<float>(7,1) << 1/sqrtf(2), -1/sqrtf(2), 0, 0, 0, 0, 0);
+    kalman.statePost = (cv::Mat_<float>(7,1) << 1, 0, 0, 0, 1e-3, 1e-3, 1e-3);
+//    kalman.statePost = (cv::Mat_<float>(7,1) << 1/sqrtf(2), -1/sqrtf(2), 0, 0, 0, 0, 0);
     
     printMatrix();
     
@@ -138,6 +138,8 @@ void IMUEstimator::updatePose(const IMUData& data)
                        IMU::getAccelValue(data.accel_z));
     
     std::cout << "measure = " << std::endl << measure << std::endl;
+    std::cout << "measure mult = " << std::endl << kalman.measurementMatrix*kalman.statePre << std::endl;
+    std::cout << "error = " << measure - kalman.measurementMatrix*kalman.statePre << std::endl;
     
     std::cout << "measurement matrix = " << std::endl << kalman.measurementMatrix << std::endl;
     

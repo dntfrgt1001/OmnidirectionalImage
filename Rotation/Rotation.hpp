@@ -38,6 +38,7 @@ public:
     
     // ベクトルをz軸正の向きになるよう回転させる行列
     static cv::Mat getFroChgMat(const cv::Mat& rotMat);
+    static cv::Mat getFroChgMat(const cv::Vec3f& rotVec);
     
     // 回転行列の座標系を変更
     static cv::Mat chgRotMatCoo

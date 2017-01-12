@@ -16,15 +16,14 @@
 #include "Transform.hpp"
 #include "Perspective.hpp"
 #include "Rotation.hpp"
-#include "OpticalFlow.hpp"
-#include "Estimate.hpp"
-#include "Range.hpp"
+//#include "CalcOpticalFlow.hpp"
+//#include "Range.hpp"
 
 int main(int argc, const char * argv[])
 {
-    const std::string path = "/Users/masakazu/Desktop/";
-    const std::string inputName1 = path + "image0041.jpg";
-    const std::string inputName2 = path + "image0042.jpg";
+    const std::string path = "/Users/masakazu/Desktop/TestImage/";
+    const std::string inputName1 = path + "hall1.jpg";
+    const std::string inputName2 = path + "hall2.jpg";
     
     const cv::Size frameSize(5376, 2688);
     
@@ -35,30 +34,30 @@ int main(int argc, const char * argv[])
     cv::resize(input1, img1, frameSize);
     input2 = cv::imread(inputName2);
     cv::resize(input2, img2, frameSize);
-    cv::cvtColor(img1, img1, CV_BGR2GRAY);
-    cv::cvtColor(img2, img2, CV_BGR2GRAY);
+//    cv::cvtColor(img1, img1, CV_BGR2GRAY);
+//    cv::cvtColor(img2, img2, CV_BGR2GRAY);
     
-    
-    const int uniPixel = 300;
+    const int persRad = 300;
     
     const float rangeAngle = M_PI / 4.0;
-    Perspective pers(tf, uniPixel, rangeAngle);
+    Perspective pers(tf, persRad, rangeAngle);
 
-    const float angle = M_PI/2.0;
-    const cv::Vec3f rotVec = angle * cv::Vec3f(0.0, 1.0, 0.0);
-    cv::Mat rotMat;
-    Rotation::RotVec2RotMat(rotVec, rotMat);
-
+    const cv::Vec3f rotVec = cv::Vec3f(0.0, 1.0, 0.0);
+    cv::Mat froMat = Rotation::getFroChgMat(rotVec);
+    
     cv::Mat persImg1, persImg2;
     const bool isFront = true;
-    pers.getPersImg(img1, persImg1, rotMat, isFront);
-    pers.getPersImg(img2, persImg2, rotMat, isFront);
+    pers.getPersImg(img1, persImg1, froMat, isFront);
+    pers.getPersImg(img2, persImg2, froMat, isFront);
     
     cv::namedWindow("pers 1");
     cv::namedWindow("pers 2");
     cv::imshow("pers 1", persImg1);
     cv::imshow("pers 2", persImg2);
     
+    cv::waitKey(0);
+    
+    /*
     const float rangeAngle2 = M_PI/3.0;
     Range rg(frameSize, tf, rangeAngle2);
     const int numThre = 10;
@@ -94,6 +93,8 @@ int main(int argc, const char * argv[])
     
 //    const std::string outName = "5.jpg";
 //    cv::imwrite(path + outName, persImg);
+    
+    */
     
     cv::waitKey(-1);
     
