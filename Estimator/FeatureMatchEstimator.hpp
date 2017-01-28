@@ -26,7 +26,11 @@ public:
     (const Transform& tf, const ExtractFeaturePoint& efp,
      const MatchFeaturePoint& mfp, const Epipolar& epi, const Range& ran);
     
-    // 画像は入力したそのまま
+    // インタフェース
+    cv::Mat getRotMat
+    (const cv::Mat& forImg, const cv::Mat& latImg, const State& state);
+    
+    // 実体
     cv::Mat getRotMat
     (const cv::Mat& forImg, const cv::Mat& latImg, const int frameNum);
     
@@ -46,6 +50,8 @@ private:
     const MatchFeaturePoint& mfp;
     const Epipolar& epi;
     const Range& ran;
+    
+    // カメラ座標系変更のための行列
     std::vector<cv::Mat> froChgMats;
     
     int prevFrameNum; // 直前の特徴マッチ法で処理したフレーム番号

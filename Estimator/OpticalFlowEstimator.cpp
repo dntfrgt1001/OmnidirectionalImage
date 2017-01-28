@@ -9,15 +9,13 @@
 #include "OpticalFlowEstimator.hpp"
 
 cv::Mat OpticalFlowEstimator::getRotMat
-(const cv::Mat &forImg, const cv::Mat &latImg, const int frameNum)
+(const cv::Mat &forImg, const cv::Mat &latImg, const State &state)
 {
-    return getRotMat(forImg, latImg, frameNum,
-                     cv::Mat::eye(3, 3, CV_32FC1));
+    return getRotMat(forImg, latImg, state.curRotMat);
 }
 
 cv::Mat OpticalFlowEstimator::getRotMat
-(const cv::Mat &forImg, const cv::Mat &latImg, const int frameNum,
- const cv::Mat &curRotMat) const
+(const cv::Mat &forImg, const cv::Mat &latImg, const cv::Mat &curRotMat)
 {
     // 直前の回転行列から正面を変更
     cv::Mat froChgMat = Rotation::getFroChgMat(curRotMat);
@@ -80,6 +78,14 @@ cv::Mat OpticalFlowEstimator::getRotMat
     cv::namedWindow("optical flow");
     cv::imshow("optical flow", drawImg);
     
+//    std::stringstream ss;
+//    ss << "/Users/masakazu/Desktop/Jack/opt/" << "image" <<
+//        std::setw(4) << std::setfill('0') << frameNum << ".jpg";
+//    cv::imwrite(ss.str(), drawImg);
+    
     // 回転行列の座標系を変更
     return Rotation::chgRotMatCoo(rotMat, froChgMat.inv());
 }
+
+
+

@@ -9,7 +9,7 @@
 #include "IMUFile.hpp"
 
 IMUFile::IMUFile(const std::string& fileName):
-IMU(), ifs(fileName), dataSize(3)
+IMU(), ifs(fileName), dataSize(1)
 {
     if (!ifs) {
         std::cerr << "cannnot open file" << std::endl;

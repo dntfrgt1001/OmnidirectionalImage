@@ -124,15 +124,42 @@ cv::Vec3f Rotation::RotMat2RotVec(const cv::Mat &rotMat)
      */
     
     cv::Vec3f rotVec;
+        
     cv::Rodrigues(rotMat, rotVec);
     return rotVec;
 }
 
 cv::Mat Rotation::getFroChgMat(const cv::Mat &rotMat)
 {
-    // 回転ベクトルの計算
-    cv::Vec3f rotVec = RotMat2RotVec(rotMat);
+    return getFroChgMat(RotMat2RotVec(rotMat));
+}
+
+cv::Mat Rotation::getFroChgMat(const cv::Vec3f &rotVec)
+{
+    // 回転角がゼロなら正面は変化しない
+    if (cv::norm(rotVec) == 0.0) return cv::Mat::eye(3, 3, CV_32FC1);
     
+    // z軸方向ベクトル
+    cv::Vec3f froVec(0.0, 0.0, 1.0);
+    
+    // 内積で正面変更のための回転角を求める
+    float cos = froVec.dot(rotVec) / (cv::norm(rotVec) * cv::norm(froVec));
+    const float angle = acosf(cos < -1? -1: 1 < cos? 1: cos);
+    
+    // 外積で正面変更のための回転軸を求める
+    cv::Vec3f crossPro = rotVec.cross(froVec);
+    
+    // 回転軸がz軸
+    if (cv::norm(crossPro) == 0.0) {
+        return cv::Mat_<float>(3, 3) <<
+            cosf(angle), 0, sinf(angle),
+            0, 1, 0, 
+            -sinf(angle), 0, cosf(angle);
+    }
+    
+    return RotVec2RotMat(crossPro / cv::norm(crossPro) * angle);
+    
+/*
     // 回転ベクトルのノルム
     float normRotVec = cv::norm(rotVec);
     
@@ -140,21 +167,19 @@ cv::Mat Rotation::getFroChgMat(const cv::Mat &rotMat)
     if (normRotVec == 0.0) return cv::Mat::eye(3, 3, CV_32FC1);
     
     // 単位回転ベクトル
-    cv::Vec3f rotVecUni = rotVec/cv::norm(rotVec);
+    cv::Vec3f rotVecUni = rotVec/normRotVec;
     
     // 回転角
     float angle = acosf(rotVecUni[2]);
-    // 回転軸
+    
+    // z軸方向ベクトルと回転ベクトルの外積のノルム
     float normAxis = sqrtf(rotVecUni[0]*rotVecUni[0] +
                            rotVecUni[1]*rotVecUni[1]);
+    
     cv::Vec3f axis = cv::Vec3f(rotVecUni[1], -rotVecUni[0], 0) / normAxis;
     
     return RotVec2RotMat(angle * axis);
-}
-
-cv::Mat Rotation::getFroChgMat(const cv::Vec3f &rotVec)
-{
-    return getFroChgMat(RotVec2RotMat(rotVec));
+ */
 }
 
 cv::Mat Rotation::chgRotMatCoo

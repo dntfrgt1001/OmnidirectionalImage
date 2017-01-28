@@ -9,6 +9,8 @@
 #include <iostream>
 
 #include <opencv2/core.hpp>
+#include <Eigen/Core>
+#include <Eigen/QR>
 
 #include "Transform.hpp"
 #include "ExtractFeaturePoint.hpp"
@@ -17,6 +19,34 @@
 
 int main(int argc, const char * argv[])
 {
+    Eigen::Vector3f v = Eigen::Vector3f::Identity();
+    
+    Eigen::Matrix3d e; e << 2,0,0,0,3,0,0,0,1;
+//    Eigen::Matrix3d t; t << 1,0,100,0,1,200,0,0,1;
+    Eigen::Matrix3d t; t << 1,0,0,0,1,0,0,0,1;
+    Eigen::Matrix3d s; s << 1,1,0,0,1,0,0,0,1;
+    const float angle = M_PI / 3.0;
+    Eigen::Matrix3d r; r << cos(angle), -sin(angle), 0,
+                            sin(angle), cos(angle),  0, 0, 0, 1;
+    Eigen::Matrix3d m = e * t * s * r;
+    
+    std::cout << "R = " << std::endl << e*t*s << std::endl;
+    std::cout << "Q = " << std::endl << r << std::endl;
+    
+    Eigen::HouseholderQR<Eigen::Matrix3d> qr(m);
+//    Eigen::FullPivHouseholderQR<Eigen::Matrix3f> qr(m);
+//    Eigen::ColPivHouseholderQR<Eigen::Matrix3d> qr(m);
+    
+    Eigen::Matrix3d R = qr.matrixQR().triangularView<Eigen::Upper>();
+    Eigen::Matrix3d Q = qr.householderQ();
+//    Eigen::Matrix3d Q = qr.matrixQ();
+    
+    std::cout << "R = " << std::endl << R << std::endl;
+    std::cout << "Q = " << std::endl << Q << std::endl;
+    
+    
+    return 0;
+    /*
     const std::string path = "/Users/masakazu/Desktop/rotation/";
     const std::string imgName1 = path + "img.jpg";
     const std::string imgName2 = path + "rotimg.jpg";
@@ -107,6 +137,6 @@ int main(int argc, const char * argv[])
     cv::waitKey(-1);
     
     cv::imwrite(outName, matchImg);
+    */
     
-    return 0;
 }

@@ -19,11 +19,11 @@
 
 int main(int argc, const char * argv[])
 {
-    const std::string path = "/Users/masakazu/Desktop/";
-    const std::string inputName = path + "01.mp4";
-    const std::string outputName = path + "01";
+    const std::string path = "/Users/masakazu/Desktop/Jack/";
+    const std::string inputName = path + "sample104.mp4";
+    const std::string outputName = path + "sample104";
 
-    const cv::Size frameSize(960, 480);
+    const cv::Size frameSize(800, 400);
     const int stride = 1;
     VideoReaderMov vr(frameSize, inputName, stride);
     VideoWriterPic vw(frameSize, outputName);

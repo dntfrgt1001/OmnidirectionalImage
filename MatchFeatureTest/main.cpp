@@ -19,9 +19,9 @@
 
 int main(int argc, const char * argv[])
 {
-    const std::string path = "/Users/masakazu/Desktop/01";
-    const std::string inputName1 = path + "image0007.jpg";
-    const std::string inputName2 = path + "image0008.jpg";
+    const std::string path = "/Users/masakazu/Desktop/TestImage/";
+    const std::string inputName1 = path + "image0025.jpg";
+    const std::string inputName2 = path + "image0026.jpg";
     
     const cv::Size fs(960, 480);
 
@@ -36,8 +36,8 @@ int main(int argc, const char * argv[])
     const int divNum = 6;
     ExtractFeaturePoint efp(fs, tf, divNum);
     
-    const float distThre = 250;
-    const float coordThre = 0.6;
+    const float distThre = 200;
+    const float coordThre = 0.3;
     MatchFeaturePoint mfp(tf, distThre, coordThre);
     
     cv::Mat grayImg1, grayImg2;
@@ -47,8 +47,8 @@ int main(int argc, const char * argv[])
     // 特徴抽出
     std::vector<cv::KeyPoint> KeyPointSet1, KeyPointSet2;
     cv::Mat descriptor1, descriptor2;
-    efp.extractFeaturePoint(grayImg1, KeyPointSet1, descriptor1);
-    efp.extractFeaturePoint(grayImg2, KeyPointSet2, descriptor2);
+    efp.extFeat(grayImg1, KeyPointSet1, descriptor1);
+    efp.extFeat(grayImg2, KeyPointSet2, descriptor2);
     
     cv::Mat drawKeyImg1, drawKeyImg2;
     efp.drawKeyPointClear(grayImg1, KeyPointSet1, drawKeyImg1);

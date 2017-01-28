@@ -8,6 +8,7 @@
 
 #include <iostream>
 
+#include <opencv2/opencv.hpp>
 #include <opencv2/core.hpp>
 
 #include "Transform.hpp"
@@ -33,19 +34,48 @@ static inline cv::Point calcPoint(cv::Point2f& center, double R, double angle)
 
 int main(int argc, const char * argv[])
 {
-    cv::Mat e = (cv::Mat_<float>(3, 3) << 2,0,0,0,3,0,0,0,1);
-    cv::Mat t = (cv::Mat_<float>(3, 3) << 1,0,100, 0, 1, 200, 0, 0, 1);
-    cv::Mat s = (cv::Mat_<float>(3, 3) << 1,1,0,0,1,0,0,0,1);
+    const std::string path = "/Users/masakazu/Desktop/TestImage/";
+    const std::string inputName = path + "hall2.jpg";
+    const std::string outputName = path + "hall2gray.jpg";
+    
+    cv::Mat input, grayImg;
+    input = cv::imread(inputName);
+    cv::cvtColor(input, grayImg, CV_BGR2GRAY);
+    
+    cv::imwrite(outputName, grayImg);
+    
+    cv::Mat e = (cv::Mat_<float>(3, 3) <<
+                 2, 0, 0,
+                 0, 3, 0,
+                 0, 0, 4);
+    
+    cv::Mat t = (cv::Mat_<float>(3, 3) <<
+                 1, 0, 0,
+                 0, 1, 0,
+                 0, 0, 1);
+    
+    cv::Mat s = (cv::Mat_<float>(3, 3) <<
+                 1, 0, 0,
+                 2, 1, 0,
+                 3, 3, 1);
+    
     float angle = M_PI/6.0;
-    cv::Mat r = (cv::Mat_<float>(3, 3) << cosf(angle), -sinf(angle), 0,
-                 sinf(angle), cosf(angle), 0, 0, 0,1);
+    cv::Mat r = (cv::Mat_<float>(3, 3) <<
+                 cosf(angle), -sinf(angle), 0,
+                 sinf(angle), cosf(angle), 0,
+                 0, 0,1);
+    
+    std::cout << "R = " << std::endl << e * t * s << std::endl;
+    std::cout << "Q = " << std::endl << r << std::endl;
+    std::cout << "RQ = " << std::endl << e * t * s * r << std::endl;
     
     cv::Mat m = e * t * s * r;
     cv::Mat R, Q;
     cv::RQDecomp3x3(m, R, Q);
     
-    std::cout << "R = " << R << std::endl;
-    std::cout << "Q = " << Q << std::endl;
+    std::cout << "R = " << std::endl << R << std::endl;
+    std::cout << "Q = " << std::endl << Q << std::endl;
+    
     
     cv::Mat img(500, 500, CV_8UC3);
     cv::KalmanFilter KF(2, 1, 0);

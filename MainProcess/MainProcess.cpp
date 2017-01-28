@@ -8,44 +8,8 @@
 
 #include "MainProcess.hpp"
 
-MainProcess::MainProcess
-(const Transform& tf, FeatureMatchEstimator& fme,
- OpticalFlowEstimator& ofe):
-tf(tf), fme(fme), ofe(ofe), frameNum(0),
-accRotMat(cv::Mat::eye(3,3,CV_32F)), curRotMat(cv::Mat::eye(3,3,CV_32F))
+void MainProcess::printMatInfo()
 {
-    updateFrameInfo();
-}
-
-
-void MainProcess::modifyLatImgFeatureMatch
-(const cv::Mat &forImg, const cv::Mat &latImg, cv::Mat &modLatImg)
-{
-    curRotMat = fme.getRotMat(forImg, latImg, frameNum);
-    
-    updateFrameInfo();
-    
-    tf.rotateImg(latImg, modLatImg, accRotMat);
-}
-
-void MainProcess::modifyLatImgOpticalFlow
-(const cv::Mat &forImg, const cv::Mat &latImg, cv::Mat &modLatImg)
-{
-    curRotMat = ofe.getRotMat(forImg, latImg, frameNum, curRotMat);
-    
-    updateFrameInfo();
-    
-    tf.rotateImg(latImg, modLatImg, accRotMat);
-}
-
-void MainProcess::updateFrameInfo()
-{
-    // 回転行列を乗算
-    accRotMat = accRotMat * curRotMat;
- 
-    // フレーム番号を更新
-    frameNum++;
-    
     cv::Mat froChgMat = Rotation::getFroChgMat(curRotMat);
     cv::Vec3f rotVec = Rotation::RotMat2RotVec(curRotMat);
     
@@ -68,6 +32,60 @@ void MainProcess::updateFrameInfo()
     std::cout << std::endl;
 }
 
+
+void MainProcess::modImg
+(const cv::Mat &forImg, const cv::Mat &latImg, cv::Mat &latImgMod)
+{
+    const State curState = {frameNum, curRotMat};
+    
+    curRotMat = est.getRotMat(forImg, latImg, curState);
+    
+    accRotMat = accRotMat * curRotMat;
+    
+    tf.rotateImg(latImg, latImgMod, accRotMat);
+}
+
+void MainProcess::modVideo(VideoReader &vr, VideoWriter &vw)
+{
+    // 前方画像と後方画像
+    cv::Mat forImg, latImg;
+    
+    // 初期フレーム入力と出力
+    vr.readImg(latImg);
+    vw.writeImg(latImg);
+    std::cout << "0 th frame finished" << std::endl;
+    frameNum ++;
+    
+    // ウィンドウ生成
+    cv::namedWindow("former image");
+    cv::namedWindow("latter image");
+    cv::namedWindow("modified latter image");
+    
+    // 繰り返し処理
+    while (vr.hasNext()) {
+        // フレームをずらす
+        forImg = latImg.clone();
+        vr.readImg(latImg);
+        
+        // 後方フレームの修正と出力
+        cv::Mat latImgMod;
+        modImg(forImg, latImg, latImgMod);
+        vw.writeImg(latImgMod);
+        
+        // 現在のフレームを表示
+        cv::imshow("former image", forImg);
+        cv::imshow("latter image", latImg);
+        cv::imshow("modified latter image", latImgMod);
+        
+        // フレーム番号を更新して終了
+        std::cout << frameNum << " th frame finished" << std::endl;
+        frameNum ++;
+        
+        cv::waitKey(0);
+    }
+}
+
+/*
 void MainProcess::modVideo(VideoReader &vr, VideoWriter &vw)
 {
     cv::Mat forImg, latImg;
@@ -87,19 +105,25 @@ void MainProcess::modVideo(VideoReader &vr, VideoWriter &vw)
         forImg = latImg.clone();
         vr.readImg(latImg);
         
+       
+        
         // 後画像を修正
         cv::Mat latImgMod;
-        modifyLatImgFeatureMatch(forImg, latImg, latImgMod);
-        /*
+ //       modifyLatImgJackInHead(forImg, latImg, latImgMod);
+ //       modifyLatImgFeatureMatch(forImg, latImg, latImgMod);
+        
+//        modifyLatImgOpticalFlow(forImg, latImg, latImgMod);
+        
+        
         float normRotVec = cv::norm(Rotation::RotMat2RotVec(curRotMat));
-        float normRotThre = 1.0;
+        float normRotThre = 0.2;
         if (normRotThre < normRotVec) {
             std::cout << "OpticalFlow Method" << std::endl;
-            modifyLatImgOpticalFlow(forImg, latImg, latImgMod);
+            modImgOpticalFlow(forImg, latImg, latImgMod);
         } else {
             std::cout << "Feature Matching Method" << std::endl;
-            modifyLatImgFeatureMatch(forImg, latImg, latImgMod);
-        }*/
+            modImgFeatureMatch(forImg, latImg, latImgMod);
+        }
         
         // modifyLatImgFeatureMatch(forImg, latImg, latImgMod);
         // modifyLatImgOpticalFlow(forImg, latImg, latImgMod);
@@ -113,6 +137,8 @@ void MainProcess::modVideo(VideoReader &vr, VideoWriter &vw)
         
         std::cout << i << "-th frame finished" << std::endl;
         
-        cv::waitKey();
+        cv::waitKey(0);
     }
 }
+*/
+

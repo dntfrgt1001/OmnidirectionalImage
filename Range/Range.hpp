@@ -39,11 +39,25 @@ public:
     (const cv::Point3f& forsphere, const cv::Point3f& latsphere) const {
         return forsphere.z * latsphere.z < 0;
     }
+    
     // 推定に使う特徴点か(カメラ前後にあり境界を跨がない)
+    
     bool isValidSpherePair
     (const Sphere& forsphere, const Sphere& latsphere) const {
         return isInRange(forsphere) && isInRange(latsphere) &&
                !isStrideBorder(forsphere, latsphere);
+    }
+    
+    /*
+    bool isValidSpherePair
+    (const Sphere& forsphere, const Sphere& latsphere) const {
+        return  isFront(forsphere) && isFront(latsphere) &&
+                isInRange(forsphere) && isInRange(latsphere);
+    }
+    */
+    
+    bool isFront(const Sphere& sphere) const {
+        return sphere.z > 0;
     }
     
     // 推定に使う特徴点の組を取り出す

@@ -15,12 +15,18 @@
 
 #include "Transform.hpp"
 
+typedef struct State {
+    int frameNum;
+    cv::Mat& curRotMat;
+} State;
+
 class Estimator {
 public:
     Estimator(const Transform& tf): tf(tf) {};
     
+    // インタフェース
     virtual cv::Mat getRotMat
-    (const cv::Mat& forImg, const cv::Mat& latImg, const int frameNum) = 0;
+    (const cv::Mat& forImg, const cv::Mat& latImg, const State& state) = 0;
     
 protected:
     const Transform& tf;

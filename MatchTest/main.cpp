@@ -29,14 +29,17 @@
 #include "CalcOpticalFlow.hpp"
 #include "Epipolar.hpp"
 
+#include "JackInHeadEstimator.hpp"
+
 int main(int argc, const char * argv[])
 {    
     const std::string path = "/Users/masakazu/Desktop/TestImage/";
-    const std::string inputName1 = path + "hall1.jpg";
-    const std::string inputName2 = path + "hall2.jpg";
+    const std::string inputName1 = path + "rothally8.jpg";
+    const std::string inputName2 = path + "rothally6.jpg";
 
     const cv::Size fso(960, 480);
-    const cv::Size fs(960, 480);
+//    const cv::Size fs(960, 480);
+    const cv::Size fs(1000, 500);
     
     cv::Mat input1, img1, input2, img2;
     input1 = cv::imread(inputName1);
@@ -47,15 +50,21 @@ int main(int argc, const char * argv[])
     const Transform tfo(fso);
     const Transform tf(fs);
     
-    const int numThre = 15;
+    JackInHeadEstimator jihe(tf);
+    
+    
+    const int numThre = 10;
     const Epipolar epi(numThre);
     // -----------------------------------------------------
     // 特徴点マッチング用
     const int divNum = 6;
     ExtractFeaturePoint efp(fs, tf, divNum);
     
-    const float distThre = 200;
-    const float coordThre = 0.5;
+    
+    const float distThre = 150;
+    const float coordThre = 1.0;
+    
+    
     MatchFeaturePoint mfp(tf, distThre, coordThre);
     
     const float fieldAngle = M_PI / 4.0;
@@ -76,11 +85,12 @@ int main(int argc, const char * argv[])
     OpticalFlowEstimator ofe(tf, cof, per, epi);
     // -----------------------------------------------------
     
-    MainProcess mp(tfo, fme, ofe);
+    MainProcess mp(tfo, fme, ofe, jihe);
     
     cv::Mat modImg2;
     mp.modifyLatImgFeatureMatch(img1, img2, modImg2);
-    //mp.modifyLatImgOpticalFlow(img1, img2, modImg2);
+//    mp.modifyLatImgOpticalFlow(img1, img2, modImg2);
+//    mp.modifyLatImgJackInHead(img1, img2, modImg2);
     
     cv::namedWindow("img1");
     cv::namedWindow("img2");

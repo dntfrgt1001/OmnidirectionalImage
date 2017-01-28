@@ -19,9 +19,9 @@
 
 int main(int argc, const char * argv[])
 {
-    const std::string path = "/Users/masakazu/Desktop/";
-    const std::string inputName = path + "hall1.jpg";
-    const std::string outputName = path + "rothall.jpg";
+    const std::string path = "/Users/masakazu/Desktop/TestImage/";
+    const std::string inputName = path + "hall.jpg";
+    const std::string outputName = path + "rothallz6.jpg";
     
 //    const cv::Size frameSize(1280, 640);
     const cv::Size frameSize(5376, 2688);
@@ -34,8 +34,8 @@ int main(int argc, const char * argv[])
     
     cv::Mat rotImg;
     
-    float anglez = 0 * M_PI/8.0;
-    cv::Vec3f axisz(1.0, 1.0, 1.0);
+    float anglez = 1 * M_PI/6.0;
+    cv::Vec3f axisz(0.0, 0.0, 1.0);
     axisz = axisz / cv::norm(axisz);
     cv::Mat rotMatz = Rotation::RotVec2RotMat(anglez * axisz);
     
@@ -43,7 +43,7 @@ int main(int argc, const char * argv[])
     cv::Vec3f axisx(1.0, 0.0, 0.0);
     cv::Mat rotMatx = Rotation::RotVec2RotMat(anglex * axisx);
     
-    float angley = 1 * M_PI / 4.0;
+    float angley = 0 * M_PI / 4.0;
     cv::Vec3f axisy(0.0, 1.0, 0.0);
     cv::Mat rotMaty = Rotation::RotVec2RotMat(angley * axisy);
     

@@ -30,19 +30,18 @@
 
 int main(int argc, const char * argv[])
 {
-    // ffmpeg -f image2 -r 30 -i image%4d.jpg -pix_fmt yuv420p video.mp4
-    
+ // ffmpeg -f image2 -r 30 -i image\%04d.jpg -an -vcodec libx264 -pix_fmt yuv420p video.mp4
     //    const std::string path = "/Users/masakazu/Desktop/casio/bowling/02/";
-    const std::string path = "/Users/masakazu/Desktop/wmovie/";
-    const std::string inputVideoName = path + "sample2-rot";
-    const std::string outputVideoName = path + "sample2-7";
+    const std::string path = "/Users/masakazu/Desktop/Jack/";
+    const std::string inputVideoName = path + "sample52";
+    const std::string outputVideoName = path + "sample52-4";
     
     const cv::Size fso(960, 480);
-    const cv::Size fs(800, 400);
+    const cv::Size fs(960, 480);
     
     int stride = 1;
     VideoReaderPic vr(fso, inputVideoName, stride);
-    VideoWriterMov vw(fso, outputVideoName);
+    VideoWriterPic vw(fso, outputVideoName);
     
     const Transform tfo(fso);
     const Transform tf(fs);
@@ -54,21 +53,21 @@ int main(int argc, const char * argv[])
     const int divNum = 6;
     const ExtractFeaturePoint efp(fs, tf, divNum);
     
-    const float distThre = 250;
-    const float coordThre = 0.28;
+    const float distThre = 200;
+    const float coordThre = 0.5;
     const MatchFeaturePoint mfp(tf, distThre, coordThre);
     
-    const float fieldAngle = M_PI / 3.8;
+    const float fieldAngle = M_PI / 2.5;
     const Range ran(fs, tf, fieldAngle);
     
     FeatureMatchEstimator fme(tf, efp, mfp, epi, ran);
     // -----------------------------------------------------
     // オプティカルフロー用
-    const int persRad = 150;
+    const int persRad = 250;
     const float ranAng = M_PI / 4.0;
     const Perspective per(tf, persRad, ranAng);
     
-    const float margin = 0.1;
+    const float margin = 0.05;
     const float angRag = M_PI / 4.0;
     const float normRat = 3.0;
     const CalcOpticalFlow cof(margin, per, angRag, normRat);
@@ -76,7 +75,9 @@ int main(int argc, const char * argv[])
     OpticalFlowEstimator ofe(tf, cof, per, epi);
     // -----------------------------------------------------
 
-    MainProcess mp(tfo, fme, ofe);
+    JackInHeadEstimator jhe(tf);
+    
+    MainProcess mp(tfo, fme);
     
     mp.modVideo(vr, vw);
     

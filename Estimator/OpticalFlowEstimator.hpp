@@ -12,6 +12,9 @@
 #include <stdio.h>
 
 #include <opencv2/core.hpp>
+#include <string>
+#include <iostream>
+#include <iomanip>
 
 #include "Estimator.hpp"
 #include "Perspective.hpp"
@@ -27,12 +30,13 @@ public:
      const Perspective& per, const Epipolar& epi):
     Estimator(tf), cof(cof), per(per), epi(epi) {};
     
+    // インタフェース
     cv::Mat getRotMat
-    (const cv::Mat& forImg, const cv::Mat& latImg, const int frameNum);
+    (const cv::Mat& forImg, const cv::Mat& latImg, const State& state);
     
+    // 実体
     cv::Mat getRotMat
-    (const cv::Mat& forImg, const cv::Mat& latImg, const int frameNum,
-     const cv::Mat& curRotMat) const;
+    (const cv::Mat& forImg, const cv::Mat& latImg, const cv::Mat& curRotMat);
     
 private:
     const CalcOpticalFlow& cof;

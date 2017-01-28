@@ -101,8 +101,8 @@ void CalcOpticalFlow::drawOpticalFlow
     for (int i = 0; i < forPerss.size(); i++) {
         cv::line
         (drawImg, forPerss[i], latPerss[i],
-         cv::Scalar(rand()%256, rand()%256, rand()%256), 2, CV_AA);
+         cv::Scalar(rand()%256, rand()%256, rand()%256), 5, CV_AA);
         cv::circle
-        (drawImg, latPerss[i], 3, cv::Scalar(0, 0, 0), -1, CV_AA);
+        (drawImg, forPerss[i], 10, cv::Scalar(0, 0, 0), -1, CV_AA);
     }
 }

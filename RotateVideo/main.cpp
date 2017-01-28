@@ -21,12 +21,13 @@
 int main(int argc, const char * argv[])
 {
 //    const std::string path = "/Users/masakazu/Desktop/casio/bowling/02/";
-    const std::string path = "/Users/masakazu/Desktop/wmovie/";
-    const std::string inputVideoName = path + "sample2.mp4";
-    const std::string outputVideoName = path + "sample2-rot";
+    const std::string path = "/Users/masakazu/Desktop/Jack/";
+    const std::string inputVideoName = path + "sample14.mp4";
+    const std::string outputVideoName = path + "sample14-rot";
     
-    const cv::Size frameSize(1920, 960);
+//    const cv::Size frameSize(1920, 960);
 //    const cv::Size frameSize(480, 240);
+    const cv::Size frameSize(800, 400);
     
     Transform tf(frameSize);
     const int stride = 1;
@@ -34,13 +35,13 @@ int main(int argc, const char * argv[])
     
     cv::Mat rotImg;
     
-    cv::Vec3f rotVec1 = M_PI * cv::Vec3f(0.0, 1.0, 0.0);
+    cv::Vec3f rotVec1 = 1 * M_PI/0.90 * cv::Vec3f(0.0, 1.0, 0.0);
     cv::Mat rotMat1 = Rotation::RotVec2RotMat(rotVec1);
     
-    cv::Vec3f rotVec2 = 0* M_PI/2.2 * cv::Vec3f(1.0, 0.0, 0.0);
+    cv::Vec3f rotVec2 = 1 * M_PI/20.0 * cv::Vec3f(0.0, 0.0, 1.0);
     cv::Mat rotMat2 = Rotation::RotVec2RotMat(rotVec2);
     
-    cv::Vec3f rotVec3 =  0 * M_PI/3.8 * cv::Vec3f(0.0, 1.0, 0.0);
+    cv::Vec3f rotVec3 = 0 * M_PI/0.95 * cv::Vec3f(0.0, 1.0, 0.0);
     cv::Mat rotMat3 = Rotation::RotVec2RotMat(rotVec3);
     
     cv::Vec3f rotVec4 = 0 * M_PI/2.5 * cv::Vec3f(1.0, 0.0, 0.0);
@@ -58,7 +59,7 @@ int main(int argc, const char * argv[])
     cv::imshow("original", img);
     cv::imshow("rotated", rotImg);
     
-    cv::waitKey(-1);
+    cv::waitKey(10000);
     
     VideoWriterPic vw(frameSize, outputVideoName);
     

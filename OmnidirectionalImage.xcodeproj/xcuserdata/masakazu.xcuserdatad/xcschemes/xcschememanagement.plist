@@ -9,6 +9,11 @@
 			<key>orderHint</key>
 			<integer>5</integer>
 		</dict>
+		<key>Blur.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>16</integer>
+		</dict>
 		<key>ConvertGyro.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
@@ -23,6 +28,11 @@
 		<dict>
 			<key>orderHint</key>
 			<integer>6</integer>
+		</dict>
+		<key>Fish2Sphere.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>15</integer>
 		</dict>
 		<key>FrameMatchTest.xcscheme</key>
 		<dict>
@@ -169,6 +179,11 @@
 			<key>primary</key>
 			<true/>
 		</dict>
+		<key>02670DED1E2A366E00CC5E12</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
 		<key>026B3EA51CA1A460008B59CD</key>
 		<dict>
 			<key>primary</key>
@@ -220,6 +235,11 @@
 			<true/>
 		</dict>
 		<key>02C4C3641E10CA580098ACFA</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>02EE73201E35E731006686BD</key>
 		<dict>
 			<key>primary</key>
 			<true/>

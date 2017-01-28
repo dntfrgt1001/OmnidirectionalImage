@@ -27,6 +27,14 @@ public:
     (const std::vector<Normal>& forNormals,
      const std::vector<Normal>& latNormals, cv::Mat& mask) const;
     
+    cv::Mat getRotMatEssMat2
+    (const std::vector<Normal>& forNormals,
+     const std::vector<Normal>& latNormals,
+     const std::vector<Normal>& fn1, const std::vector<Normal>& ln1,
+     const std::vector<Normal>& fn2, const std::vector<Normal>& ln2,
+     const std::vector<Normal>& fn3, const std::vector<Normal>& ln3,
+     const std::vector<Normal>& fn4, const std::vector<Normal>& ln4) const;
+     
     // マスクから重みを計算する
     float getWeight(const cv::Mat& mask) const;
     

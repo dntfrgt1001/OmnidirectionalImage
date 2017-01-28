@@ -10,6 +10,7 @@
 #define IMUEstimator_hpp
 
 #include <stdio.h>
+#include <iostream>
 #include <opencv2/core.hpp>
 #include <opencv2/video.hpp>
 

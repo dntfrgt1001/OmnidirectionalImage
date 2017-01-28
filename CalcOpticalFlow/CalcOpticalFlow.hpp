@@ -21,8 +21,7 @@ public:
     CalcOpticalFlow
     (const float margin, const Perspective& per,
      const float angRag, const float normRat):
-    optflowMask(per.getMask(margin)),
-    cosRag(cosf(angRag)), normRat(normRat) {};
+    optflowMask(per.getMask(margin)), cosRag(cosf(angRag)), normRat(normRat) {};
     
     // オプティカルフローを求める
     void getOpticalFlow
@@ -100,8 +99,8 @@ public:
 
 private:
     const cv::Mat optflowMask;
-    const float cosRag;
-    const float normRat;
+    const float cosRag; // 半径方向との直交性の基準
+    const float normRat; // ノルムの基準
 };
 
 #endif /* CalcOpticalFlow_hpp */

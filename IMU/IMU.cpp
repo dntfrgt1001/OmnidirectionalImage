@@ -8,9 +8,9 @@
 
 #include "IMU.hpp"
 
-const float IMU::dt = 0.05;
-const float IMU::sensAccel = 0.005;
-const float IMU::sensGyro = 0.03 *  M_PI / 180;
+const float IMU::dt = 1.0 / 30.0;
+const float IMU::sensAccel = 0.00061;
+const float IMU::sensGyro = 0.00763 *  M_PI / 180;
 
 void IMU::printIMUData(const IMUData &data)
 {

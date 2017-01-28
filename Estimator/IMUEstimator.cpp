@@ -21,7 +21,7 @@ Estimator(tf), imu(imu), kalman(cv::KalmanFilter(7, 3, 0, CV_32FC1))
     cv::setIdentity(kalman.measurementMatrix);
     
     // 遷移誤差分散共分散行列の初期化
-    cv::setIdentity(kalman.processNoiseCov, cv::Scalar::all(1e-5));
+    cv::setIdentity(kalman.processNoiseCov, cv::Scalar::all(1e-4));
     
     // 観測誤差分散共分散行列の初期化
     cv::setIdentity(kalman.measurementNoiseCov, cv::Scalar::all(0.5));
@@ -35,6 +35,79 @@ Estimator(tf), imu(imu), kalman(cv::KalmanFilter(7, 3, 0, CV_32FC1))
     
     printMatrix();
     
+}
+
+cv::Mat IMUEstimator::getRotMat
+(const cv::Mat &forImg, const cv::Mat &latImg, const int frameNum)
+{
+    // IMUデータの取り出し
+    std::vector<IMUData> datas;
+    const int dataNum = imu.inputDataSet(datas);
+    
+    if (dataNum == 0) {
+        std::cout << "no sensor data" << std::endl;
+        exit(1);
+    }
+    
+    // 姿勢変化集積
+    cv::Mat rotMat = cv::Mat::eye(3, 3, CV_32FC1);
+    
+    // データ組数だけ更新処理
+    for (int i = 0; i < dataNum; i++) {
+        updatePose(datas[i]);
+    }
+    
+    // 更新処理後の姿勢を回転行列で返す
+    return Rotation::Quat2RotMat(Quaternion
+                                 (kalman.statePost.at<float>(0),
+                                  kalman.statePost.at<float>(1),
+                                  kalman.statePost.at<float>(2),
+                                  kalman.statePost.at<float>(3)));
+}
+
+void IMUEstimator::updatePose(const IMUData& data)
+{
+    //    std::cout << "prev state = " << std::endl << kalman.statePost.t() << std::endl;
+    
+    
+    // センサ値から回転ベクトルを得る
+    cv::Vec3f angVelVec(IMU::getGyroValue(data.gyro_x),
+                        IMU::getGyroValue(data.gyro_y),
+                        IMU::getGyroValue(data.gyro_z));
+    
+    //   std::cout << "rot vector = " << std::endl << angVelVec << std::endl;
+    
+    // 現在の遷移行列を設定
+    kalman.transitionMatrix = getTransMat(angVelVec);
+    
+    //    std::cout << "transition matrix = " << std::endl << kalman.transitionMatrix << std::endl;
+    
+    // 予測
+    kalman.predict();
+    
+    // 現在の観測行列を設定
+    kalman.measurementMatrix = getMeasureMat();
+    
+    // センサ値から加速度を得る
+    cv::Mat measure = (cv::Mat_<float>(3, 1) <<
+                       IMU::getAccelValue(data.accel_x),
+                       IMU::getAccelValue(data.accel_y),
+                       IMU::getAccelValue(data.accel_z));
+    
+    std::cout << "measure = " << std::endl << measure << std::endl;
+    //    std::cout << "measure mult = " << std::endl << kalman.measurementMatrix*kalman.statePre << std::endl;
+    std::cout << "error = " << measure - kalman.measurementMatrix*kalman.statePre << std::endl;
+    
+    //    std::cout << "measurement matrix = " << std::endl << kalman.measurementMatrix << std::endl;
+    
+    // 修正
+    kalman.correct(measure);
+    
+    // 四元数を正規化
+    normalQuat();
+    
+    //    std::cout << "next state = " << std::endl << kalman.statePost.t() << std::endl;
+    //std::cout << "post error covariance matrix = " << std::endl << kalman.errorCovPost << std::endl;
 }
 
 cv::Mat IMUEstimator::getTransMat(const cv::Vec3f &angVel)
@@ -54,7 +127,7 @@ cv::Mat IMUEstimator::getTransMat(const cv::Vec3f &angVel)
     // バイアスを考慮した回転の四元数
     Quaternion quatBias(angleBias, rotVecBias);
 
-    std::cout << "cur rot quaternion = " << std::endl << quatBias << std::endl;
+//    std::cout << "cur rot quaternion = " << std::endl << quatBias << std::endl;
     
     return cv::Mat_<float>(7, 7) <<
         quatBias.w, -quatBias.x, -quatBias.y, -quatBias.z, 0, 0, 0,
@@ -85,72 +158,7 @@ cv::Mat IMUEstimator::getMeasureMat()
 }
 
 
-cv::Mat IMUEstimator::getRotMat
-(const cv::Mat &forImg, const cv::Mat &latImg, const int frameNum)
-{
-    // IMUデータの取り出し
-    std::vector<IMUData> datas;
-    const int dataNum = imu.inputDataSet(datas);
-    
-    // 姿勢変化集積
-    cv::Mat rotMat = cv::Mat::eye(3, 3, CV_32FC1);
-    
-    // データ組数だけ更新処理
-    for (int i = 0; i < dataNum; i++) {
-        updatePose(datas[i]);
-    }
-    
-    // 更新処理後の姿勢を回転行列で返す
-    return Rotation::Quat2RotMat(Quaternion
-                                 (kalman.statePost.at<float>(0),
-                                  kalman.statePost.at<float>(1),
-                                  kalman.statePost.at<float>(2),
-                                  kalman.statePost.at<float>(3)));
-}
 
-void IMUEstimator::updatePose(const IMUData& data)
-{
-    std::cout << "prev state = " << std::endl << kalman.statePost.t() << std::endl;
-
-    
-    // センサ値から回転ベクトルを得る
-    cv::Vec3f angVelVec(IMU::getGyroValue(data.gyro_x),
-                        IMU::getGyroValue(data.gyro_y),
-                        IMU::getGyroValue(data.gyro_z));
-    
-    std::cout << "rot vector = " << std::endl << angVelVec << std::endl;
-    
-    // 現在の遷移行列を設定
-    kalman.transitionMatrix = getTransMat(angVelVec);
-    
-    std::cout << "transition matrix = " << std::endl << kalman.transitionMatrix << std::endl;
-    
-    // 予測
-    kalman.predict();
-    
-    // 現在の観測行列を設定
-    kalman.measurementMatrix = getMeasureMat();
-    
-    // センサ値から加速度を得る
-    cv::Mat measure = (cv::Mat_<float>(3, 1) <<
-                       IMU::getAccelValue(data.accel_x),
-                       IMU::getAccelValue(data.accel_y),
-                       IMU::getAccelValue(data.accel_z));
-    
-    std::cout << "measure = " << std::endl << measure << std::endl;
-    std::cout << "measure mult = " << std::endl << kalman.measurementMatrix*kalman.statePre << std::endl;
-    std::cout << "error = " << measure - kalman.measurementMatrix*kalman.statePre << std::endl;
-    
-    std::cout << "measurement matrix = " << std::endl << kalman.measurementMatrix << std::endl;
-    
-    // 修正
-    kalman.correct(measure);
-    
-    // 四元数を正規化
-    normalQuat();
-    
-    std::cout << "next state = " << std::endl << kalman.statePost.t() << std::endl;
-}
 
 void IMUEstimator::normalQuat()
 {

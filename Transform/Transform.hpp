@@ -316,7 +316,7 @@ public:
     // チャンネル数の変換
     static void changeChannel(const cv::Mat& img, cv::Mat& outImg);
     
-private:
+//private:
     const cv::Size& fs;
 };
 

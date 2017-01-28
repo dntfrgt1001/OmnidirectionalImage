@@ -13,10 +13,10 @@ ExtractFeaturePoint::ExtractFeaturePoint
 fs(fs), tf(tf), divNum(divNum), validHeight(tf.dphi2v(M_PI)/divNum),
 mergin(10), roi(cv::Rect(0, (fs.height - validHeight)/2 - mergin,
                          fs.width, validHeight + mergin*2)),
-//feature(cv::xfeatures2d::SIFT::create())
+feature(cv::xfeatures2d::SIFT::create())
 //feature(cv::AKAZE::create())
 //feature(cv::xfeatures2d::SURF::create())
-feature(cv::ORB::create())
+//feature(cv::ORB::create())
 {
     setLowLatMask();
 }

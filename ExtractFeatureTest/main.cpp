@@ -22,13 +22,14 @@
 
 int main(int argc, const char * argv[])
 {
-    const std::string path = "/Users/masakazu/Desktop/";
-    const std::string inputName = path + "img1.jpg";
+    const std::string path = "/Users/masakazu/Desktop/TestImage/";
+    const std::string inputName = path + "hall.jpg";
     const std::string outputName = path + "key.jpg";
 //    const cv::Size frameSize(960, 480);
-    const cv::Size frameSize(640, 320);
+//    const cv::Size frameSize(640, 320);
+    const cv::Size frameSize(800, 400);
     
-    cv::Mat input, img;
+    cv::Mat input, img, grayimg;
     input = cv::imread(inputName);
     cv::resize(input, img, frameSize);
     
@@ -45,7 +46,7 @@ int main(int argc, const char * argv[])
     
     std::vector<cv::KeyPoint> keyPoints;
     cv::Mat descriptors;
-    efp.extractFeaturePoint(img, keyPoints, descriptors);
+    efp.extFeat(img, keyPoints, descriptors);
 
     cv::Mat keyPointImg;
     
