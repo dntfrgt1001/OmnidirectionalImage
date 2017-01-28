@@ -36,13 +36,27 @@ void MainProcess::printMatInfo()
 void MainProcess::modImg
 (const cv::Mat &forImg, const cv::Mat &latImg, cv::Mat &latImgMod)
 {
-    const State curState = {frameNum, curRotMat};
+    struct timeval estStart, estEnd;
+    gettimeofday(&estStart, NULL);
     
+    const State curState = {frameNum, curRotMat};
     curRotMat = est.getRotMat(forImg, latImg, curState);
     
-    accRotMat = accRotMat * curRotMat;
+    gettimeofday(&estEnd, NULL);
+    double estTime = (double) (estEnd.tv_sec - estStart.tv_sec) +
+                     (estEnd.tv_usec - estStart.tv_usec) * 1e-6;
+    std::cout << "est time = " << estTime << std::endl;
     
+    struct timeval rotStart, rotEnd;
+    gettimeofday(&rotStart, NULL);
+    
+    accRotMat = accRotMat * curRotMat;
     tf.rotateImg(latImg, latImgMod, accRotMat);
+    
+    gettimeofday(&rotEnd, NULL);
+    double rotTime = (double) (rotEnd.tv_sec - rotStart.tv_sec) +
+                     (rotEnd.tv_usec - rotStart.tv_usec) * 1e-6;
+    std::cout << "rot time = " << rotTime << std::endl;
 }
 
 void MainProcess::modVideo(VideoReader &vr, VideoWriter &vw)
@@ -63,6 +77,9 @@ void MainProcess::modVideo(VideoReader &vr, VideoWriter &vw)
     
     // 繰り返し処理
     while (vr.hasNext()) {
+        struct timeval frmStart, frmEnd;
+        gettimeofday(&frmStart, NULL);
+        
         // フレームをずらす
         forImg = latImg.clone();
         vr.readImg(latImg);
@@ -81,7 +98,12 @@ void MainProcess::modVideo(VideoReader &vr, VideoWriter &vw)
         std::cout << frameNum << " th frame finished" << std::endl;
         frameNum ++;
         
-        cv::waitKey(0);
+        gettimeofday(&frmEnd, NULL);
+        double frmTime = (double) (frmEnd.tv_sec - frmStart.tv_sec) +
+                         (frmEnd.tv_usec - frmStart.tv_usec) * 1e-6;
+        std::cout << "frm time = " << frmTime << std::endl;
+        
+        cv::waitKey(3000);
     }
 }
 

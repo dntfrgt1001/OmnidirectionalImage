@@ -32,15 +32,15 @@ int main(int argc, const char * argv[])
 {
  // ffmpeg -f image2 -r 30 -i image\%04d.jpg -an -vcodec libx264 -pix_fmt yuv420p video.mp4
     //    const std::string path = "/Users/masakazu/Desktop/casio/bowling/02/";
-    const std::string path = "/Users/masakazu/Desktop/Jack/";
-    const std::string inputVideoName = path + "sample52";
-    const std::string outputVideoName = path + "sample52-4";
+    const std::string path = "/Users/masakazu/Desktop/Sample/";
+    const std::string inputVideoName = path + "sample1.mp4";
+    const std::string outputVideoName = path + "sample1-1";
     
     const cv::Size fso(960, 480);
     const cv::Size fs(960, 480);
     
     int stride = 1;
-    VideoReaderPic vr(fso, inputVideoName, stride);
+    VideoReaderMov vr(fso, inputVideoName, stride);
     VideoWriterPic vw(fso, outputVideoName);
     
     const Transform tfo(fso);

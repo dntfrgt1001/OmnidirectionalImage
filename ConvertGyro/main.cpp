@@ -45,7 +45,8 @@ int main(int argc, const char * argv[])
     const std::string inputfile = path + "log.txt";
     
     // シリアルポート設定
-    const std::string port = "/dev/tty.usbmodem1422";
+//    const std::string port = "/dev/tty.usbmodem1422";
+    const std::string port = "/dev/tty.usbmodem1412";
     const speed_t baudRate = B57600;
     
     // バッファサイズ

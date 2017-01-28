@@ -52,11 +52,15 @@ cv::Mat FeatureMatchEstimator::getRotMat
     cv::Mat forImgGray, latImgGray;
     cv::cvtColor(forImgRes, forImgGray, CV_BGR2GRAY);
     cv::cvtColor(latImgRes, latImgGray, CV_BGR2GRAY);
+
+    
+    struct timeval featStart, featEnd;
+    gettimeofday(&featStart, NULL);
+    
     
     // 特徴抽出
     std::vector<cv::KeyPoint> forKeyPointSet, latKeyPointSet;
     cv::Mat forDescSet, latDescSet;
-
     // 直前も特徴マッチ法なら直前フレームの特徴を使いまわし
     if (frameNum - prevFrameNum == 1) {
         forKeyPointSet = curKeyPointSet;
@@ -70,6 +74,11 @@ cv::Mat FeatureMatchEstimator::getRotMat
     
     
     
+    gettimeofday(&featEnd, NULL);
+    double featTime = (double) (featEnd.tv_sec - featStart.tv_sec) +
+                      (featEnd.tv_usec - featStart.tv_usec) * 1e-6;
+    std::cout << "feat time = " << featTime << std::endl;
+    
     /*
     cv::Mat imgKeyPoint1;
     cv::Mat imgKeyPoint2;
@@ -82,17 +91,21 @@ cv::Mat FeatureMatchEstimator::getRotMat
     cv::waitKey();
     */
     
+    
+    struct timeval matchStart, matchEnd;
+    gettimeofday(&matchStart, NULL);
+    
+    
     // マッチング＆フィルタリング
     std::vector<cv::DMatch> matchs;
     mfp.match(forDescSet, latDescSet, matchs);
     mfp.filterMatchDistance(matchs);
     
-    // マッチした特徴点を得る
+    // マッチした特徴点を並べる
     std::vector<cv::KeyPoint> forKeyPoints, latKeyPoints;
-    
-    // マッチの距離でフィルタ
     mfp.getMatchKeyPoint
-    (forKeyPointSet, latKeyPointSet, matchs, forKeyPoints, latKeyPoints);
+    (forKeyPointSet, latKeyPointSet, matchs,
+     forKeyPoints, latKeyPoints);
     
     // 画像座標に変換
     std::vector<Equirect> forEquirects(forKeyPoints.size());
@@ -109,6 +122,11 @@ cv::Mat FeatureMatchEstimator::getRotMat
     
     // ３次元空間上の距離でフィルタ
     mfp.filterCoordDistance(forSpheres, latSpheres);
+    
+    gettimeofday(&matchEnd, NULL);
+    double matchTime = (double)(matchEnd.tv_sec - matchStart.tv_sec) +
+                       (matchEnd.tv_usec - matchStart.tv_usec) * 1e-6;
+    std::cout << "match time = " << matchTime << std::endl;
     
 /*
     std::vector<Equirect> forEquiLast, latEquiLast;
@@ -206,6 +224,9 @@ cv::Mat FeatureMatchEstimator::getRotMatWeightMax
 (const std::vector<Sphere> &forSpheres,
  const std::vector<Sphere> &latSpheres, int &maxIdx) const
 {
+    struct timeval essStart, essEnd;
+    gettimeofday(&essStart, NULL);
+    
     std::vector<cv::Mat> rotMats(froChgMats.size());
     std::vector<float> weights(froChgMats.size());
     
@@ -237,6 +258,11 @@ cv::Mat FeatureMatchEstimator::getRotMatWeightMax
      rotMatAxis =
      getRotMatSpecDir(forSpheres, latSpheres, froChgMatAxis, weightAxis);
      */
+    
+    gettimeofday(&essEnd, NULL);
+    double essTime = (double) (essEnd.tv_sec - essStart.tv_sec) +
+                      (essEnd.tv_usec - essStart.tv_usec) * 1e-6;
+    std::cout << "ess time = " << essTime << std::endl;
     
     return rotMats[maxIdx];
 }
