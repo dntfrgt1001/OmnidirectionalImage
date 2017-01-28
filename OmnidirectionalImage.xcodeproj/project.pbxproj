@@ -149,6 +149,8 @@
 		02A9B6FA1DC2004B00D4A0E7 /* Epipolar.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 02A9B6F81DC2004B00D4A0E7 /* Epipolar.cpp */; };
 		02A9B6FD1DC232AA00D4A0E7 /* OpticalFlowEstimator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 02A9B6FB1DC232AA00D4A0E7 /* OpticalFlowEstimator.cpp */; };
 		02A9B7011DC23E8200D4A0E7 /* CalcOpticalFlow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 02A9B6FF1DC23E8200D4A0E7 /* CalcOpticalFlow.cpp */; };
+		02AFBD6B1E3C7B8F00ECA673 /* libopencv_core.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 02670DC51E1F631E00CC5E12 /* libopencv_core.dylib */; };
+		02AFBD6D1E3C7B9B00ECA673 /* libopencv_calib3d.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 02670DC71E1F632900CC5E12 /* libopencv_calib3d.dylib */; };
 		02B1BD721E303B9A0023E580 /* libopencv_core.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 02670DC51E1F631E00CC5E12 /* libopencv_core.dylib */; };
 		02B1BD731E303B9D0023E580 /* libopencv_highgui.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 02670DC91E1F633F00CC5E12 /* libopencv_highgui.dylib */; };
 		02B1BD741E303BA00023E580 /* libopencv_imgcodecs.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 02670DDC1E2747C000CC5E12 /* libopencv_imgcodecs.dylib */; };
@@ -570,6 +572,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				02AFBD6D1E3C7B9B00ECA673 /* libopencv_calib3d.dylib in Frameworks */,
+				02AFBD6B1E3C7B8F00ECA673 /* libopencv_core.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1960,7 +1964,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				HEADER_SEARCH_PATHS = "$(inherited)";
-				LIBRARY_SEARCH_PATHS = "$(inherited)";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					/usr/local/Cellar/opencv3/3.2.0/lib,
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -1969,7 +1976,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				HEADER_SEARCH_PATHS = "$(inherited)";
-				LIBRARY_SEARCH_PATHS = "$(inherited)";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					/usr/local/Cellar/opencv3/3.2.0/lib,
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;

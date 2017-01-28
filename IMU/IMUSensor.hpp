@@ -49,6 +49,12 @@ public:
     // char型のデータ組をshort型に変換
     void getShortData(const char charData[], short shortData[]);
     
+    // 加速度データの符号を反転
+    void invAccel(IMUData& data) {
+        data.accel_x*=-1; data.accel_y*=-1; data.accel_z+=-1;
+    }
+    
+    // データ組を返す
     IMUData getDataSet(const short shortData[]);
     
     // char型を連結してshort型にする
