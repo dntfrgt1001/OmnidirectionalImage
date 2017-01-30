@@ -76,8 +76,9 @@ int main(int argc, const char * argv[])
     // -----------------------------------------------------
 
     JackInHeadEstimator jhe(tf);
+    // -----------------------------------------------------
     
-    MainProcess mp(tfo, fme);
+    MainProcess mp(tfo, jhe);
     
     mp.modVideo(vr, vw);
     

@@ -103,7 +103,7 @@ void MainProcess::modVideo(VideoReader &vr, VideoWriter &vw)
                          (frmEnd.tv_usec - frmStart.tv_usec) * 1e-6;
         std::cout << "frm time = " << frmTime << std::endl;
         
-        cv::waitKey(3000);
+        cv::waitKey(1000);
     }
 }
 
