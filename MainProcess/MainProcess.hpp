@@ -37,6 +37,9 @@ public:
     void modImg
     (const cv::Mat& forImg, const cv::Mat& latImg, cv::Mat& latImgMod);
     
+    // 補助エスティメータあり
+    void modVideo(VideoReader& vr, VideoWriter& vw, Estimator& estSub);
+    
     void printMatInfo();
     
 private:

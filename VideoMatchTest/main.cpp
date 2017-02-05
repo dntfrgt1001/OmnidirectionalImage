@@ -32,9 +32,9 @@ int main(int argc, const char * argv[])
 {
  // ffmpeg -f image2 -r 30 -i image\%04d.jpg -an -vcodec libx264 -pix_fmt yuv420p video.mp4
     //    const std::string path = "/Users/masakazu/Desktop/casio/bowling/02/";
-    const std::string path = "/Users/masakazu/Desktop/Sample/";
-    const std::string inputVideoName = path + "sample1.mp4";
-    const std::string outputVideoName = path + "sample1-1";
+    const std::string path = "/Users/masakazu/Desktop/Jack/";
+    const std::string inputVideoName = path + "sample55.mp4";
+    const std::string outputVideoName = path + "sample55-2";
     
     const cv::Size fso(960, 480);
     const cv::Size fs(960, 480);
@@ -53,8 +53,8 @@ int main(int argc, const char * argv[])
     const int divNum = 6;
     const ExtractFeaturePoint efp(fs, tf, divNum);
     
-    const float distThre = 200;
-    const float coordThre = 0.5;
+    const float distThre = 250;
+    const float coordThre = 0.35;
     const MatchFeaturePoint mfp(tf, distThre, coordThre);
     
     const float fieldAngle = M_PI / 2.5;
@@ -63,7 +63,7 @@ int main(int argc, const char * argv[])
     FeatureMatchEstimator fme(tf, efp, mfp, epi, ran);
     // -----------------------------------------------------
     // オプティカルフロー用
-    const int persRad = 250;
+    const int persRad = 150;
     const float ranAng = M_PI / 4.0;
     const Perspective per(tf, persRad, ranAng);
     
@@ -78,9 +78,11 @@ int main(int argc, const char * argv[])
     JackInHeadEstimator jhe(tf);
     // -----------------------------------------------------
     
-    MainProcess mp(tfo, jhe);
+//    MainProcess mp(tfo, fme);
+    MainProcess mp(tfo, ofe);
     
     mp.modVideo(vr, vw);
+//    mp.modVideo(vr, vw, fme);
     
     cv::Mat curRotMat = (cv::Mat_<float>(3,3)
                          << -0.39498305, -0.34497485, 0.85145819,

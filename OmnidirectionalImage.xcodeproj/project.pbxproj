@@ -130,6 +130,7 @@
 		027F388A1D5B0F830012DA39 /* Transform.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0245CD8D1C4233E000FF5E33 /* Transform.cpp */; };
 		027F388C1D5B0F8B0012DA39 /* VideoWriter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 02C57BEE1D0FDED300F428F2 /* VideoWriter.cpp */; };
 		027F388D1D5B0F8E0012DA39 /* VideoReader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 02C57BE91D0FB0D100F428F2 /* VideoReader.cpp */; };
+		0280E5221E44433400E094F3 /* FisheyeConvert.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0280E5201E44433400E094F3 /* FisheyeConvert.cpp */; };
 		0287FC241D787B7200E4FE99 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0287FC231D787B7200E4FE99 /* main.cpp */; };
 		0287FC281D787E0F00E4FE99 /* Transform.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0245CD8D1C4233E000FF5E33 /* Transform.cpp */; };
 		029994151C72A9CB00792144 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 029994141C72A9CB00792144 /* main.cpp */; };
@@ -409,6 +410,8 @@
 		027283F21DE4230500EA7D57 /* IMUFile.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = IMUFile.hpp; path = IMU/IMUFile.hpp; sourceTree = "<group>"; };
 		027F387F1D5B0EDB0012DA39 /* RotateVideo */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = RotateVideo; sourceTree = BUILT_PRODUCTS_DIR; };
 		027F38811D5B0EDB0012DA39 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
+		0280E5201E44433400E094F3 /* FisheyeConvert.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FisheyeConvert.cpp; path = FisheyeConvert/FisheyeConvert.cpp; sourceTree = SOURCE_ROOT; };
+		0280E5211E44433400E094F3 /* FisheyeConvert.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = FisheyeConvert.hpp; path = FisheyeConvert/FisheyeConvert.hpp; sourceTree = SOURCE_ROOT; };
 		0287FC211D787B7200E4FE99 /* RotateFrame */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = RotateFrame; sourceTree = BUILT_PRODUCTS_DIR; };
 		0287FC231D787B7200E4FE99 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		028D7A121C302CE200790A10 /* Rotate.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Rotate.cpp; sourceTree = "<group>"; };
@@ -840,6 +843,7 @@
 				0245CD8C1C4233B100FF5E33 /* Transform */,
 				022BA2641DD1ABC00015C380 /* Core */,
 				02A9B6F41DC1EE8A00D4A0E7 /* MainProcess */,
+				0280E5231E44434400E094F3 /* FisheyeConvert */,
 				0298B4791D0A897700B68032 /* old */,
 			);
 			name = class;
@@ -883,6 +887,15 @@
 				027F38811D5B0EDB0012DA39 /* main.cpp */,
 			);
 			path = RotateVideo;
+			sourceTree = "<group>";
+		};
+		0280E5231E44434400E094F3 /* FisheyeConvert */ = {
+			isa = PBXGroup;
+			children = (
+				0280E5201E44433400E094F3 /* FisheyeConvert.cpp */,
+				0280E5211E44433400E094F3 /* FisheyeConvert.hpp */,
+			);
+			name = FisheyeConvert;
 			sourceTree = "<group>";
 		};
 		0287FC221D787B7200E4FE99 /* RotateFrame */ = {
@@ -1633,6 +1646,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0280E5221E44433400E094F3 /* FisheyeConvert.cpp in Sources */,
 				02670DF91E2A43B200CC5E12 /* Transform.cpp in Sources */,
 				02670DF11E2A366E00CC5E12 /* main.cpp in Sources */,
 			);

@@ -88,9 +88,8 @@ cv::Mat FeatureMatchEstimator::getRotMat
     cv::namedWindow("KeyPoint 2");
     cv::imshow("KeyPoint 1", imgKeyPoint1);
     cv::imshow("KeyPoint 2", imgKeyPoint2);
-    cv::waitKey();
+    cv::waitKey(0);
     */
-    
     
     struct timeval matchStart, matchEnd;
     gettimeofday(&matchStart, NULL);
@@ -128,7 +127,6 @@ cv::Mat FeatureMatchEstimator::getRotMat
                        (matchEnd.tv_usec - matchStart.tv_usec) * 1e-6;
     std::cout << "match time = " << matchTime << std::endl;
     
-/*
     std::vector<Equirect> forEquiLast, latEquiLast;
     tf.sphere2equirect(forSpheres, forEquiLast);
     tf.sphere2equirect(latSpheres, latEquiLast);
@@ -137,8 +135,7 @@ cv::Mat FeatureMatchEstimator::getRotMat
     (forImg, forEquiLast, latImg, latEquiLast, imgMatch);
     cv::namedWindow("match");
     cv::imshow("match", imgMatch);
-    cv::waitKey();
-  */
+
     
     // 現在フレーム番号の保存
     prevFrameNum = frameNum;
@@ -224,8 +221,8 @@ cv::Mat FeatureMatchEstimator::getRotMatWeightMax
 (const std::vector<Sphere> &forSpheres,
  const std::vector<Sphere> &latSpheres, int &maxIdx) const
 {
-    struct timeval essStart, essEnd;
-    gettimeofday(&essStart, NULL);
+//    struct timeval essStart, essEnd;
+//    gettimeofday(&essStart, NULL);
     
     std::vector<cv::Mat> rotMats(froChgMats.size());
     std::vector<float> weights(froChgMats.size());
@@ -243,6 +240,7 @@ cv::Mat FeatureMatchEstimator::getRotMatWeightMax
     
     // どの方向でも推定に失敗
     if (!sucFlag) {
+        std::cout << "estimation failed" << std::endl;
         maxIdx = -1;
         return cv::Mat::zeros(3, 3, CV_32FC1);
     }
@@ -259,10 +257,10 @@ cv::Mat FeatureMatchEstimator::getRotMatWeightMax
      getRotMatSpecDir(forSpheres, latSpheres, froChgMatAxis, weightAxis);
      */
     
-    gettimeofday(&essEnd, NULL);
-    double essTime = (double) (essEnd.tv_sec - essStart.tv_sec) +
-                      (essEnd.tv_usec - essStart.tv_usec) * 1e-6;
-    std::cout << "ess time = " << essTime << std::endl;
+//    gettimeofday(&essEnd, NULL);
+//    double essTime = (double) (essEnd.tv_sec - essStart.tv_sec) +
+//                      (essEnd.tv_usec - essStart.tv_usec) * 1e-6;
+//    std::cout << "ess time = " << essTime << std::endl;
     
     return rotMats[maxIdx];
 }

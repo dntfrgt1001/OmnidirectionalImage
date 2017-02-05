@@ -79,8 +79,11 @@ void MatchFeaturePoint::drawMatchVert
     cv::Mat tmpOutImg;
     cv::vconcat(img1, img2, tmpOutImg);
     
-    if (outImg.channels() == 1) Transform::changeChannel(tmpOutImg, outImg);
+//    if (tmpOutImg.channels() == 1) Transform::changeChannel(tmpOutImg, outImg);
     
+    if (tmpOutImg.channels() == 1) cv::cvtColor(tmpOutImg, outImg, CV_GRAY2BGR);
+    else outImg = tmpOutImg.clone();
+        
     for (int i = 0; i < forEquirects.size(); i++) {
         drawLineVert(forEquirects[i], latEquirects[i], outImg);
     }

@@ -11,7 +11,8 @@
 
 #include <stdio.h>
 
-#include <opencv2/core.hpp>
+#include <opencv2/opencv.hpp>
+
 
 class Equirect : public cv::Point2f
 {

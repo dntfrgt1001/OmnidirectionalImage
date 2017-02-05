@@ -62,11 +62,16 @@ cv::Mat OpticalFlowEstimator::getRotMat
     const float rotAng = cv::norm(curRotVec);
     
     // ノルムがおかしいものを削除
-    cof.remNormOutlier(forNormals, latNormals, rotAng);
+//    cof.remNormOutlier(forNormals, latNormals, rotAng);
     
     // 回転行列を推定
     cv::Mat mask;
     cv::Mat rotMat = epi.getRotMatEssMat(forNormals, latNormals, mask);
+    
+    float weight = epi.getWeight(mask);
+    std::cout << "--------------------------------------" << std::endl;
+    std::cout << "weight = " << weight << std::endl;
+    std::cout << "--------------------------------------" << std::endl;
     
     // オプティカルフロー描画
     std::vector<Pers> forPerssLast, latPerssLast;
