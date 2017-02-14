@@ -31,38 +31,38 @@ int main(int argc, const char * argv[])
     input2 = cv::imread(inputName2);
     cv::resize(input2, img2, fs);
     
-    const Transform tf(fs);
+//    const Transform tf(fs);
     
     const int divNum = 6;
-    ExtractFeaturePoint efp(fs, tf, divNum);
+    const int mergin = 10;
+    ExtractFeaturePoint efp(fs, divNum, mergin);
     
-    const float distThre = 200;
-    const float coordThre = 0.3;
-    MatchFeaturePoint mfp(tf, distThre, coordThre);
+    const float eucThre = 250;
+    const float sphereThre = 0.3;
+    MatchFeaturePoint mfp(eucThre, sphereThre);
     
     cv::Mat grayImg1, grayImg2;
     cv::cvtColor(img1, grayImg1, CV_BGR2GRAY);
     cv::cvtColor(img2, grayImg2, CV_BGR2GRAY);
 
     // 特徴抽出
-    std::vector<cv::KeyPoint> KeyPointSet1, KeyPointSet2;
+    std::vector<cv::KeyPoint> keyPoints1, keyPoints2;
     cv::Mat descriptor1, descriptor2;
-    efp.extFeat(grayImg1, KeyPointSet1, descriptor1);
-    efp.extFeat(grayImg2, KeyPointSet2, descriptor2);
+    efp.extFeat(grayImg1, keyPoints1, descriptor1);
+    efp.extFeat(grayImg2, keyPoints2, descriptor2);
     
     cv::Mat drawKeyImg1, drawKeyImg2;
-    efp.drawKeyPointClear(grayImg1, KeyPointSet1, drawKeyImg1);
-    efp.drawKeyPointClear(grayImg2, KeyPointSet2, drawKeyImg2);
+    efp.drawKeyPointClear(grayImg1, keyPoints1, drawKeyImg1);
+    efp.drawKeyPointClear(grayImg2, keyPoints2, drawKeyImg2);
     
     // 特徴マッチ
     std::vector<cv::DMatch> matchs;
     mfp.match(descriptor1, descriptor2, matchs);
     
-    mfp.filterMatchDistance(matchs);
+    mfp.filterMatchEuc(matchs);
     
     // マッチした特徴点
-    std::vector<cv::KeyPoint> keyPoints1, keyPoints2;
-    mfp.getMatchKeyPoint(KeyPointSet1, KeyPointSet2, matchs, keyPoints1, keyPoints2);
+    mfp.orderKeyPoint(keyPoints1, keyPoints2, matchs);
     
     // 画像座標に変換
     std::vector<Equirect> equirects1(keyPoints1.size());
@@ -74,16 +74,15 @@ int main(int argc, const char * argv[])
 
     // 球面座標に変換
     std::vector<Sphere> spheres1, spheres2;
-    tf.equirect2sphere(equirects1, spheres1);
-    tf.equirect2sphere(equirects2, spheres2);
+    Map::equirect2sphere(equirects1, spheres1);
+    Map::equirect2sphere(equirects2, spheres2);
     
     // 幾何学距離でフィルタ
-    mfp.filterCoordDistance(spheres1, spheres2);
+    mfp.filterMatchSphere(spheres1, spheres2);
     
     std::vector<Equirect> equirectsLast1, equirectsLast2;
-    tf.sphere2equirect(spheres1, equirectsLast1);
-    tf.sphere2equirect(spheres2, equirectsLast2);
-    
+    Map::sphere2equirect(spheres1, equirectsLast1);
+    Map::sphere2equirect(spheres2, equirectsLast2);
     
     cv::Mat drawMatchImg;
     mfp.drawMatchVert(grayImg1, equirectsLast1, grayImg2, equirectsLast2, drawMatchImg);

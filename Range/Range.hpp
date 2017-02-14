@@ -14,50 +14,35 @@
 
 #include <opencv2/core.hpp>
 
-#include "Transform.hpp"
+//#include "Transform.hpp"
+#include "Core.hpp"
 
 class Range {
 public:
-    Range
-    (const cv::Size& frameSize, const Transform& tf,
-     const float rangeAngle);
+    Range(const float fovAngle);
     
-    
-    // 特徴点がカメラの前後にあるか
-    bool isInRange(const cv::Point2f& normal) const {
-        return normal.x*normal.x + normal.y*normal.y <
-               rangeRadius*rangeRadius;
+    // 特徴点がカメラの前方または後方にあるか
+    bool isInRange(const Normal& normal) const {
+        return normal.x*normal.x + normal.y*normal.y < fovRadius*fovRadius;
     }
     bool isInRange(const Sphere& sphere) const {
-        return isInRange(tf.sphere2normal(sphere));
+        return isInRange(Map::sphere2normal(sphere));
     }
     bool isInRange(const Equirect& equirect) const {
-        return isInRange(tf.equirect2sphere(equirect));
+        return isInRange(Map::equirect2sphere(equirect));
     }
+    
     // マッチした特徴点の組が境界を跨いでいるか
     bool isStrideBorder
-    (const cv::Point3f& forsphere, const cv::Point3f& latsphere) const {
+    (const Sphere& forsphere, const Sphere& latsphere) const {
         return forsphere.z * latsphere.z < 0;
     }
     
-    // 推定に使う特徴点か(カメラ前後にあり境界を跨がない)
-    
+    // 推定に使う特徴点か(カメラの前方または後方にあり境界を跨がない)
     bool isValidSpherePair
     (const Sphere& forsphere, const Sphere& latsphere) const {
         return isInRange(forsphere) && isInRange(latsphere) &&
                !isStrideBorder(forsphere, latsphere);
-    }
-    
-    /*
-    bool isValidSpherePair
-    (const Sphere& forsphere, const Sphere& latsphere) const {
-        return  isFront(forsphere) && isFront(latsphere) &&
-                isInRange(forsphere) && isInRange(latsphere);
-    }
-    */
-    
-    bool isFront(const Sphere& sphere) const {
-        return sphere.z > 0;
     }
     
     // 推定に使う特徴点の組を取り出す
@@ -70,23 +55,23 @@ public:
     // 回転後の特徴点がカメラの前後にあるか
     bool isInRange
     (const Sphere& sphere, const cv::Mat& froMat) const {
-        return isInRange(tf.rotateSphere(sphere, froMat));
+        return isInRange(Map::rotateSphere(sphere, froMat));
     }
     bool isInRange
     (const Equirect& equirect, const cv::Mat& froMat) const {
-        return isInRange(tf.rotateEquirect(equirect, froMat));
+        return isInRange(Map::rotateEquirect(equirect, froMat));
     }
  
     // 回転後にカメラの前後にある特徴点を取り出す
     void extRotFroFeat
     (const std::vector<cv::KeyPoint>& keyPoints, const cv::Mat& descriptors,
-     std::vector<cv::KeyPoint>& keyPointsValid, cv::Mat& descriptorsValid,
-     const cv::Mat& froMat) const;
+     const cv::Mat& froMat, std::vector<cv::KeyPoint>& keyPointsValid,
+     cv::Mat& descriptorsValid) const;
 
 private:
-    const cv::Size& fs;
-    const Transform& tf;
-    const float rangeRadius;
+//    const cv::Size& fs;
+//    const Transform& tf;
+    const float fovRadius;
 };
 
 #endif /* Range_hpp */

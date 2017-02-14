@@ -9,22 +9,20 @@
 #include "MatchFeaturePoint.hpp"
 
 MatchFeaturePoint::MatchFeaturePoint
-(const Transform& transform, const float distThreshold,
- const float coordThreshold):
-transform(transform),
-distThreshold(distThreshold), coordThreshold(coordThreshold),
+(const float eucThre, const float sphereThre):
+eucThre(eucThre), sphereThre(sphereThre),
 matcher(cv::DescriptorMatcher::create("BruteForce"))
 {
 }
 
 void MatchFeaturePoint::match
-(const cv::Mat descriptors1, const cv::Mat descriptors2,
+(const cv::Mat& descs1, const cv::Mat& descs2,
  std::vector<cv::DMatch> &dMatches) const
 {
     std::vector<cv::DMatch> dMatches1, dMatches2;
     
-    matcher->match(descriptors1, descriptors2, dMatches1);
-    matcher->match(descriptors2, descriptors1, dMatches2);
+    matcher->match(descs1, descs2, dMatches1);
+    matcher->match(descs2, descs1, dMatches2);
     
     crossMatch(dMatches1, dMatches2, dMatches);
 }
@@ -32,7 +30,7 @@ void MatchFeaturePoint::match
 void MatchFeaturePoint::crossMatch
 (const std::vector<cv::DMatch> &dMatches1,
  const std::vector<cv::DMatch> &dMatches2,
- std::vector<cv::DMatch> &dMatches)
+ std::vector<cv::DMatch> &dMatches) const
 {
     dMatches.clear();
     
@@ -45,24 +43,26 @@ void MatchFeaturePoint::crossMatch
     }
 }
 
-void MatchFeaturePoint::filterMatchDistance
+void MatchFeaturePoint::filterMatchEuc
 (std::vector<cv::DMatch> &dMatches) const
 {
-    // .eraseに注意
     for (int i = 0; i < dMatches.size();  ) {
-        if (dMatches[i].distance > distThreshold)
+        if (dMatches[i].distance > eucThre)
             dMatches.erase(dMatches.begin() + i);
         else
             i++;
     }
 }
 
-void MatchFeaturePoint::filterCoordDistance
+void MatchFeaturePoint::filterMatchSphere
 (std::vector<Sphere> &forSpheres, std::vector<Sphere> &latSpheres) const
 {
-    // .eraseに注意
     for (int i = 0; i < forSpheres.size(); ) {
-        if (cv::norm(forSpheres[i] - latSpheres[i]) > coordThreshold) {
+        // 球面距離を計算
+        const float arc =
+        acosf(Map::normalDomain(forSpheres[i].dot(latSpheres[i]), -1, 1));
+        //cv::norm(forSpheres[i] - latSpheres[i]);
+        if (arc > sphereThre) {
             forSpheres.erase(forSpheres.begin() + i);
             latSpheres.erase(latSpheres.begin() + i);
         } else {
@@ -71,15 +71,29 @@ void MatchFeaturePoint::filterCoordDistance
     }
 }
 
+void MatchFeaturePoint::orderKeyPoint
+(const std::vector<cv::KeyPoint> &forKeyPointSet,
+ const std::vector<cv::KeyPoint> &latKeyPointSet,
+ const std::vector<cv::DMatch> &matchs,
+ std::vector<cv::KeyPoint> &forKeyPoints,
+ std::vector<cv::KeyPoint> &latKeyPoints) const
+{
+    forKeyPoints = std::vector<cv::KeyPoint>(matchs.size());
+    latKeyPoints = std::vector<cv::KeyPoint>(matchs.size());
+    
+    for (int i = 0; i < matchs.size(); i++) {
+        forKeyPoints[i] = forKeyPointSet[matchs[i].queryIdx];
+        latKeyPoints[i] = latKeyPointSet[matchs[i].trainIdx];
+    }
+}
+
 void MatchFeaturePoint::drawMatchVert
 (const cv::Mat &img1, const std::vector<Equirect> &forEquirects,
  const cv::Mat &img2, const std::vector<Equirect> &latEquirects,
- cv::Mat &outImg)
+ cv::Mat &outImg) const
 {
     cv::Mat tmpOutImg;
     cv::vconcat(img1, img2, tmpOutImg);
-    
-//    if (tmpOutImg.channels() == 1) Transform::changeChannel(tmpOutImg, outImg);
     
     if (tmpOutImg.channels() == 1) cv::cvtColor(tmpOutImg, outImg, CV_GRAY2BGR);
     else outImg = tmpOutImg.clone();
@@ -92,12 +106,13 @@ void MatchFeaturePoint::drawMatchVert
 void MatchFeaturePoint::drawMatchVert
 (const cv::Mat &img1, const std::vector<cv::KeyPoint> keyPoints1,
  const cv::Mat &img2, const std::vector<cv::KeyPoint> keyPoints2,
- const std::vector<cv::DMatch> matchs, cv::Mat &outImg)
+ const std::vector<cv::DMatch> matchs, cv::Mat &outImg) const
 {
     cv::Mat tmpOutImg;
     cv::vconcat(img1, img2, tmpOutImg);
     
-    if (outImg.channels() == 1) Transform::changeChannel(tmpOutImg, outImg);
+    if (tmpOutImg.channels() == 1) cv::cvtColor(tmpOutImg, outImg, CV_GRAY2BGR);
+    else outImg = tmpOutImg.clone();
     
     for (int i = 0; i < matchs.size(); i++) {
         drawLineVert(keyPoints1[matchs[i].queryIdx].pt,
@@ -106,7 +121,8 @@ void MatchFeaturePoint::drawMatchVert
 }
 
 void MatchFeaturePoint::drawLineVert
-(const cv::Point2f &point1, const cv::Point2f &point2, cv::Mat &outImg)
+(const cv::Point2f &point1, const cv::Point2f &point2,
+ cv::Mat &outImg) const
 {
     // 下側の特徴の座標を修正
     cv::Point2f modPoint2 = point2 + cv::Point2f(0, outImg.rows / 2);
@@ -117,15 +133,3 @@ void MatchFeaturePoint::drawLineVert
      cv::Scalar(rand()%256, rand()%256, rand()%256), 2, CV_AA);
 }
 
-void MatchFeaturePoint::getMatchKeyPoint
-(const std::vector<cv::KeyPoint> &forKeyPointsSet,
- const std::vector<cv::KeyPoint> &latKeyPointsSet,
- const std::vector<cv::DMatch> &matchs,
- std::vector<cv::KeyPoint> &forKeyPoints,
- std::vector<cv::KeyPoint> &latKeyPoints) const
-{
-    for (int i = 0; i < matchs.size(); i++) {
-        forKeyPoints.push_back(forKeyPointsSet[matchs[i].queryIdx]);
-        latKeyPoints.push_back(latKeyPointsSet[matchs[i].trainIdx]);
-    }
-}

@@ -21,14 +21,14 @@
 #include "VideoWriter.hpp"
 #include "Rotation.hpp"
 #include "JackInHeadEstimator.hpp"
+#include "Core.hpp"
 
 class MainProcess
 {
 public:
-    MainProcess(const Transform& tf, Estimator& est):
-    tf(tf), est(est),
-    curRotMat(cv::Mat::eye(3,3,CV_32FC1)), accRotMat(cv::Mat::eye(3,3,CV_32FC1))
-    {};
+    MainProcess(Estimator& est): est(est),
+    curRotMat(cv::Mat::eye(3,3,CV_32FC1)), accRotMat(cv::Mat::eye(3,3,CV_32FC1)),
+    frameNum(0) {};
     
     // 動画の姿勢修正
     void modVideo(VideoReader& vr, VideoWriter& vw);
@@ -41,9 +41,6 @@ public:
     void modVideo(VideoReader& vr, VideoWriter& vw, Estimator& estSub);
     
     void printMatInfo();
-    
-private:
-    const Transform& tf; // 出力画像用
     
     Estimator& est; // エスティメータ
     

@@ -16,62 +16,62 @@
 #include <opencv2/imgproc.hpp>
 #include <opencv2/features2d.hpp>
 
-#include "Transform.hpp"
+//#include "Transform.hpp"
+#include "Core.hpp"
 
 class MatchFeaturePoint
 {
 public:
-    MatchFeaturePoint
-    (const Transform& transform, const float distThreshold,
-     const float coordThreshold);
+    MatchFeaturePoint(const float eucThre, const float sphereThre);
     
+    // マッチング
     void match
-    (const cv::Mat descriptors1, const cv::Mat descriptors2,
+    (const cv::Mat& descs1, const cv::Mat& descs2,
      std::vector<cv::DMatch>& dMatches) const;
    
-    // 1->2，2->1へのクロスマッチ
-    static void crossMatch
+    // クロスマッチング
+    void crossMatch
     (const std::vector<cv::DMatch>& dMatches1,
      const std::vector<cv::DMatch>& dMatches2,
-     std::vector<cv::DMatch>& dMatches) ;
+     std::vector<cv::DMatch>& dMatches) const;
     
-    // マッチング距離が閾値以下のものはフィルタリング
-    void filterMatchDistance
+    // 球面距離が大きく離れているマッチングは除去
+    void filterMatchEuc
     (std::vector<cv::DMatch>& dMatches) const;
     
-    // 座標距離が大きく離れているものはフィルタリング
-    void filterCoordDistance
+    // 記述子のユークリッド距離が大きく離れているものは削除
+    void filterMatchSphere
     (std::vector<Sphere>& forSpheres,
      std::vector<Sphere>& latSpheres) const;
     
-    // マッチの描画
-    static void drawMatchVert
-    (const cv::Mat& img1, const std::vector<Equirect>& forEquirects,
-     const cv::Mat& img2, const std::vector<Equirect>& latEquirects,
-     cv::Mat& outImg);
-    
-    static void drawMatchVert
-    (const cv::Mat& img1, const std::vector<cv::KeyPoint> keyPoints1,
-     const cv::Mat& img2, const std::vector<cv::KeyPoint> keyPoints2,
-     const std::vector<cv::DMatch> matchs, cv::Mat& outImg);
-
-    static void drawLineVert
-    (const cv::Point2f& point1, const cv::Point2f& point2, cv::Mat& outImg);
-    
-    // マッチした特徴点を返す
-    void getMatchKeyPoint
-    (const std::vector<cv::KeyPoint>& forKeyPointsSet,
-     const std::vector<cv::KeyPoint>& latKeyPointsSet,
+    // 特徴点を対応するように並べ替える
+    void orderKeyPoint
+    (const std::vector<cv::KeyPoint>& forKeyPointSet,
+     const std::vector<cv::KeyPoint>& latKeyPointSet,
      const std::vector<cv::DMatch>& matchs,
      std::vector<cv::KeyPoint>& forKeyPoints,
      std::vector<cv::KeyPoint>& latKeyPoints) const;
     
-private:
-    const Transform& transform;
+    // 画像座標でマッチングを表示
+    void drawMatchVert
+    (const cv::Mat& img1, const std::vector<Equirect>& forEquirects,
+     const cv::Mat& img2, const std::vector<Equirect>& latEquirects,
+     cv::Mat& outImg) const;
     
-    const cv::Ptr<cv::DescriptorMatcher> matcher;
-    const float distThreshold;
-    const float coordThreshold;
+    // キーポイントでマッチングを表示
+    void drawMatchVert
+    (const cv::Mat& img1, const std::vector<cv::KeyPoint> keyPoints1,
+     const cv::Mat& img2, const std::vector<cv::KeyPoint> keyPoints2,
+     const std::vector<cv::DMatch> matchs, cv::Mat& outImg) const;
+
+    void drawLineVert
+    (const cv::Point2f& point1, const cv::Point2f& point2,
+     cv::Mat& outImg) const;
+    
+private:
+    const cv::Ptr<cv::DescriptorMatcher> matcher; // マッチャ
+    const float eucThre;     // 記述子のユークリッド距離のフィルタ
+    const float sphereThre;  // 球面距離のフィルタ
 };
 
 #endif /* MatchFeaturePoint_hpp */

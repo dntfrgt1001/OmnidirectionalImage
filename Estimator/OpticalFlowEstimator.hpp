@@ -26,9 +26,9 @@ class OpticalFlowEstimator: public Estimator
 {
 public:
     OpticalFlowEstimator
-    (const Transform& tf, const CalcOpticalFlow& cof,
+    (const CalcOpticalFlow& cof,
      const Perspective& per, const Epipolar& epi):
-    Estimator(tf), cof(cof), per(per), epi(epi) {};
+    cof(cof), per(per), epi(epi) {};
     
     // インタフェース
     cv::Mat getRotMat

@@ -9,17 +9,14 @@
 #include "FeatureMatchEstimator.hpp"
 
 FeatureMatchEstimator::FeatureMatchEstimator
-(const Transform& tf, const ExtractFeaturePoint& efp,
- const MatchFeaturePoint& mfp, const Epipolar& epi, const Range& ran):
-Estimator(tf), efp(efp), mfp(mfp), epi(epi), ran(ran), prevFrameNum(-1)
+(const ExtractFeaturePoint& efp, const MatchFeaturePoint& mfp,
+ const Epipolar& epi, const Range& ran):
+ efp(efp), mfp(mfp), epi(epi), ran(ran), prevFrameNum(1)
 {
     // カメラの正面を変える回転行列
     froChgMats.push_back((cv::Mat_<float>(3,3) << 1,0,0,0,1,0,0,0,1));  // z 0
     froChgMats.push_back((cv::Mat_<float>(3,3) << 0,0,-1,0,1,0,1,0,0)); // y pi/2
     froChgMats.push_back((cv::Mat_<float>(3,3) << 1,0,0,0,0,-1,0,1,0)); // x pi/2
-//    froChgMats.push_back((cv::Mat_<float>(3,3) << -1,0,0,0,-1,0,0,0,1));// z pi
-//    froChgMats.push_back((cv::Mat_<float>(3,3) << -1,0,0,0,1,0,0,0,-1));// y pi
-//    froChgMats.push_back((cv::Mat_<float>(3,3) << 1,0,0,0,-1,0,0,0,-1));// x pi
     
     float sqrt6 = sqrtf(6.0);
     float sqrt3 = sqrtf(3.0);
@@ -45,39 +42,42 @@ cv::Mat FeatureMatchEstimator::getRotMat
 {
     // 画像サイズを縮小
     cv::Mat forImgRes, latImgRes;
-    tf.resizeImg(forImg, forImgRes);
-    tf.resizeImg(latImg, latImgRes);
+    Map::resizeImg(forImg, forImgRes);
+    Map::resizeImg(latImg, latImgRes);
     
     // グレースケールに変換
     cv::Mat forImgGray, latImgGray;
     cv::cvtColor(forImgRes, forImgGray, CV_BGR2GRAY);
     cv::cvtColor(latImgRes, latImgGray, CV_BGR2GRAY);
 
-    
-    struct timeval featStart, featEnd;
-    gettimeofday(&featStart, NULL);
-    
+//    struct timeval featStart, featEnd;
+//    gettimeofday(&featStart, NULL);
     
     // 特徴抽出
     std::vector<cv::KeyPoint> forKeyPointSet, latKeyPointSet;
     cv::Mat forDescSet, latDescSet;
+    
     // 直前も特徴マッチ法なら直前フレームの特徴を使いまわし
     if (frameNum - prevFrameNum == 1) {
+//        forKeyPoints = curKeyPointSet;
+//        forDescs = curDescSet;
         forKeyPointSet = curKeyPointSet;
         forDescSet = curDescSet;
     } else {
         efp.extFeat(forImgGray, forKeyPointSet, forDescSet);
     }
     
+    // 前方フレームの特徴抽出
+    //efp.extFeat(forImgGray, forKeyPoints, forDescs);
+    
     // 後フレームの特徴抽出
+    //efp.extFeat(latImgGray, latKeyPoints, latDescs);
     efp.extFeat(latImgGray, latKeyPointSet, latDescSet);
     
-    
-    
-    gettimeofday(&featEnd, NULL);
-    double featTime = (double) (featEnd.tv_sec - featStart.tv_sec) +
-                      (featEnd.tv_usec - featStart.tv_usec) * 1e-6;
-    std::cout << "feat time = " << featTime << std::endl;
+//    gettimeofday(&featEnd, NULL);
+//    double featTime = (double) (featEnd.tv_sec - featStart.tv_sec) +
+//                      (featEnd.tv_usec - featStart.tv_usec) * 1e-6;
+//    std::cout << "feat time = " << featTime << std::endl;
     
     /*
     cv::Mat imgKeyPoint1;
@@ -91,20 +91,19 @@ cv::Mat FeatureMatchEstimator::getRotMat
     cv::waitKey(0);
     */
     
-    struct timeval matchStart, matchEnd;
-    gettimeofday(&matchStart, NULL);
+//    struct timeval matchStart, matchEnd;
+//    gettimeofday(&matchStart, NULL);
     
     
     // マッチング＆フィルタリング
     std::vector<cv::DMatch> matchs;
     mfp.match(forDescSet, latDescSet, matchs);
-    mfp.filterMatchDistance(matchs);
+    mfp.filterMatchEuc(matchs);
     
     // マッチした特徴点を並べる
     std::vector<cv::KeyPoint> forKeyPoints, latKeyPoints;
-    mfp.getMatchKeyPoint
-    (forKeyPointSet, latKeyPointSet, matchs,
-     forKeyPoints, latKeyPoints);
+    mfp.orderKeyPoint
+    (forKeyPointSet, latKeyPointSet, matchs, forKeyPoints, latKeyPoints);
     
     // 画像座標に変換
     std::vector<Equirect> forEquirects(forKeyPoints.size());
@@ -116,35 +115,32 @@ cv::Mat FeatureMatchEstimator::getRotMat
     
     // 球面座標に変換
     std::vector<Sphere> forSpheres, latSpheres;
-    tf.equirect2sphere(forEquirects, forSpheres);
-    tf.equirect2sphere(latEquirects, latSpheres);
+    Map::equirect2sphere(forEquirects, forSpheres);
+    Map::equirect2sphere(latEquirects, latSpheres);
     
     // ３次元空間上の距離でフィルタ
-    mfp.filterCoordDistance(forSpheres, latSpheres);
+    mfp.filterMatchSphere(forSpheres, latSpheres);
     
-    gettimeofday(&matchEnd, NULL);
-    double matchTime = (double)(matchEnd.tv_sec - matchStart.tv_sec) +
-                       (matchEnd.tv_usec - matchStart.tv_usec) * 1e-6;
-    std::cout << "match time = " << matchTime << std::endl;
+//    gettimeofday(&matchEnd, NULL);
+//    double matchTime = (double)(matchEnd.tv_sec - matchStart.tv_sec) +
+//                       (matchEnd.tv_usec - matchStart.tv_usec) * 1e-6;
+//    std::cout << "match time = " << matchTime << std::endl;
     
     std::vector<Equirect> forEquiLast, latEquiLast;
-    tf.sphere2equirect(forSpheres, forEquiLast);
-    tf.sphere2equirect(latSpheres, latEquiLast);
+    Map::sphere2equirect(forSpheres, forEquiLast);
+    Map::sphere2equirect(latSpheres, latEquiLast);
     cv::Mat imgMatch;
     mfp.drawMatchVert
-    (forImg, forEquiLast, latImg, latEquiLast, imgMatch);
+    (forImgRes, forEquiLast, latImgRes, latEquiLast, imgMatch);
     cv::namedWindow("match");
     cv::imshow("match", imgMatch);
-
     
     // 現在フレーム番号の保存
     prevFrameNum = frameNum;
+    
     // 現在フレームの特徴を保存
-    //curKeyPointSet.clear();
-    //std::copy(latKeyPointSet.begin(), latKeyPointSet.end(),
-    //          std::back_inserter(curKeyPointSet));
     curKeyPointSet = latKeyPointSet;
-    latDescSet.copyTo(curDescSet);
+    curDescSet = latDescSet;
 
     
     /*
@@ -272,8 +268,8 @@ cv::Mat FeatureMatchEstimator::getRotMatSpecDir
 {
     // カメラ正面を変更
     std::vector<Sphere> forSpheresRot, latSpheresRot;
-    tf.rotateSphere(forSpheres, forSpheresRot, froChgMat);
-    tf.rotateSphere(latSpheres, latSpheresRot, froChgMat);
+    Map::rotateSphere(forSpheres, forSpheresRot, froChgMat);
+    Map::rotateSphere(latSpheres, latSpheresRot, froChgMat);
     
     // 正面の特徴点を抽出
     std::vector<Sphere> forSpheresFro, latSpheresFro;
@@ -282,8 +278,8 @@ cv::Mat FeatureMatchEstimator::getRotMatSpecDir
     
     // 正規化画像座標に変換
     std::vector<Normal> forNormals, latNormals;
-    tf.sphere2normal(forSpheresFro, forNormals);
-    tf.sphere2normal(latSpheresFro, latNormals);
+    Map::sphere2normal(forSpheresFro, forNormals);
+    Map::sphere2normal(latSpheresFro, latNormals);
     
     // 回転行列を推定
     cv::Mat mask;

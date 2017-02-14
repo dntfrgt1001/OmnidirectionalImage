@@ -27,59 +27,62 @@
 #include "FeatureMatchEstimator.hpp"
 #include "OpticalFlowEstimator.hpp"
 #include "MainProcess.hpp"
+#include "Core.hpp"
 
 int main(int argc, const char * argv[])
 {
  // ffmpeg -f image2 -r 30 -i image\%04d.jpg -an -vcodec libx264 -pix_fmt yuv420p video.mp4
     //    const std::string path = "/Users/masakazu/Desktop/casio/bowling/02/";
-    const std::string path = "/Users/masakazu/Desktop/Jack/";
-    const std::string inputVideoName = path + "sample55.mp4";
-    const std::string outputVideoName = path + "sample55-2";
+    const std::string path = "/Users/masakazu/Desktop/fishtest/";
+    const std::string inputVideoName = path + "sample5-equi";
+    const std::string outputVideoName = path + "sample5-1";
     
-    const cv::Size fso(960, 480);
-    const cv::Size fs(960, 480);
+    const cv::Size fsOut(1280, 640);
+    const cv::Size fsProc(1280, 640);
     
     int stride = 1;
-    VideoReaderMov vr(fso, inputVideoName, stride);
-    VideoWriterPic vw(fso, outputVideoName);
+    VideoReaderPic vr(fsOut, inputVideoName, stride);
+    VideoWriterPic vw(fsOut, outputVideoName);
     
-    const Transform tfo(fso);
-    const Transform tf(fs);
+    Map::fsOut = fsOut;
+    Map::fsProc = fsProc;
+    Map::setProcSize();
     
     const int numThre = 10;
     const Epipolar epi(numThre);
     // -----------------------------------------------------
     // 特徴点マッチ用
     const int divNum = 6;
-    const ExtractFeaturePoint efp(fs, tf, divNum);
-    
-    const float distThre = 250;
-    const float coordThre = 0.35;
-    const MatchFeaturePoint mfp(tf, distThre, coordThre);
+    const int mergin = 10;
+    const ExtractFeaturePoint efp(fsProc, divNum, mergin);
+
+    const float eucThre = 250;
+    const float sphereThre = 0.35;
+    const MatchFeaturePoint mfp(eucThre, sphereThre);
     
     const float fieldAngle = M_PI / 2.5;
-    const Range ran(fs, tf, fieldAngle);
+    const Range ran(fieldAngle);
     
-    FeatureMatchEstimator fme(tf, efp, mfp, epi, ran);
+    FeatureMatchEstimator fme(efp, mfp, epi, ran);
     // -----------------------------------------------------
     // オプティカルフロー用
     const int persRad = 150;
     const float ranAng = M_PI / 4.0;
-    const Perspective per(tf, persRad, ranAng);
+    const Perspective per(persRad, ranAng);
     
     const float margin = 0.05;
     const float angRag = M_PI / 4.0;
     const float normRat = 3.0;
     const CalcOpticalFlow cof(margin, per, angRag, normRat);
 
-    OpticalFlowEstimator ofe(tf, cof, per, epi);
+    OpticalFlowEstimator ofe(cof, per, epi);
     // -----------------------------------------------------
 
-    JackInHeadEstimator jhe(tf);
+    JackInHeadEstimator jhe;
     // -----------------------------------------------------
     
-//    MainProcess mp(tfo, fme);
-    MainProcess mp(tfo, ofe);
+    MainProcess mp(fme);
+//    MainProcess mp(tfo, ofe);
     
     mp.modVideo(vr, vw);
 //    mp.modVideo(vr, vw, fme);

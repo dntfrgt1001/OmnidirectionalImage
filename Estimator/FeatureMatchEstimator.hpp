@@ -20,12 +20,13 @@
 #include "Range.hpp"
 #include "Estimate.hpp"
 #include "Epipolar.hpp"
+#include "Core.hpp"
 
 class FeatureMatchEstimator: public Estimator {
 public:
     FeatureMatchEstimator
-    (const Transform& tf, const ExtractFeaturePoint& efp,
-     const MatchFeaturePoint& mfp, const Epipolar& epi, const Range& ran);
+    (const ExtractFeaturePoint& efp, const MatchFeaturePoint& mfp,
+     const Epipolar& epi, const Range& ran);
     
     // インタフェース
     cv::Mat getRotMat

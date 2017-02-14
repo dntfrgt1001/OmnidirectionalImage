@@ -20,7 +20,7 @@
 class JackInHeadEstimator: public Estimator
 {
 public:
-    JackInHeadEstimator(const Transform& tf): Estimator(tf) {
+    JackInHeadEstimator() {
         srand((unsigned) time(NULL));
     };
     

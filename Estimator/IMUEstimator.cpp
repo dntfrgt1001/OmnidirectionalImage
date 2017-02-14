@@ -12,7 +12,7 @@ IMUEstimator::IMUEstimator(const Transform& tf, IMU& imu):
 // 状態の次元[w, x, y, z, bx, by, bz]
 // 観測の次元[gx, gy, gz]
 // 制御の次元[]
-Estimator(tf), imu(imu), kalman(cv::KalmanFilter(7, 3, 0, CV_32FC1))
+imu(imu), kalman(cv::KalmanFilter(7, 3, 0, CV_32FC1))
 {
     // 遷移行列の初期化 ダミー
     cv::setIdentity(kalman.transitionMatrix);

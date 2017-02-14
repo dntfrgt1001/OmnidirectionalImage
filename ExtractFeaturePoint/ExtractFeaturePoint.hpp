@@ -19,13 +19,13 @@
 #include <opencv2/xfeatures2d.hpp>
 
 #include "Rotate.hpp"
-#include "Transform.hpp"
+//#include "Transform.hpp"
+#include "Core.hpp"
 
 class ExtractFeaturePoint
 {
 public:
-    ExtractFeaturePoint
-    (const cv::Size& fs, const Transform& transform, const int divNum);
+    ExtractFeaturePoint(const cv::Size& fs, const int divNum, const int mergin);
     
     /*
     // 低緯度の矩形部分の特徴点を抽出
@@ -39,7 +39,6 @@ public:
     (const cv::Mat& img, std::vector<cv::KeyPoint>& keyPoints,
      cv::Mat& descs) const;
     
-    
     // 基準画像を回転させながらすべての領域の特徴を抽出
     void extFeat
     (const cv::Mat& img, std::vector<cv::KeyPoint>& keyPoints,
@@ -52,8 +51,7 @@ public:
     
     // 回転前の座標の特徴点から回転後の座標の特徴点に変換
     void rotKeyPointCrd
-    (std::vector<cv::KeyPoint>& keyPoints, float angle) const;
-    
+    (std::vector<cv::KeyPoint>& keyPoints, const float angle) const;
     
     // ROIの座標から大域の座標に変換
     void getGlobalCrd(std::vector<cv::KeyPoint>& keyPoints) const {
@@ -61,15 +59,14 @@ public:
             keyPoints[i].pt.y += roi.y;
     };
     
-    // 特徴点を連結させる
+    // 特徴点を統合
     static void keyPointConcat
-    (std::vector<cv::KeyPoint>& dest,
-     const std::vector<cv::KeyPoint>& src) {
+    (const std::vector<cv::KeyPoint>& src, std::vector<cv::KeyPoint>& dest) {
         std::copy(src.begin(), src.end(), std::back_inserter(dest));
     };
     
-    // 特徴点記述子を連結させる
-    static void descConcat(cv::Mat& dest, const cv::Mat& src) {
+    // 記述子を統合
+    static void descConcat(const cv::Mat& src, cv::Mat& dest) {
         cv::vconcat(dest, src, dest);
     };
     
@@ -79,7 +76,7 @@ public:
     
     // 特徴点が有効範囲にあるか
     bool isInLowLat(const Equirect& equirect) const {
-        Polar polar = tf.equirect2polar(equirect);
+        Polar polar = Map::equirect2polar(equirect);
         
         float theta = polar.x;
         float phi = polar.y;
@@ -103,21 +100,16 @@ public:
     (const cv::Mat& img, const std::vector<cv::KeyPoint>& keyPoints,
      cv::Mat& outImg);
     
-    void setLowLatMask();
+    // 特徴抽出範囲のマスク
+    void setLowLatMask(const cv::Size& fs);
 
 private:
-    const cv::Size& fs;
-    const Transform& tf;
-    
-    const int validHeight;
-    const int mergin;
-    
-    const cv::Ptr<cv::Feature2D> feature;
+    const cv::Ptr<cv::Feature2D> feature; // 特徴クラス
 
-    const int divNum;
-    const cv::Rect roi;
+    const int divNum;   // 全天球画像の分割数
+    const cv::Rect roi; // 各球面回転画像の特徴抽出領域(矩形)
     
-    cv::Mat mask;
+    cv::Mat mask;       // マスクを使って特徴抽出する際に必要
 };
 
 #endif /* ExtractFeaturePoint_hpp */

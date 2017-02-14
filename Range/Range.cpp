@@ -8,9 +8,8 @@
 
 #include "Range.hpp"
 
-Range::Range
-(const cv::Size& frameSize, const Transform& tf, const float rangeAngle):
-fs(frameSize), tf(tf), rangeRadius(tanf(rangeAngle))
+Range::Range(const float fovAngle):
+fovRadius(tanf(fovAngle))
 {
 }
 
@@ -30,8 +29,8 @@ void Range::extFroSphere
 
 void Range::extRotFroFeat
 (const std::vector<cv::KeyPoint> &keyPoints, const cv::Mat &descriptors,
- std::vector<cv::KeyPoint> &keyPointsValid, cv::Mat &descriptorsValid,
- const cv::Mat &froMat) const
+ const cv::Mat& froMat, std::vector<cv::KeyPoint> &keyPointsValid,
+ cv::Mat &descriptorsValid) const
 {
     descriptorsValid = cv::Mat (0, descriptors.cols, descriptors.type());
     

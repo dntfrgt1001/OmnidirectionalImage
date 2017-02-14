@@ -19,8 +19,8 @@ cv::Mat JackInHeadEstimator::getRotMat
 {
     // リサイズ
     cv::Mat forResImg, latResImg;
-    tf.resizeImg(forImg, forResImg);
-    tf.resizeImg(latImg, latResImg);
+    Map::resizeImg(forImg, forResImg);
+    Map::resizeImg(latImg, latResImg);
     
     // グレースケールに変換
     cv::Mat forGrayImg, latGrayImg;
@@ -69,8 +69,8 @@ cv::Mat JackInHeadEstimator::getRotMat
     
     std::vector<Sphere> forSphere(forEquis.size()), latSphere(latEquis.size());
     for (int i = 0; i < forEquis.size(); i++) {
-        forSphere[i] = tf.equirect2sphere(forEquis[i]);
-        latSphere[i] = tf.equirect2sphere(latEquis[i]);
+        forSphere[i] = Map::equirect2sphere(forEquis[i]);
+        latSphere[i] = Map::equirect2sphere(latEquis[i]);
     }
     
     return getRotMatAffine(forSphere, latSphere);
@@ -153,14 +153,14 @@ void JackInHeadEstimator::getOptflowMask(cv::Mat &mask)
     const float validRad = M_PI_2;
     
     // 有効な画像の高さ
-    const float validHeight = tf.dphi2v(validRad);
+    const float validHeight = Map::dphi2v(validRad);
     
     // マスクをゼロで初期化
-    mask = cv::Mat::zeros(tf.fs, CV_8UC1);
+    mask = cv::Mat::zeros(Map::fs, CV_8UC1);
     
-    for (int v = (tf.fs.height - validHeight) / 2;
-         v < (tf.fs.height + validHeight) / 2; v++) {
-        for (int u = 0; u < tf.fs.width; u++) {
+    for (int v = (Map::fs.height - validHeight) / 2;
+         v < (Map::fs.height + validHeight) / 2; v++) {
+        for (int u = 0; u < Map::fs.width; u++) {
             mask.at<uchar>(v, u) = 255;
         }
     }

@@ -10,8 +10,8 @@
 
 
 Perspective::Perspective
-(const Transform& tf, const int persRad, const float rangeAngle):
-tf(tf), normalRad(tanf(rangeAngle)),
+(const int persRad, const float rangeAngle):
+normalRad(tanf(rangeAngle)),
 inParaMat(getInParaMat(persRad, tanf(rangeAngle))),
 pfs(cv::Size(persRad*2, persRad*2))
 {
@@ -26,33 +26,54 @@ cv::Mat Perspective::getInParaMat
                                      0, 0, 1);
 }
 
+template <class Dot>
 void Perspective::getPersImg
-(const cv::Mat &img, cv::Mat &persImg,
- const cv::Mat &froMat, const bool isFront) const
+(const cv::Mat &img, const cv::Mat &froMat,
+ const bool isFront, cv::Mat &persImg) const
 {
+    cv::Mat resImg;
+    Map::resizeImg(img, resImg);
+    
+    // 逆回転を計算
     const cv::Mat froMatInv = froMat.inv();
     
+    // 出力画像
     persImg = cv::Mat::zeros(pfs, img.type());
-
+    
+    // 画素ごとに計算
     for (int v = 0; v < pfs.height; v++) {
-        cv::Vec3b* row = persImg.ptr<cv::Vec3b>(v);
+        // 行の先頭のポインタ
+        Dot* row = persImg.ptr<Dot>(v);
         
+        // 画素を計算
         for (int u = 0; u < pfs.width; u++) {
             Pers pers(u, v);
             
             if (isInRange(pers, normalRad)) {
-                row[u] = tf.getBiliPixel<cv::Vec3b>
-                    (img, tf.sphere2equirect
-                     (tf.rotateSphere
-                      (tf.normal2sphere
-                       (tf.pers2normal(pers, inParaMat), isFront),
-                       froMatInv)));
-
-                //uchar pixel;
-                //tf.getBilinearPixel<uchar>(img, equirectRot, pixel);
-                //persImg.at<uchar>(v, u) = pixel;
+                //              // 回転前のカメラ座標
+                Sphere sphere =
+                Map::normal2sphere(Map::pers2normal(pers, inParaMat), isFront);
+                
+                // 回転後のカメラ座標
+                Sphere sphereRot = Map::rotateSphere(sphere, froMatInv);
+                
+                // 画素の計算
+                row[u] =
+                Map::getBiliPixel<Dot>
+                (resImg, Map::sphere2equirect(sphereRot));
             }
         }
+    }
+}
+
+void Perspective::getPersImg
+(const cv::Mat &img, const cv::Mat &froMat,
+ const bool isFront, cv::Mat &persImg) const
+{
+    if (img.type() == CV_8UC1) {
+        getPersImg<uchar>(img, froMat, isFront, persImg);
+    } else if (img.type() == CV_8UC3) {
+        getPersImg<cv::Vec3b>(img, froMat, isFront, persImg);
     }
 }
 

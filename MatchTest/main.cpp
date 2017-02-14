@@ -16,7 +16,7 @@
 #include <opencv2/xfeatures2d.hpp>
 #include <opencv2/calib3d.hpp>
 
-#include "Transform.hpp"
+//#include "Transform.hpp"
 #include "Rotation.hpp"
 #include "ExtractFeaturePoint.hpp"
 #include "MatchFeaturePoint.hpp"
@@ -25,72 +25,74 @@
 #include "Perspective.hpp"
 #include "MainProcess.hpp"
 #include "FeatureMatchEstimator.hpp"
-#include "OpticalFlowEstimator.hpp"
+//#include "OpticalFlowEstimator.hpp"
 #include "CalcOpticalFlow.hpp"
 #include "Epipolar.hpp"
 
 #include "JackInHeadEstimator.hpp"
+#include "Core.hpp"
 
 int main(int argc, const char * argv[])
 {    
     const std::string path = "/Users/masakazu/Desktop/TestImage/";
-    const std::string inputName1 = path + "rothally8.jpg";
-    const std::string inputName2 = path + "rothally6.jpg";
+    const std::string inputName1 = path + "high-speed1.jpg";
+    const std::string inputName2 = path + "high-speed2.jpg";
 
-    const cv::Size fso(960, 480);
-//    const cv::Size fs(960, 480);
-    const cv::Size fs(1000, 500);
+    const cv::Size fsOut(1280, 640);
+    const cv::Size fsProc(960, 480);
+//    const cv::Size fs(1000, 500);
     
     cv::Mat input1, img1, input2, img2;
     input1 = cv::imread(inputName1);
-    cv::resize(input1, img1, fso);
+    cv::resize(input1, img1, fsOut);
     input2 = cv::imread(inputName2);
-    cv::resize(input2, img2, fso);
-    
-    const Transform tfo(fso);
-    const Transform tf(fs);
-    
-    JackInHeadEstimator jihe(tf);
-    
+    cv::resize(input2, img2, fsOut);
+
+    // フレームサイズをセット
+    Map::fsProc = fsProc;
+    Map::fsOut = fsOut;
+    // 画像処理用のフレームサイズをセット
+    Map::setProcSize();
     
     const int numThre = 10;
     const Epipolar epi(numThre);
     // -----------------------------------------------------
     // 特徴点マッチング用
     const int divNum = 6;
-    ExtractFeaturePoint efp(fs, tf, divNum);
+    const int mergin = 10;
+    ExtractFeaturePoint efp(fsProc, divNum, mergin);
     
+    const float eucThre = 200;
+    const float sphereThre = M_PI_2;
+    MatchFeaturePoint mfp(eucThre, sphereThre);
     
-    const float distThre = 150;
-    const float coordThre = 1.0;
+    const float fovAngle = M_PI / 4.0;
+    const Range ran(fovAngle);
     
-    
-    MatchFeaturePoint mfp(tf, distThre, coordThre);
-    
-    const float fieldAngle = M_PI / 4.0;
-    const Range ran(fs, tf, fieldAngle);
-    
-    FeatureMatchEstimator fme(tf, efp, mfp, epi, ran);
+    FeatureMatchEstimator fme(efp, mfp, epi, ran);
     // -----------------------------------------------------
     // オプティカルフロー用
-    const int persRad = 150;
+    const int persRad = 200;
     const float ranAng = M_PI / 4.0;
-    const Perspective per(tf, persRad, ranAng);
+    const Perspective per(persRad, ranAng);
     
     const float margin = 0.1;
-    const float angRag = M_PI / 3.0;
+    const float angRag = M_PI / 4.0;
     const float normRat = 3.0;
     const CalcOpticalFlow cof(margin, per, angRag, normRat);
     
-    OpticalFlowEstimator ofe(tf, cof, per, epi);
+    OpticalFlowEstimator ofe(cof, per, epi);
+    // -----------------------------------------------------
+    // 笠原の手法
+    JackInHeadEstimator jihe;
     // -----------------------------------------------------
     
-    MainProcess mp(tfo, fme, ofe, jihe);
+    MainProcess mp(fme);
+    cv::Mat curRotMat = (cv::Mat_<float>(3,3) << 1,0,0, 0,0,1, 0,-1,0);
+    mp.curRotMat = curRotMat;
     
     cv::Mat modImg2;
-    mp.modifyLatImgFeatureMatch(img1, img2, modImg2);
-//    mp.modifyLatImgOpticalFlow(img1, img2, modImg2);
-//    mp.modifyLatImgJackInHead(img1, img2, modImg2);
+    mp.modImg(img1, img2, modImg2);
     
     cv::namedWindow("img1");
     cv::namedWindow("img2");

@@ -21,16 +21,20 @@
 class Perspective
 {
 public:
-    Perspective
-    (const Transform& tf, const int persRad, const float rangeAngle);
+    Perspective(const int persRad, const float rangeAngle);
     
     // 内部パラメータ行列を返す
     cv::Mat getInParaMat(const int persRad, const float ratio) const;
     
     // 透視投影画像を返す
+    template <class Dot>
     void getPersImg
-    (const cv::Mat& img, cv::Mat& persImg,
-     const cv::Mat& froMat, const bool isFront) const;
+    (const cv::Mat& img, const cv::Mat& froMat,
+     const bool isFront, cv::Mat& persImg) const;
+    
+    void getPersImg
+    (const cv::Mat& img, const cv::Mat& froMat,
+     const bool isFront, cv::Mat& persImg) const;
     
     // 透視投影画像の中で有効な部分のマスク(CalcOpticalFlow用)
     cv::Mat getMask(const float margin) const;
@@ -38,7 +42,7 @@ public:
     // 有効範囲内か
     bool isInRange
     (const Pers& pers, const float rad) const {
-        Normal normal = tf.pers2normal(pers, inParaMat);
+        Normal normal = Map::pers2normal(pers, inParaMat);
         return normal.x*normal.x + normal.y*normal.y < rad*rad;
     }
     
@@ -52,7 +56,6 @@ public:
     const cv::Mat& getInParaMat() const { return inParaMat; }
     
 private:
-    const Transform& tf;
     const cv::Mat inParaMat;
     const cv::Size pfs;
     const float normalRad;

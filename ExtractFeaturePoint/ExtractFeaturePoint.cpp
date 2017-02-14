@@ -9,16 +9,16 @@
 #include "ExtractFeaturePoint.hpp"
 
 ExtractFeaturePoint::ExtractFeaturePoint
-(const cv::Size& fs, const Transform& tf, const int divNum):
-fs(fs), tf(tf), divNum(divNum), validHeight(tf.dphi2v(M_PI)/divNum),
-mergin(10), roi(cv::Rect(0, (fs.height - validHeight)/2 - mergin,
-                         fs.width, validHeight + mergin*2)),
+(const cv::Size& fs, const int divNum, const int mergin):
+divNum(divNum),
+roi(cv::Rect(0, (fs.height - fs.height/divNum)/2 - mergin,
+             fs.width, fs.height/divNum + mergin*2)),
 feature(cv::xfeatures2d::SIFT::create())
 //feature(cv::AKAZE::create())
 //feature(cv::xfeatures2d::SURF::create())
 //feature(cv::ORB::create())
 {
-    setLowLatMask();
+    setLowLatMask(fs);
 }
 
 /*
@@ -46,18 +46,22 @@ void ExtractFeaturePoint::extFeat
  cv::Mat& descs) const
 {
     for (int i = 0; i < divNum; i++) {
-        std::vector<cv::KeyPoint> roiKeyPoints;
-        cv::Mat roiDescs;
-        
         if (i == 0) {
+            // 特徴を引数に直接保存
             extFeatRoi(img, i, keyPoints, descs);
             
             std::cout << keyPoints.size() << std::endl;
         } else {
+            // 一時保存用
+            std::vector<cv::KeyPoint> roiKeyPoints;
+            cv::Mat roiDescs;
+            
+            // 特徴をローカルに一時保存
             extFeatRoi(img, i, roiKeyPoints, roiDescs);
             
-            keyPointConcat(keyPoints, roiKeyPoints);
-            descConcat(descs, roiDescs);
+            // 特徴を統合
+            keyPointConcat(roiKeyPoints, keyPoints);
+            descConcat(roiDescs, descs);
             
             std::cout << keyPoints.size() << std::endl;
         }
@@ -66,7 +70,7 @@ void ExtractFeaturePoint::extFeat
 
 void ExtractFeaturePoint::extFeatRoi
 (const cv::Mat& img, const int number,
- std::vector<cv::KeyPoint>& roiKeyPoints, cv::Mat& roiDescriptors) const
+ std::vector<cv::KeyPoint>& roiKeyPoints, cv::Mat& roiDescs) const
 {
     const float angle = - M_PI_2 + M_PI * ((float) number / divNum);
     
@@ -74,19 +78,22 @@ void ExtractFeaturePoint::extFeatRoi
     //cv::cvtColor(img, grayImg, CV_BGR2GRAY);
     
     cv::Mat rotImg;
-    tf.rotateImgVertRect(img, angle, roi, rotImg);
-    //tf.rotateImgVertRect(rotAngle, grayImg, roi, rotImg);
+    Map::rotateImgVert(img, angle, roi, rotImg);
     
     //feature->detect(rotImg, roiKeyPoints, mask);
-    //feature->compute(rotImg, roiKeyPoints, roiDescriptors);
-    //feature->detectAndCompute(rotImg, mask, roiKeyPoints, roiDescriptors);
+    //feature->compute(rotImg, roiKeyPoints, roiDescs);
+    //feature->detectAndCompute(rotImg, mask, roiKeyPoints, roiDescs);
+
     
-    // 低緯度領域で特徴点を抽出
+    // 低緯度領域(矩形)で特徴点を抽出
     feature->detect(rotImg(roi), roiKeyPoints);
-    feature->compute(rotImg(roi), roiKeyPoints, roiDescriptors);
+    feature->compute(rotImg(roi), roiKeyPoints, roiDescs);
     
+    // 特徴点の座標をROIから画像全体の座標に
     getGlobalCrd(roiKeyPoints);
-    filterLowLat(roiKeyPoints, roiDescriptors);
+
+    // 矩形領域内の特徴点から曲線領域内の特徴点をフィルタ
+    filterLowLat(roiKeyPoints, roiDescs);
     
     /*
     cv::namedWindow("img");
@@ -116,11 +123,11 @@ void ExtractFeaturePoint::extFeatRoi
 }
 
 void ExtractFeaturePoint::rotKeyPointCrd
-(std::vector<cv::KeyPoint> &keyPoints, float angle) const
+(std::vector<cv::KeyPoint> &keyPoints, const float angle) const
 {
     for (int i = 0; i < keyPoints.size(); i++) {
         keyPoints[i].pt =
-            tf.rotateEquirectVert(Equirect(keyPoints[i].pt), angle);
+        Map::rotateEquirectVert(Equirect(keyPoints[i].pt), angle);
     }
 }
 
@@ -147,7 +154,7 @@ void ExtractFeaturePoint::filterLowLat
     destDescriptors.copyTo(descriptors);
 }
  
-void ExtractFeaturePoint::setLowLatMask()
+void ExtractFeaturePoint::setLowLatMask(const cv::Size& fs)
 {
     // マスクは8bitの整数型
     mask = cv::Mat(fs, CV_8UC1);
@@ -174,7 +181,7 @@ void ExtractFeaturePoint::drawKeyPointClear
  cv::Mat &outImg)
 {
     // 画像をクローン
-    if (img.channels() == 1) tf.changeChannel(img, outImg);
+    if (img.channels() == 1) cv::cvtColor(img, outImg, CV_GRAY2BGR);
     else outImg = img.clone();
     
     // 円を描写

@@ -17,6 +17,7 @@
 #include "Quaternion.hpp"
 #include "Rotation.hpp"
 
+/*
 static inline void drawCross(cv::Mat& img, cv::Point& center,
                              const cv::Scalar& color, const float d)
 {
@@ -31,13 +32,38 @@ static inline cv::Point calcPoint(cv::Point2f& center, double R, double angle)
 {
     return center + cv::Point2f((float)cos(angle), (float)-sin(angle))*(float)R;
 }
+*/
 
+#include "ExtractFeaturePoint.hpp"
+ 
 int main(int argc, const char * argv[])
 {
     const std::string path = "/Users/masakazu/Desktop/TestImage/";
-    const std::string inputName = path + "hall2.jpg";
-    const std::string outputName = path + "hall2gray.jpg";
+    const std::string inputName = path + "hall.jpg";
+    const std::string outputName = path + "hall2.jpg";
+
+    const cv::Size frameSize(960, 480);
     
+    cv::Mat input, img;
+    input = cv::imread(inputName);
+    cv::resize(input, img, frameSize);
+
+    const int divNum = 6;
+    const int mergin = 10;
+    ExtractFeaturePoint efp(frameSize, divNum, mergin);
+    
+    std::vector<cv::KeyPoint> keyPoints;
+    cv::Mat descs;
+    efp.extFeat(img, keyPoints, descs);
+    
+    cv::Mat keyImg;
+    efp.drawKeyPoint(img, keyPoints, keyImg);
+    cv::namedWindow("key img");
+    cv::imshow("key img", keyImg);
+    cv::waitKey();
+    
+    
+    /*
     cv::Mat input, grayImg;
     input = cv::imread(inputName);
     cv::cvtColor(input, grayImg, CV_BGR2GRAY);
@@ -79,7 +105,7 @@ int main(int argc, const char * argv[])
     
     cv::Mat img(500, 500, CV_8UC3);
     cv::KalmanFilter KF(2, 1, 0);
-    cv::Mat state(2, 1, CV_32F); /* (phi, delta_phi) */
+    cv::Mat state(2, 1, CV_32F); /* (phi, delta_phi)
     cv::Mat processNoise(2, 1, CV_32F);
     cv::Mat measurement = cv::Mat::zeros(1, 1, CV_32F);
     char code = (char)-1;
@@ -140,7 +166,6 @@ int main(int argc, const char * argv[])
     }
 
     
-    /*
     // 回転ベクトル
     float angle = M_PI * 5.0/6.0;
     cv::Vec3f axisVec(1.0, 2.0, 1.0);

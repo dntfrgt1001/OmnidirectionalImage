@@ -21,21 +21,25 @@ cv::Mat Epipolar::getRotMatEssMat
     const double focal = 1.0;
     const cv::Point2d pp(0.0, 0.0);
     const int method = cv::RANSAC;
-    //int method = cv::LMEDS;
     double prob = 0.999;
     double threshold = 0.005;
     
-    // 後フレーム->前フレームの基本行列
-    //cv::Mat E = cv::findEssentialMat(latnormals, fornormals, focal, pp, method);
-    
+    // OpenCVの関数用に変換
     std::vector<cv::Point2f> forPoints, latPoints;
-    Transform::normal2point(forNormals, forPoints);
-    Transform::normal2point(latNormals, latPoints);
+    Map::normal2point(forNormals, forPoints);
+    Map::normal2point(latNormals, latPoints);
     
     cv::Mat E =
     cv::findEssentialMat
     (latPoints, forPoints, focal, pp, method, prob, threshold, mask);
     
+    std::cout << "E = " << std::endl << E << std::endl;
+    
+    // 回転が微小の場合，回転の復元が正常に行われない
+    // (ベースラインについて対称の回転)
+    if (std::abs(cv::trace(E)[0]) < 1e-3) {
+        return (cv::Mat_<float>(3,3) << 1,0,0,0,1,0,0,0,1);
+    }
     
     // 後フレーム->前フレームの回転行列
     cv::Mat R, t;

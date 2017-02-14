@@ -17,6 +17,7 @@
 #include "Transform.hpp"
 #include "ExtractFeaturePoint.hpp"
 #include "MatchFeaturePoint.hpp"
+#include "Core.hpp"
 
 #include <random>
 
@@ -33,10 +34,11 @@ int main(int argc, const char * argv[])
     input = cv::imread(inputName);
     cv::resize(input, img, frameSize);
     
-    Transform tf(frameSize);
+    Map::fs = frameSize;
     
-    int divNum = 6;
-    ExtractFeaturePoint efp(frameSize, tf, divNum);
+    const int divNum = 6;
+    const int mergin = 10;
+    ExtractFeaturePoint efp(frameSize, divNum, mergin);
     
     /*
     float distThre = 250;

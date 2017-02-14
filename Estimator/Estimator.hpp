@@ -22,14 +22,11 @@ typedef struct State {
 
 class Estimator {
 public:
-    Estimator(const Transform& tf): tf(tf) {};
+    Estimator() {};
     
     // インタフェース
     virtual cv::Mat getRotMat
     (const cv::Mat& forImg, const cv::Mat& latImg, const State& state) = 0;
-    
-protected:
-    const Transform& tf;
 };
 
 #endif /* Estimator_hpp */

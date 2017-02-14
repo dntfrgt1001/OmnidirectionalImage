@@ -1,3 +1,5 @@
+
+
 //
 //  MainProcess.cpp
 //  OmnidirectionalImage
@@ -39,8 +41,10 @@ void MainProcess::modImg
 //    struct timeval estStart, estEnd;
 //    gettimeofday(&estStart, NULL);
     
+    // 現在の状態をセットして回転を推定
     const State curState = {frameNum, curRotMat};
     curRotMat = est.getRotMat(forImg, latImg, curState);
+    accRotMat = accRotMat * curRotMat;
     
 //    gettimeofday(&estEnd, NULL);
 //    double estTime = (double) (estEnd.tv_sec - estStart.tv_sec) +
@@ -50,9 +54,12 @@ void MainProcess::modImg
 //    struct timeval rotStart, rotEnd;
 //    gettimeofday(&rotStart, NULL);
     
-    accRotMat = accRotMat * curRotMat;
-    tf.rotateImg(latImg, latImgMod, accRotMat);
+    // 出力画像用のフレームサイズをセット
+    Map::setOutSize();
+    Map::rotateImg(latImg, accRotMat, latImgMod);
+    Map::setProcSize();
     
+    // 画像処理用のフレームサイズをセット
 //    gettimeofday(&rotEnd, NULL);
 //    double rotTime = (double) (rotEnd.tv_sec - rotStart.tv_sec) +
 //                     (rotEnd.tv_usec - rotStart.tv_usec) * 1e-6;
@@ -126,8 +133,8 @@ void MainProcess::modVideo(VideoReader &vr, VideoWriter &vw, Estimator &estSub)
     
     // 繰り返し処理
     while (vr.hasNext()) {
-        struct timeval frmStart, frmEnd;
-        gettimeofday(&frmStart, NULL);
+//        struct timeval frmStart, frmEnd;
+//        gettimeofday(&frmStart, NULL);
         
         // フレームをずらす
         forImg = latImg.clone();
@@ -149,8 +156,10 @@ void MainProcess::modVideo(VideoReader &vr, VideoWriter &vw, Estimator &estSub)
             curRotMat = estSub.getRotMat(forImg, latImg, curState);
         }
         accRotMat = accRotMat * curRotMat;
-        tf.rotateImg(latImg, latImgMod, accRotMat);
         
+        Map::setOutSize();
+        Map::rotateImg(latImg, accRotMat, latImgMod);
+        Map::setProcSize();
         
         vw.writeImg(latImgMod);
         
@@ -163,70 +172,14 @@ void MainProcess::modVideo(VideoReader &vr, VideoWriter &vw, Estimator &estSub)
         std::cout << frameNum << " th frame finished" << std::endl;
         frameNum ++;
         
-        gettimeofday(&frmEnd, NULL);
-        double frmTime = (double) (frmEnd.tv_sec - frmStart.tv_sec) +
-        (frmEnd.tv_usec - frmStart.tv_usec) * 1e-6;
-        std::cout << "frm time = " << frmTime << std::endl;
+//        gettimeofday(&frmEnd, NULL);
+//        double frmTime = (double) (frmEnd.tv_sec - frmStart.tv_sec) +
+//        (frmEnd.tv_usec - frmStart.tv_usec) * 1e-6;
+//        std::cout << "frm time = " << frmTime << std::endl;
         
         cv::waitKey(1000);
         
     }
 }
 
-/*
-void MainProcess::modVideo(VideoReader &vr, VideoWriter &vw)
-{
-    cv::Mat forImg, latImg;
-    
-    cv::namedWindow("former image");
-    cv::namedWindow("latter image");
-    cv::namedWindow("modified latter image");
-    
-    // 初期フレームを書き出す
-    vr.readImg(latImg);
-    vw.writeImg(latImg);
-    
-    std::cout << "0-th frame finished" << std::endl;
-    
-    for (int i = 1; vr.hasNext(); i++) {
-        // 画像をシフト
-        forImg = latImg.clone();
-        vr.readImg(latImg);
-        
-       
-        
-        // 後画像を修正
-        cv::Mat latImgMod;
- //       modifyLatImgJackInHead(forImg, latImg, latImgMod);
- //       modifyLatImgFeatureMatch(forImg, latImg, latImgMod);
-        
-//        modifyLatImgOpticalFlow(forImg, latImg, latImgMod);
-        
-        
-        float normRotVec = cv::norm(Rotation::RotMat2RotVec(curRotMat));
-        float normRotThre = 0.2;
-        if (normRotThre < normRotVec) {
-            std::cout << "OpticalFlow Method" << std::endl;
-            modImgOpticalFlow(forImg, latImg, latImgMod);
-        } else {
-            std::cout << "Feature Matching Method" << std::endl;
-            modImgFeatureMatch(forImg, latImg, latImgMod);
-        }
-        
-        // modifyLatImgFeatureMatch(forImg, latImg, latImgMod);
-        // modifyLatImgOpticalFlow(forImg, latImg, latImgMod);
-        
-        vw.writeImg(latImgMod);
-        
-        // 出力
-        cv::imshow("former image", forImg);
-        cv::imshow("latter image", latImg);
-        cv::imshow("modified latter image", latImgMod);
-        
-        std::cout << i << "-th frame finished" << std::endl;
-        
-        cv::waitKey(0);
-    }
-}
-*/
 
