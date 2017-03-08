@@ -8,7 +8,7 @@
 
 #include "IMUEstimator.hpp"
 
-IMUEstimator::IMUEstimator(const Transform& tf, IMU& imu):
+IMUEstimator::IMUEstimator(IMU& imu):
 // 状態の次元[w, x, y, z, bx, by, bz]
 // 観測の次元[gx, gy, gz]
 // 制御の次元[]
@@ -21,13 +21,14 @@ imu(imu), kalman(cv::KalmanFilter(7, 3, 0, CV_32FC1))
     cv::setIdentity(kalman.measurementMatrix);
     
     // 遷移誤差分散共分散行列の初期化
-    cv::setIdentity(kalman.processNoiseCov, cv::Scalar::all(1e-4));
+    cv::setIdentity(kalman.processNoiseCov, cv::Scalar::all(1e-3));
     
     // 観測誤差分散共分散行列の初期化
-    cv::setIdentity(kalman.measurementNoiseCov, cv::Scalar::all(0.5));
+    cv::setIdentity(kalman.measurementNoiseCov, cv::Scalar::all(1e-2
+                                                                ));
     
     // 誤差分散共分散行列の初期化
-    cv::setIdentity(kalman.errorCovPost, cv::Scalar::all(0.5));
+    cv::setIdentity(kalman.errorCovPost, cv::Scalar::all(1e-2));
     
     // 状態の初期化 q = [1: 0, 0, 0], b = [0, 0, 0]
     kalman.statePost = (cv::Mat_<float>(7,1) << 1, 0, 0, 0, 1e-3, 1e-3, 1e-3);
@@ -38,7 +39,7 @@ imu(imu), kalman(cv::KalmanFilter(7, 3, 0, CV_32FC1))
 }
 
 cv::Mat IMUEstimator::getRotMat
-(const cv::Mat &forImg, const cv::Mat &latImg, const int frameNum)
+(const cv::Mat &forImg, const cv::Mat &latImg, const State& state)
 {
     // IMUデータの取り出し
     std::vector<IMUData> datas;
@@ -142,7 +143,7 @@ cv::Mat IMUEstimator::getTransMat(const cv::Vec3f &angVel)
 cv::Mat IMUEstimator::getMeasureMat()
 {
     // 重力加速度
-    const float g = 9.8;
+    const float g = 1.0;
     
     // 予測後の四元数
     Quaternion quat(kalman.statePre.at<float>(0),

@@ -92,14 +92,27 @@ void MatchFeaturePoint::drawMatchVert
  const cv::Mat &img2, const std::vector<Equirect> &latEquirects,
  cv::Mat &outImg) const
 {
-    cv::Mat tmpOutImg;
-    cv::vconcat(img1, img2, tmpOutImg);
+    // チャネル数取得
+    cv::Mat rgbImg1, rgbImg2;
     
-    if (tmpOutImg.channels() == 1) cv::cvtColor(tmpOutImg, outImg, CV_GRAY2BGR);
-    else outImg = tmpOutImg.clone();
+    // RGB画像に変換
+    if (img1.channels() == 1) {
+        cv::cvtColor(img1, rgbImg1, CV_GRAY2BGR);
+        cv::cvtColor(img2, rgbImg2, CV_GRAY2BGR);
+    } else {
+        rgbImg1 = img1;
+        rgbImg2 = img2;
+    }
+    
+    const int mergin = 30;
+    //cv::Mat merginImg(mergin, img1.cols, CV_8UC3);
+    cv::Mat merginImg(mergin, img1.cols, CV_8UC3, cv::Scalar(255,255,255));
+    cv::Mat tmpImg;
+    cv::vconcat(rgbImg1, merginImg, tmpImg);
+    cv::vconcat(tmpImg, rgbImg2, outImg);
         
     for (int i = 0; i < forEquirects.size(); i++) {
-        drawLineVert(forEquirects[i], latEquirects[i], outImg);
+        drawLineVert(forEquirects[i], latEquirects[i], mergin, outImg);
     }
 }
 
@@ -108,24 +121,24 @@ void MatchFeaturePoint::drawMatchVert
  const cv::Mat &img2, const std::vector<cv::KeyPoint> keyPoints2,
  const std::vector<cv::DMatch> matchs, cv::Mat &outImg) const
 {
-    cv::Mat tmpOutImg;
-    cv::vconcat(img1, img2, tmpOutImg);
-    
-    if (tmpOutImg.channels() == 1) cv::cvtColor(tmpOutImg, outImg, CV_GRAY2BGR);
-    else outImg = tmpOutImg.clone();
+    std::vector<Equirect> forEquirects(matchs.size());
+    std::vector<Equirect> latEquirects(matchs.size());
     
     for (int i = 0; i < matchs.size(); i++) {
-        drawLineVert(keyPoints1[matchs[i].queryIdx].pt,
-                     keyPoints2[matchs[i].trainIdx].pt, outImg);
+        forEquirects[i] = keyPoints1[matchs[i].queryIdx].pt;
+        latEquirects[i] = keyPoints2[matchs[i].trainIdx].pt;
     }
+    
+    drawMatchVert(img1, forEquirects, img2, latEquirects, outImg);
 }
 
 void MatchFeaturePoint::drawLineVert
 (const cv::Point2f &point1, const cv::Point2f &point2,
- cv::Mat &outImg) const
+ const int mergin, cv::Mat &outImg) const
 {
     // 下側の特徴の座標を修正
-    cv::Point2f modPoint2 = point2 + cv::Point2f(0, outImg.rows / 2);
+    cv::Point2f modPoint2 = point2 +
+                            cv::Point2f(0, (outImg.rows-mergin) / 2 + mergin);
     
     // 線の描画
     cv::line

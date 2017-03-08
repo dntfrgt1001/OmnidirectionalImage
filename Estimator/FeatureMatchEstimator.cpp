@@ -135,7 +135,7 @@ cv::Mat FeatureMatchEstimator::getRotMat
     cv::namedWindow("match");
     cv::imshow("match", imgMatch);
     
-    // 現在フレーム番号の保存
+    // 現在フレーム番号の保存/
     prevFrameNum = frameNum;
     
     // 現在フレームの特徴を保存

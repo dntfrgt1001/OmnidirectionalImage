@@ -45,8 +45,8 @@ int main(int argc, const char * argv[])
     const std::string inputfile = path + "log.txt";
     
     // シリアルポート設定
-//    const std::string port = "/dev/tty.usbmodem1422";
-    const std::string port = "/dev/tty.usbmodem1412";
+    const std::string port = "/dev/tty.usbmodem1422";
+//    const std::string port = "/dev/tty.usbmodem1412";
     const speed_t baudRate = B57600;
     
     // バッファサイズ
@@ -77,7 +77,7 @@ int main(int argc, const char * argv[])
     int count = 0;
     long int midCount = 1;
     double period = (double) 1.0 / 30.0;
-    const int maxCount = 1000;
+    const int maxCount = 10000;
     IMUData tmpIMUData;
     while (count < maxCount) {
         // データ組を入力

@@ -20,40 +20,42 @@
 int main(int argc, const char * argv[])
 {
     const std::string path = "/Users/masakazu/Desktop/TestImage/";
-    const std::string inputName1 = path + "image0025.jpg";
-    const std::string inputName2 = path + "image0026.jpg";
+    const std::string inputName1 = path + "hall.jpg";
+    const std::string inputName2 = path + "hall2.jpg";
     
-    const cv::Size fs(960, 480);
-
+    const cv::Size fsProc(600, 300);
+    const cv::Size fsOut(960, 480);
+    
     cv::Mat input1, img1, input2, img2;
     input1 = cv::imread(inputName1);
-    cv::resize(input1, img1, fs);
+    cv::resize(input1, img1, fsProc);
     input2 = cv::imread(inputName2);
-    cv::resize(input2, img2, fs);
+    cv::resize(input2, img2, fsProc);
     
-//    const Transform tf(fs);
+    Map::fsProc = fsProc;
+    Map::fsOut = fsOut;
+    Map::setProcSize();
     
     const int divNum = 6;
     const int mergin = 10;
-    ExtractFeaturePoint efp(fs, divNum, mergin);
+    ExtractFeaturePoint efp(fsProc, divNum, mergin);
     
-    const float eucThre = 250;
-    const float sphereThre = 0.3;
+    const float eucThre = 200;
+    const float sphereThre = M_PI / 4.0;
     MatchFeaturePoint mfp(eucThre, sphereThre);
-    
     cv::Mat grayImg1, grayImg2;
     cv::cvtColor(img1, grayImg1, CV_BGR2GRAY);
     cv::cvtColor(img2, grayImg2, CV_BGR2GRAY);
 
     // 特徴抽出
-    std::vector<cv::KeyPoint> keyPoints1, keyPoints2;
+    std::vector<cv::KeyPoint> keyPointSet1, keyPointSet2;
     cv::Mat descriptor1, descriptor2;
-    efp.extFeat(grayImg1, keyPoints1, descriptor1);
-    efp.extFeat(grayImg2, keyPoints2, descriptor2);
+    efp.extFeat(grayImg1, keyPointSet1, descriptor1);
+    efp.extFeat(grayImg2, keyPointSet2, descriptor2);
     
     cv::Mat drawKeyImg1, drawKeyImg2;
-    efp.drawKeyPointClear(grayImg1, keyPoints1, drawKeyImg1);
-    efp.drawKeyPointClear(grayImg2, keyPoints2, drawKeyImg2);
+    efp.drawKeyPointClear(grayImg1, keyPointSet1, drawKeyImg1);
+    efp.drawKeyPointClear(grayImg2, keyPointSet2, drawKeyImg2);
     
     // 特徴マッチ
     std::vector<cv::DMatch> matchs;
@@ -62,7 +64,9 @@ int main(int argc, const char * argv[])
     mfp.filterMatchEuc(matchs);
     
     // マッチした特徴点
-    mfp.orderKeyPoint(keyPoints1, keyPoints2, matchs);
+    std::vector<cv::KeyPoint> keyPoints1, keyPoints2;
+    mfp.orderKeyPoint
+    (keyPointSet1, keyPointSet2, matchs, keyPoints1, keyPoints2);
     
     // 画像座標に変換
     std::vector<Equirect> equirects1(keyPoints1.size());

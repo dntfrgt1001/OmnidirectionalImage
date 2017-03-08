@@ -23,37 +23,33 @@ int main(int argc, const char * argv[])
 {
     const std::string path = "/Users/masakazu/Desktop/TestImage/";
     const std::string inputName1 = path + "hall.jpg";
-    const std::string inputName2 = path + "rothall.jpg";
+    const std::string inputName2 = path + "rothallz12.jpg";
     
-//    const cv::Size frameSize(1000, 500);
-    const cv::Size frameSize(1280, 640);
-//    const cv::Size frameSize(960, 480);
-    
-    Transform tf(frameSize);
+    const cv::Size fsOut(1280, 640);
+    const cv::Size fsProc(5376, 2688);
+    Map::fsOut = fsOut;
+    Map::fsProc = fsProc;
+    Map::setProcSize();
     
     cv::Mat input1, img1, input2, img2;
     input1 = cv::imread(inputName1);
-    cv::resize(input1, img1, frameSize);
+    cv::resize(input1, img1, fsProc);
     input2 = cv::imread(inputName2);
-    cv::resize(input2, img2, frameSize);
-//    cv::cvtColor(img1, img1, CV_BGR2GRAY);
-//    cv::cvtColor(img2, img2, CV_BGR2GRAY);
+    cv::resize(input2, img2, fsProc);
     
-    const int persRad = 300;
-    
+    const int persRad = 200;
     const float rangeAngle = M_PI / 4.0;
-    Perspective pers(tf, persRad, rangeAngle);
+    Perspective pers(persRad, rangeAngle);
 
     const cv::Vec3f rotVec = cv::Vec3f(0.0, 0.0, 1.0);
     cv::Mat froMat = Rotation::getFroChgMat(rotVec);
-    
-    
+
     cv::Mat persImg1, persImg2;
     const bool isFront = true;
-    pers.getPersImg(img1, persImg1, froMat, isFront);
-    pers.getPersImg(img2, persImg2, froMat, isFront);
+    pers.getPersImg(img1, froMat, isFront, persImg1);
+    pers.getPersImg(img2, froMat, isFront, persImg2);
     
-    cv::Mat mask = pers.getMask(0.05);
+    cv::Mat mask = pers.getMask(0.1);
     cv::namedWindow("mask");
     cv::imshow("mask", mask);
     
@@ -62,7 +58,7 @@ int main(int argc, const char * argv[])
     cv::imshow("pers 1", persImg1);
     cv::imshow("pers 2", persImg2);
     
-    cv::waitKey(0);
+    cv::waitKey();
     
     const float margin = 0.1;
     const float angRag = M_PI/4.0;
@@ -74,22 +70,33 @@ int main(int argc, const char * argv[])
     optflow.getOpticalFlow(persImg2, persImg1, forPerss, latPerss);
     
     std::vector<Normal> forNormals, latNormals;
-    tf.pers2normal(forPerss, forNormals, pers.getInParaMat());
-    tf.pers2normal(latPerss, latNormals, pers.getInParaMat());
+    Map::pers2normal(forPerss, forNormals, pers.getInParaMat());
+    Map::pers2normal(latPerss, latNormals, pers.getInParaMat());
     optflow.remOrthOutlier(forNormals, latNormals);
     optflow.remRotOutlier(forNormals, latNormals);
     
     std::vector<Pers> forPerssLast, latPerssLast;
-    tf.normal2pers(forNormals, forPerssLast, pers.getInParaMat());
-    tf.normal2pers(latNormals, latPerssLast, pers.getInParaMat());
+    Map::normal2pers(forNormals, forPerssLast, pers.getInParaMat());
+    Map::normal2pers(latNormals, latPerssLast, pers.getInParaMat());
     
+    cv::Mat persGrayImg;
+    cv::cvtColor(persImg1, persGrayImg, CV_BGR2GRAY);
+    cv::Mat persGrayRGBImg;
+    cv::cvtColor(persGrayImg, persGrayRGBImg, CV_GRAY2BGR);
     cv::Mat persDrawImg;
-    optflow.drawOpticalFlow(persImg1, forPerssLast, latPerssLast, persDrawImg);
+    optflow.drawOpticalFlow(persGrayRGBImg, forPerssLast, latPerssLast, persDrawImg);
     
     cv::namedWindow("opt flow");
     cv::imshow("opt flow", persDrawImg);
     
-    cv::waitKey(0);
+    cv::waitKey();
+    
+    const std::string persName1 = path + "pers1.png";
+    const std::string persName2 = path + "pers2.png";
+    const std::string flowName = path + "optcalflow.png";
+    cv::imwrite(persName1, persImg1);
+    cv::imwrite(persName2, persImg2);
+    cv::imwrite(flowName, persDrawImg);
     
     /*
     const float rangeAngle2 = M_PI/3.0;
@@ -129,8 +136,7 @@ int main(int argc, const char * argv[])
 //    cv::imwrite(path + outName, persImg);
     
     */
-    
-    cv::waitKey(-1);
+
     
     return 0;
 }

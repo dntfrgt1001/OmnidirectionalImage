@@ -118,15 +118,14 @@ public:
     // カメラ座標(球面上) → 経緯度
     static Polar sphere2polar(const Sphere& sphere)
     {
-        float den = sqrtf(sphere.x* sphere.x + sphere.z*sphere.z);
-        float theta = (den==0)? 0: acosf(normalDomain(sphere.z/den,-1,1)) *
-                                   (sphere.x > 0? 1: -1);
-        
+//        float den = sqrtf(sphere.x* sphere.x + sphere.z*sphere.z);
+//        float theta = (den==0)? 0: acosf(normalDomain(sphere.z/den,-1,1)) *
+//                                   (sphere.x > 0? 1: -1);
+
+        float theta = atan2f(sphere.x, sphere.z);
         float phi = asinf(normalDomain(-sphere.y, -1, 1));
         
         return Polar(theta, phi);
-        //return Polar(normalDomain(theta, -M_PI, M_PI),
-        //             normalDomain(phi, -M_PI_2, M_PI_2));
     }
     static void sphere2polar
     (const std::vector<Sphere>& spheres, std::vector<Polar>& polars);

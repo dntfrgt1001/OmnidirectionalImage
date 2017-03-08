@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		020011BD1E52D1B000611D5A /* Core.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 022BA2651DD1ABD90015C380 /* Core.cpp */; };
 		0202316F1DF30DB100D6B3B2 /* Rotation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 020D73071D2A62E800BC61BD /* Rotation.cpp */; };
 		020231701DF30DB500D6B3B2 /* Quaternion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 02D6D9A11D8189B900862E8F /* Quaternion.cpp */; };
 		020231791DF562EF00D6B3B2 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 020231781DF562EF00D6B3B2 /* main.cpp */; };
@@ -133,6 +134,7 @@
 		0280E5221E44433400E094F3 /* FisheyeConvert.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0280E5201E44433400E094F3 /* FisheyeConvert.cpp */; };
 		0280E5241E47279D00E094F3 /* Core.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 022BA2651DD1ABD90015C380 /* Core.cpp */; };
 		0280E5251E473FFA00E094F3 /* Core.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 022BA2651DD1ABD90015C380 /* Core.cpp */; };
+		028798431E5C2AFD00451683 /* Core.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 022BA2651DD1ABD90015C380 /* Core.cpp */; };
 		0287FC241D787B7200E4FE99 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0287FC231D787B7200E4FE99 /* main.cpp */; };
 		0287FC281D787E0F00E4FE99 /* Transform.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0245CD8D1C4233E000FF5E33 /* Transform.cpp */; };
 		029994151C72A9CB00792144 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 029994141C72A9CB00792144 /* main.cpp */; };
@@ -159,6 +161,7 @@
 		02B1BD751E303BA30023E580 /* libopencv_imgproc.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 02670DCB1E1F634300CC5E12 /* libopencv_imgproc.dylib */; };
 		02B1BD761E303BA60023E580 /* libopencv_features2d.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 02670DD81E2746A900CC5E12 /* libopencv_features2d.dylib */; };
 		02B1BD771E303BA90023E580 /* libopencv_xfeatures2d.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 02670DDA1E2746B900CC5E12 /* libopencv_xfeatures2d.dylib */; };
+		02B443B61E69B07900DC4DD7 /* Core.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 022BA2651DD1ABD90015C380 /* Core.cpp */; };
 		02B8D5F51CA7D92F00A736DB /* InputGyro.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 020FE6C71CA6DA6E00A650CE /* InputGyro.cpp */; };
 		02C4C35F1E0A6B860098ACFA /* IMUEstimator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 02C4C35D1E0A6B860098ACFA /* IMUEstimator.cpp */; };
 		02C4C3601E0A84DC0098ACFA /* IMUEstimator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 02C4C35D1E0A6B860098ACFA /* IMUEstimator.cpp */; };
@@ -1622,6 +1625,7 @@
 			files = (
 				02513FAB1D366BD100089959 /* Transform.cpp in Sources */,
 				025ADB871DB7621E00DCE366 /* Rotation.cpp in Sources */,
+				02B443B61E69B07900DC4DD7 /* Core.cpp in Sources */,
 				02513FAA1D366BCA00089959 /* Perspective.cpp in Sources */,
 				025ADB881DB7622700DCE366 /* Quaternion.cpp in Sources */,
 				02513FA61D36648900089959 /* main.cpp in Sources */,
@@ -1704,6 +1708,7 @@
 				027F388C1D5B0F8B0012DA39 /* VideoWriter.cpp in Sources */,
 				027F388D1D5B0F8E0012DA39 /* VideoReader.cpp in Sources */,
 				027F388A1D5B0F830012DA39 /* Transform.cpp in Sources */,
+				020011BD1E52D1B000611D5A /* Core.cpp in Sources */,
 				027F38821D5B0EDB0012DA39 /* main.cpp in Sources */,
 				02CB50D01D98122A0000BCFD /* Rotation.cpp in Sources */,
 				02CB50D11D98123F0000BCFD /* Quaternion.cpp in Sources */,
@@ -1739,6 +1744,7 @@
 				02C4C36C1E10EF620098ACFA /* IMUEstimator.cpp in Sources */,
 				024D71FE1E34A25D00CE3477 /* VideoReader.cpp in Sources */,
 				02C4C36E1E10EF740098ACFA /* Quaternion.cpp in Sources */,
+				028798431E5C2AFD00451683 /* Core.cpp in Sources */,
 				02C4C3681E10CA580098ACFA /* main.cpp in Sources */,
 				024D71FD1E34A25800CE3477 /* VideoWriter.cpp in Sources */,
 				02C4C3711E10EF960098ACFA /* IMU.cpp in Sources */,

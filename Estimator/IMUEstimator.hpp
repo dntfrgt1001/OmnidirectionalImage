@@ -22,12 +22,12 @@
 
 class IMUEstimator: public Estimator {
 public:
-    IMUEstimator(const Transform& tf, IMU& imu);
-
+    IMUEstimator(IMU& imu);
+    
     // 画像入力はダミー
     cv::Mat getRotMat
-    (const cv::Mat& forImg, const cv::Mat& latImg, const int frameNum);
-  
+    (const cv::Mat& forImg, const cv::Mat& latImg, const State& state);
+    
     // 角速度から遷移行列を生成（線型）
     cv::Mat getTransMat(const cv::Vec3f& angVel);
     

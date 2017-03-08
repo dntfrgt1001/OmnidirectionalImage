@@ -110,7 +110,7 @@ void MainProcess::modVideo(VideoReader &vr, VideoWriter &vw)
 //                         (frmEnd.tv_usec - frmStart.tv_usec) * 1e-6;
 //        std::cout << "frm time = " << frmTime << std::endl;
         
-        cv::waitKey(1000);
+        cv::waitKey(250);
     }
 }
 
@@ -144,8 +144,9 @@ void MainProcess::modVideo(VideoReader &vr, VideoWriter &vw, Estimator &estSub)
         cv::Mat latImgMod;
         
         float normRotVec = cv::norm(Rotation::RotMat2RotVec(curRotMat));
-        float normRotThre = 0.2;
-        if (normRotThre < normRotVec) {
+        std::cout << "rot velocity = " << normRotVec << std::endl;
+        float normRotThre = 0.1;
+        if (normRotThre > normRotVec) {
             std::cout << "OpticalFlow Method" << std::endl;
             const State curState = {frameNum, curRotMat};
             curRotMat = est.getRotMat(forImg, latImg, curState);
@@ -155,6 +156,7 @@ void MainProcess::modVideo(VideoReader &vr, VideoWriter &vw, Estimator &estSub)
             const State curState = {frameNum, curRotMat};
             curRotMat = estSub.getRotMat(forImg, latImg, curState);
         }
+        
         accRotMat = accRotMat * curRotMat;
         
         Map::setOutSize();
@@ -177,7 +179,7 @@ void MainProcess::modVideo(VideoReader &vr, VideoWriter &vw, Estimator &estSub)
 //        (frmEnd.tv_usec - frmStart.tv_usec) * 1e-6;
 //        std::cout << "frm time = " << frmTime << std::endl;
         
-        cv::waitKey(1000);
+        cv::waitKey(250);
         
     }
 }

@@ -34,11 +34,11 @@ int main(int argc, const char * argv[])
  // ffmpeg -f image2 -r 30 -i image\%04d.jpg -an -vcodec libx264 -pix_fmt yuv420p video.mp4
     //    const std::string path = "/Users/masakazu/Desktop/casio/bowling/02/";
     const std::string path = "/Users/masakazu/Desktop/fishtest/";
-    const std::string inputVideoName = path + "sample5-equi";
-    const std::string outputVideoName = path + "sample5-1";
+    const std::string inputVideoName = path + "sample3-steregraph";
+    const std::string outputVideoName = path + "sample3-steregraph-1";
     
-    const cv::Size fsOut(1280, 640);
-    const cv::Size fsProc(1280, 640);
+    const cv::Size fsOut(640, 320);
+    const cv::Size fsProc(640, 320);
     
     int stride = 1;
     VideoReaderPic vr(fsOut, inputVideoName, stride);
@@ -56,8 +56,8 @@ int main(int argc, const char * argv[])
     const int mergin = 10;
     const ExtractFeaturePoint efp(fsProc, divNum, mergin);
 
-    const float eucThre = 250;
-    const float sphereThre = 0.35;
+    const float eucThre = 280;
+    const float sphereThre = M_PI_4;
     const MatchFeaturePoint mfp(eucThre, sphereThre);
     
     const float fieldAngle = M_PI / 2.5;
@@ -82,10 +82,11 @@ int main(int argc, const char * argv[])
     // -----------------------------------------------------
     
     MainProcess mp(fme);
-//    MainProcess mp(tfo, ofe);
-    
     mp.modVideo(vr, vw);
-//    mp.modVideo(vr, vw, fme);
+    
+//    MainProcess mp(ofe);
+
+//    mp.modVideo(vr, vw, ofe);
     
     cv::Mat curRotMat = (cv::Mat_<float>(3,3)
                          << -0.39498305, -0.34497485, 0.85145819,

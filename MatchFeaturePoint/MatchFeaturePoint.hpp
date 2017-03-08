@@ -66,7 +66,7 @@ public:
 
     void drawLineVert
     (const cv::Point2f& point1, const cv::Point2f& point2,
-     cv::Mat& outImg) const;
+     const int mergin, cv::Mat& outImg) const;
     
 private:
     const cv::Ptr<cv::DescriptorMatcher> matcher; // マッチャ

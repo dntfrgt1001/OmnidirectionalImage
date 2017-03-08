@@ -14,8 +14,8 @@ divNum(divNum),
 roi(cv::Rect(0, (fs.height - fs.height/divNum)/2 - mergin,
              fs.width, fs.height/divNum + mergin*2)),
 feature(cv::xfeatures2d::SIFT::create())
-//feature(cv::AKAZE::create())
 //feature(cv::xfeatures2d::SURF::create())
+//feature(cv::AKAZE::create())
 //feature(cv::ORB::create())
 {
     setLowLatMask(fs);
